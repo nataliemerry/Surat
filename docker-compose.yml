@@ -1,0 +1,23 @@
+version: '3.8'
+
+services:
+  mysql:
+    image: mysql:latest         # MySQL image from Docker Hub
+    container_name: mysql_persuratan     # Name your MySQL container
+    environment:
+      MYSQL_ROOT_PASSWORD: bps3308  # Root password for MySQL
+      MYSQL_DATABASE: persuratan         # Default database to create
+      MYSQL_USER: penggunasurat          # Custom user to create
+      MYSQL_PASSWORD: surat3308           # Password for the custom user
+    ports:
+      - "3306:3306"             # Expose MySQL on port 3306
+    volumes:
+      - mysql_data:/var/lib/mysql   # Persistent storage for data
+    networks:
+      - mysql_network
+
+volumes:
+  mysql_data:
+
+networks:
+  mysql_network:
