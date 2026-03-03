@@ -40,7 +40,7 @@ use Inertia\Response;
         {
             return Inertia::render('Surat-Undangan/Index', [
                 'kode' => \App\Models\Kode::query()
-                    ->orderByDesc('id')
+                    ->orderBy('kode')
                     ->get()
                     ->map(fn ($kode) => [
                         'id' => $kode->id,
@@ -54,7 +54,7 @@ use Inertia\Response;
         {
             return Inertia::render('Surat-Pengantar/Index', [
                 'kode' => \App\Models\Kode::query()
-                    ->orderByDesc('id')
+                    ->orderBy('kode')
                     ->get()
                     ->map(fn ($kode) => [
                         'id' => $kode->id,
@@ -68,7 +68,7 @@ use Inertia\Response;
         {
             return Inertia::render('Surat-Tugas/form', [
                 'kode' => \App\Models\Kode::query()
-                    ->orderByDesc('id')
+                    ->orderBy('kode')
                     ->get()
                     ->map(fn ($kode) => [
                         'id' => $kode->id,
@@ -210,7 +210,7 @@ use Inertia\Response;
                     'filepath' => $surat->filepath,
                 ],
                 'kode' => \App\Models\Kode::query()
-                    ->orderByDesc('id')
+                    ->orderBy('kode')
                     ->get()
                     ->map(fn($kode) => [
                         'id' => $kode->id,
@@ -251,7 +251,7 @@ use Inertia\Response;
                     'link' => $surat->link,
                 ],
                 'kode' => \App\Models\Kode::query()
-                    ->orderByDesc('id')
+                    ->orderBy('kode')
                     ->get()
                     ->map(fn($kode) => [
                         'id' => $kode->id,
@@ -293,7 +293,7 @@ use Inertia\Response;
                     'link' => $surat->link,
                 ],
                 'kode' => \App\Models\Kode::query()
-                    ->orderByDesc('id')
+                    ->orderBy('kode')
                     ->get()
                     ->map(fn($kode) => [
                         'id' => $kode->id,

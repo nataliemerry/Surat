@@ -48,33 +48,34 @@
     <span class="font-medium text-indigo-400">/</span> Create
 </h1>
 
-<div class="max-w-3xl overflow-hidden rounded-md bg-white shadow">
+<div class="max-w-3xl overflow-hidden bg-white rounded-md shadow">
     <form on:submit|preventDefault={store}>
-        <div class="-mb-8 -mr-6 flex flex-wrap p-8">
+        <div class="flex flex-wrap p-8 -mb-8 -mr-6">
             <SelectInput bind:value={$form.firstSelect} error={$form.errors.firstSelect} class="w-full pb-8 pr-6" label="Kode Arsip Utama">
-                <option value={null}>Select an option</option>
-                <option value="PS">PS - Pengkajian dan Pengusulan Kebijakan</option>
-                <option value="SS">SS - Perencanaan</option>
-                <option value="VS">VS - Perencanaan</option>
-                <option value="KS">KS - Kompilasi data</option>
-                <option value="KU">KU - Pelaksanaan Anggaran</option>
-                <option value="KP">KP - Formasi Pegawai</option>
-                <option value="PR">PR - Pokok-Pokok Kebijakan dan Strategi Pembangunan</option>
-                <option value="HK">HK - Program Legislasi</option>
-                <option value="OT">OT - Organisasi</option>
-                <option value="HM">HM - Keprotokolan</option>
-                <option value="KA">KA - Pencetakan</option>
-                <option value="RT">RT - Administrasi penggunaan / langganan peralatan telekomunikasi</option>
-                <option value="PL">PL - Rencana Kebutuhan Barang dan Jasa</option>
-                <option value="DL">DL - Perencanaan Diklat</option>
-                <option value="PK">PK - Penyimpanan Deposit Bahan Pustaka</option>
-                <option value="IF">IF - Rencana Strategis Masterplan Pembangunan Sistem Informasi</option>
-                <option value="PW">PW - Rencana Pengawasan</option>
-                <option value="TS">TS - Penyusunan Rencana Kegiatan Bidang Transformasi Statistik ( TOR )</option>
+                <option value={null}>Silakan pilih salah satu opsi</option>
+                <option value="PS">PS - Perumusan Kebijakan di Bidang Statistik</option>
+                <option value="SS">SS - Sensus Penduduk, Sensus Pertanian dan Sensus Ekonomi</option>
+                <option value="VS">VS - Survei</option>
+                <option value="KS">KS - Konsolidasi Data Statistik</option>
+                <option value="ES">ES - Evaluasi dan Pelaporan Sensus, Survei dan Konsolidasi Data</option>
+                <option value="KU">KU - Keuangan</option>
+                <option value="KP">KP - Kepegawaian</option>
+                <option value="PR">PR - Perencanaan</option>
+                <option value="HK">HK - Hukum</option>
+                <option value="OT">OT - Organisasi dan Tata Laksana</option>
+                <option value="HM">HM - Hubungan Masyarakat</option>
+                <option value="KA">KA - Kearsipan</option>
+                <option value="RT">RT - Kerumahtanggaan</option>
+                <option value="PL">PL - Perlengkapan</option>
+                <option value="DL">DL - Pendidikan dan Pelatihan</option>
+                <option value="PK">PK - Kepustakaan</option>
+                <option value="IF">IF - Informatika</option>
+                <option value="PW">PW - Pengawasan</option>
+                <option value="TS">TS - Transformasi Statistik</option>
             </SelectInput>
             {#if $form.firstSelect}
             <SelectInput bind:value={$form.kode} error={$form.errors.kode} class="w-full pb-8 pr-6" label="Data Berdasarkan Kegiatan:">
-                <option value={null}>Select an option</option>
+                <option value={null}>Silakan pilih salah satu opsi</option>
                 {#each filteredKode as option}
                     <option value={option.value}>{option.text}</option>
                 {/each}
@@ -83,33 +84,33 @@
             <TextInput bind:value={$form.perihal} error={$form.errors.perihal} class="w-full pb-8 pr-6" label="Perihal:" />
             <TextInput bind:value={$form.tujuan} error={$form.errors.tujuan} class="w-full pb-8 pr-6" label="Tujuan:" />
             <SelectInput bind:value={$form.isRuangan} error={$form.errors.isRuangan} class="w-full pb-8 pr-6" label="Apakah menggunakan Ruang Aula">
-                <option value={null}>Select an option</option>
+                <option value={null}>Silakan pilih salah satu opsi</option>
                 <option value=1>Ya, Kegiatan menggunakan Ruang Aula</option>
                 <option value=0>Tidak, Kegiatan tidak menggunakan Ruang Aula</option>
             </SelectInput>
             <SelectInput bind:value={$form.isKonsumsi} error={$form.errors.isKonsumsi} class="w-full pb-8 pr-6" label="Keperluan Konsumsi">
-                <option value={null}>Select an option</option>
+                <option value={null}>Silakan pilih salah satu opsi</option>
                 <option value=1>Ya, Kegiatan membutuhkan konsumsi</option>
                 <option value=0>Tidak, Kegiatan tidak membutuhkan konsumsi</option>
             </SelectInput>
             
             {#if $form.isKonsumsi == 1}
                 <SelectInput bind:value={$form.isPengelolaan} error={$form.errors.isPengelolaan} class="w-full pb-8 pr-6" label="Siapa yang akan mengelola konsumsi?">
-                    <option value={null}>Select an option</option>
+                    <option value={null}>Silakan pilih salah satu opsi</option>
                     <option value=1>Dikelola oleh Umum / TU</option>
                     <option value=0>Dikelola sendiri</option>
                 </SelectInput>
             {/if}
             <TextInput bind:value={$form.link} error={$form.errors.link} class="w-full pb-8 pr-6" label="Perihal:" />
             <div class="w-full pb-8 pr-6">
-                <label for="file" class="block">Upload File (.docx):</label>
-                <input type="file" accept=".docx" on:input={e => $form.file = e.target.files[0]} class="mt-1 block w-full">
+                <label for="file" class="block">Unggah File (.docx):</label>
+                <input type="file" accept=".docx" on:input={e => $form.file = e.target.files[0]} class="block w-full mt-1">
                 {#if $form.errors.file}
                     <p class="mt-2 text-sm text-red-600">{$form.errors.file}</p>
                 {/if}
             </div>
         </div>
-        <div class="flex items-center justify-end border-t border-gray-100 bg-gray-50 px-8 py-4">
+        <div class="flex items-center justify-end px-8 py-4 border-t border-gray-100 bg-gray-50">
             <LoadingButton loading={$form.processing} class="btn-indigo" type="submit">Ajukan Surat</LoadingButton>
         </div>
     </form>
