@@ -54,7 +54,7 @@ use Inertia\Response;
         {
             return Inertia::render('Surat-Pengantar/Index', [
                 'kode' => \App\Models\Kode::query()
-                    ->orderByAsc('id')
+                    ->orderBy('kode')
                     ->get()
                     ->map(fn ($kode) => [
                         'id' => $kode->id,

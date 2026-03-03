@@ -14,6 +14,8 @@
     "@popperjs/core": "^2.11.0",
     "fit-textarea": "^2.0.0",
     "lodash": "^4.17.21",
+    "lucide-react": "^0.576.0",
+    "lucide-svelte": "^0.576.0",
     "nanoid": "^5.0.7"
   },
   "devDependencies": {
