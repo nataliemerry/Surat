@@ -25,7 +25,7 @@ class DashboardController extends Controller
                     'filepath' => $surat->filepath,
                     'isKonsumsi' => $surat->isKonsumsi,
                     'isPengelolaan' => $surat->isPengelolaan,
-                    'isRuang'=>$surat->isRuang,
+                    'isRuangan' => $surat->isRuangan,
                 ]),
         ]);
     }

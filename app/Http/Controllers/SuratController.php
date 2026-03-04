@@ -52,7 +52,7 @@ use Inertia\Response;
 
         public function formSuratPengantar()
         {
-            return Inertia::render('Surat-Pengantar/Index', [
+            return Inertia::render('Surat-Dinas/Index', [
                 'kode' => \App\Models\Kode::query()
                     ->orderBy('kode')
                     ->get()
@@ -100,8 +100,8 @@ use Inertia\Response;
 
 
             Surat::create($validated);
-            
-            return Redirect::route('dashboard')->with('success', 'Surat Pengantar Berhasil Dibuat.');
+
+            return Redirect::route('dashboard', ['type' => 3])->with('success', 'Surat Dinas Berhasil Dibuat.');
         }
 
         public function storeSuratUndangan(Request $request)
@@ -111,6 +111,7 @@ use Inertia\Response;
                 'kode' => 'required|string',
                 'perihal' => 'required|string',
                 'tujuan' => 'required|string',
+                'isRuangan' => 'nullable|boolean',
                 'isKonsumsi' => 'nullable|boolean',
                 'isPengelolaan' => 'nullable|boolean',
                 'filepath' => 'nullable|string',
@@ -125,8 +126,8 @@ use Inertia\Response;
             }
 
             Surat::create($validated);
-            
-            return Redirect::route('dashboard')->with('success', 'Surat Undangan Berhasil Dibuat.');
+
+            return Redirect::route('dashboard', ['type' => 2])->with('success', 'Surat Undangan Berhasil Dibuat.');
         }
 
         public function updateSuratTugas(Request $request)
@@ -144,14 +145,12 @@ use Inertia\Response;
 
             if ($request->hasFile('file')) {
                 $file = $request->file('file');
-                $filePath = $file->store('uploads', 'public'); // Save file in 'uploads' directory
-                $validated['filepath'] = Storage::url($filePath); // Store public URL in the database
-
-                // Update the 'filepath' in the database
+                $filePath = $file->store('uploads', 'public'); 
+                $validated['filepath'] = Storage::url($filePath); 
                 $surat->update(['filepath' => $validated['filepath']]);
             }
 
-            return Redirect::route('dashboard')->with('success', "Surat Tugas with Nomor {$validated['nomor']} has been updated.");
+            return Redirect::route('dashboard', ['type' => 1])->with('success', "Surat Tugas with Nomor {$validated['nomor']} has been updated.");
         }
 
         public function storeSuratTugas(Request $request)
@@ -177,8 +176,8 @@ use Inertia\Response;
             );
         
             $surat->update(['nomor' => $formattedNomor]);
-        
-            return Redirect::route('dashboard')->with('success', "Nomor Surat Tugas Anda: $formattedNomor");
+
+            return Redirect::route('dashboard', ['type' => 1])->with('success', "Nomor Surat Tugas Anda: $formattedNomor");
         }
 
 
@@ -232,7 +231,7 @@ use Inertia\Response;
                     'filepath' => 'nullable|string',
                 ])
             );
-            return Redirect::back()->with('success', 'Sukses Mengupdate Surat Tugas');
+            return Redirect::route('dashboard', ['type' => 1])->with('success', 'Sukses Mengupdate Surat Tugas');
         }
 
         public function editSuratUndangan(Surat $surat): Response
@@ -277,7 +276,7 @@ use Inertia\Response;
                     'link' => 'nullable|string'
                 ])
             );
-            return Redirect::back()->with('success', 'Sukses Mengupdate Surat Undangan');
+            return Redirect::route('dashboard', ['type' => 2])->with('success', 'Sukses Mengupdate Surat Undangan');
         }
 
         public function editSuratPengantar(Surat $surat): Response
@@ -316,7 +315,7 @@ use Inertia\Response;
                     'link' => 'nullable|string'
                 ])
             );
-            return Redirect::back()->with('success', 'Sukses Mengupdate Surat Tugas');
+            return Redirect::route('dashboard', ['type' => 3])->with('success', 'Sukses Mengupdate Surat Dinas');
         }
 
         public function update(Request $request, Surat $surat)

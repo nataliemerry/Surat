@@ -36,8 +36,8 @@
       </a>
     </div>
     <div class="group flex items-start py-2">
-      <a use:inertia href="/surat-pengantar/form">
-        <div class={isUrl('surat-pengantar/form') ? 'text-white' : 'text-indigo-300 group-hover:text-white'}>Surat Pengantar dll</div>
+      <a use:inertia href="/surat-dinas/form">
+        <div class={isUrl('surat-dinas/form') ? 'text-white' : 'text-indigo-300 group-hover:text-white'}>Surat Dinas</div>
       </a>
     </div>
   </div>

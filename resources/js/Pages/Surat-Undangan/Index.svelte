@@ -101,7 +101,6 @@
                     <option value=0>Dikelola sendiri</option>
                 </SelectInput>
             {/if}
-            <TextInput bind:value={$form.link} error={$form.errors.link} class="w-full pb-8 pr-6" label="Perihal:" />
             <div class="w-full pb-8 pr-6">
                 <label for="file" class="block">Unggah File (.docx):</label>
                 <input type="file" accept=".docx" on:input={e => $form.file = e.target.files[0]} class="block w-full mt-1">
