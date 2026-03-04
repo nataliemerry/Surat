@@ -20,9 +20,10 @@
   $title = 'Tambah Surat Dinas'
 
   let form = useForm('CreateSurat', {
-    type: 1,
+    type: 3,
     firstSelect: null,
     kode: null,
+    isRahasia: '0',
     isRuangan: null,
     isKonsumsi: null,
     isPengelolaan: null,
@@ -47,9 +48,9 @@
   <span class="font-medium text-indigo-400">/</span> Create
 </h1>
 
-<div class="max-w-3xl overflow-hidden rounded-md bg-white shadow">
+<div class="max-w-3xl overflow-hidden bg-white rounded-md shadow">
   <form on:submit|preventDefault={store}>
-    <div class="-mb-8 -mr-6 flex flex-wrap p-8">
+    <div class="flex flex-wrap p-8 -mb-8 -mr-6">
       <SelectInput bind:value={$form.firstSelect} error={$form.errors.firstSelect} class="w-full pb-8 pr-6" label="Kode Arsip Utama">
         <option value={null}>Silakan pilih salah satu opsi</option>
         <option value="PS">PS - Perumusan Kebijakan di Bidang Statistik</option>
@@ -80,17 +81,21 @@
           {/each}
         </SelectInput>
       {/if}
+      <SelectInput bind:value={$form.isRahasia} error={$form.errors.isRahasia} class="w-full pb-8 pr-6" label="Sifat Surat:" id="sifat-surat">
+        <option value="0">Biasa</option>
+        <option value="1">Rahasia</option>
+      </SelectInput>
       <TextInput bind:value={$form.perihal} error={$form.errors.perihal} class="w-full pb-8 pr-6" label="Perihal:" />
       <TextInput bind:value={$form.tujuan} error={$form.errors.tujuan} class="w-full pb-8 pr-6" label="Tujuan:" />
       <div class="w-full pb-8 pr-6">
         <label for="file" class="block">Upload File (.docx):</label>
-        <input type="file" accept=".docx" on:input={(e) => ($form.file = e.target.files[0])} class="mt-1 block w-full" />
+        <input type="file" accept=".docx" on:input={(e) => ($form.file = e.target.files[0])} class="block w-full mt-1" />
         {#if $form.errors.file}
           <p class="mt-2 text-sm text-red-600">{$form.errors.file}</p>
         {/if}
       </div>
     </div>
-    <div class="flex items-center justify-end border-t border-gray-100 bg-gray-50 px-8 py-4">
+    <div class="flex items-center justify-end px-8 py-4 border-t border-gray-100 bg-gray-50">
       <LoadingButton loading={$form.processing} class="btn-indigo" type="submit">Ajukan Surat</LoadingButton>
     </div>
   </form>

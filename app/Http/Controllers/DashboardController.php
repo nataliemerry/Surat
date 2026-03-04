@@ -26,6 +26,7 @@ class DashboardController extends Controller
                     'isKonsumsi' => $surat->isKonsumsi,
                     'isPengelolaan' => $surat->isPengelolaan,
                     'isRuangan' => $surat->isRuangan,
+                    'isRahasia' => $surat->isRahasia,
                 ]),
         ]);
     }

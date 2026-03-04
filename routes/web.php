@@ -57,7 +57,7 @@ Route::get('/img/{path}', [ImagesController::class, 'show'])
     ->where('path', '.*')
     ->name('image');
 
-Route::get('/surat-dinas/form', [SuratController::class, 'formSuratPengantar'])
+Route::get('/surat-dinas/form', [SuratController::class, 'formSuratDinas'])
     ->name('form.surat.dinas');
 
 Route::get('/surat-undangan/form', [SuratController::class, 'formSuratUndangan'])
@@ -72,7 +72,7 @@ Route::get('/surat-tugas', [SuratController::class, 'optionSuratTugas'])
 Route::get('/surat-tugas/upload-surat', [SuratController::class, 'uploadSuratTugas'])
     ->name('surat-tugas.upload-surat');
 
-Route::post('/surat-dinas/create', [SuratController::class, 'storeSuratPengantar'])
+Route::post('/surat-dinas/create', [SuratController::class, 'storeSuratDinas'])
     ->name('surat.store.dinas');
 
 Route::post('/surat-undangan/create', [SuratController::class, 'storeSuratUndangan'])
@@ -100,10 +100,10 @@ Route::put('surat-undangan/{surat}', [SuratController::class, 'editedSuratUndang
     ->name('surat-undangan.update')
     ->middleware('auth');
 
-Route::get('surat-dinas/{surat}/edit', [SuratController::class, 'editSuratPengantar'])
+Route::get('surat-dinas/{surat}/edit', [SuratController::class, 'editSuratDinas'])
     ->name('surat-dinas.edit')
     ->middleware('auth');
 
-Route::put('surat-dinas/{surat}', [SuratController::class, 'editedSuratPengantar'])
+Route::put('surat-dinas/{surat}', [SuratController::class, 'editedSuratDinas'])
     ->name('surat-dinas.update')
     ->middleware('auth');
