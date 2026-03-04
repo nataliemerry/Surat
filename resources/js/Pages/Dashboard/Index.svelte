@@ -104,7 +104,7 @@
     <tbody>
       {#each paginatedSurat as surat (surat.id)}
         {#if auth?.user}
-          <tr class="cursor-pointer focus-within:bg-gray-100 hover:bg-gray-100" on:click={() => (window.location.href = getEditUrl(surat.type, surat.id))}>
+          <tr class="focus-within:bg-gray-100 hover:bg-gray-100">
             <td class="border-t">
               <p class="flex items-center px-6 py-4">{surat.created_at}</p>
             </td>
@@ -160,7 +160,7 @@
               {/if}
             </td>
             <td class="border-t px-6 text-center">
-              <button class="inline-flex items-center rounded bg-green-500 p-2 text-white hover:bg-green-600 focus:outline-none" on:click|stopPropagation={() => (window.location.href = getEditUrl(surat.type, surat.id))} aria-label="Edit">
+              <button class="inline-flex items-center rounded bg-green-500 p-2 text-white hover:bg-green-600 focus:outline-none" on:click={() => (window.location.href = getEditUrl(surat.type, surat.id))} aria-label="Edit">
                 <Pencil class="h-4 w-4 text-white" />
               </button>
             </td>

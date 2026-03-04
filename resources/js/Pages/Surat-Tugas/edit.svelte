@@ -10,18 +10,16 @@
     import TextInput from '@/Shared/TextInput.svelte';
 
     export let surat = [];
-    export let kode = []; // List of all possible kode options
+    export let kode = []; 
 
     let filteredKode = [];
 
-    // Filter kode options based on firstSelect
     function filterByType(firstSelect) {
         filteredKode = kode.filter(item => item.value.startsWith(firstSelect));
     }
 
     $title = 'Edit Surat Tugas';
 
-    // Initialize form with data from the database
     let form = useForm(`EditSuratTugas: ${surat.id}`, {
         kode: surat.kode,
         type: surat.type,
@@ -29,15 +27,13 @@
         tujuan: surat.tujuan,
         nomor: surat.nomor,
         filepath: surat.filepath,
-        firstSelect: surat.kode ? surat.kode.substring(0, 2) : null, // Extract the first 2 characters
+        firstSelect: surat.kode ? surat.kode.substring(0, 2) : null, 
     });
 
-    // Update filteredKode options whenever firstSelect changes
     $: if ($form.firstSelect) {
         filterByType($form.firstSelect);
     }
 
-    // Update form submission handler
     function update() {
         $form.put(`/surat-tugas/${surat.id}`);
     }
@@ -48,9 +44,9 @@
     <span class="font-medium text-indigo-400">/</span> Edit
 </h1>
 
-<div class="max-w-3xl overflow-hidden rounded-md bg-white shadow">
+<div class="max-w-3xl overflow-hidden bg-white rounded-md shadow">
     <form on:submit|preventDefault={update}>
-        <div class="-mb-8 -mr-6 flex flex-wrap p-8">
+        <div class="flex flex-wrap p-8 -mb-8 -mr-6">
             <TextInput bind:value={$form.perihal} error={$form.errors.perihal} class="w-full pb-8 pr-6" label="Perihal:" />
             <TextInput bind:value={$form.tujuan} error={$form.errors.tujuan} class="w-full pb-8 pr-6" label="Tujuan:" />
             <TextInput bind:value={$form.nomor} error={$form.errors.nomor} class="w-full pb-8 pr-6" label="Tujuan:" />
@@ -87,7 +83,7 @@
             {/if}
         </div>
 
-        <div class="flex items-center justify-end border-t border-gray-100 bg-gray-50 px-8 py-4">
+        <div class="flex items-center justify-end px-8 py-4 border-t border-gray-100 bg-gray-50">
             <LoadingButton loading={$form.processing} class="btn-indigo" type="submit">Ajukan Surat</LoadingButton>
         </div>
     </form>
