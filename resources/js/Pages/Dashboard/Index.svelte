@@ -6,7 +6,8 @@
 <script>
   import { onMount } from 'svelte'
   import Pagination from '@/Shared/Pagination.svelte'
-  import { Pencil } from 'lucide-svelte'
+  import { router } from '@inertiajs/svelte'
+  import { Pencil, Trash2 } from 'lucide-svelte'
   export let surat = []
   export let auth
 
@@ -66,6 +67,50 @@
       default:
         return '#'
     }
+  }
+
+  function getDeleteUrl(type, id) {
+    switch (type) {
+      case 1:
+        return `/surat-tugas/${id}`
+      case 2:
+        return `/surat-undangan/${id}`
+      case 3:
+        return `/surat-dinas/${id}`
+      default:
+        return null
+    }
+  }
+
+  let showDeleteModal = false
+  let deleteTarget = null
+
+  function confirmDelete(type, id, label) {
+    deleteTarget = { type, id, label }
+    showDeleteModal = true
+  }
+
+  function executeDelete() {
+    if (!deleteTarget) return
+    const url = getDeleteUrl(deleteTarget.type, deleteTarget.id)
+    if (url) {
+      const deletedId = deleteTarget.id
+      router.delete(url, {
+        preserveScroll: true,
+        onSuccess: () => {
+          surat = surat.filter((s) => s.id !== deletedId)
+          filteredSurat = filteredSurat.filter((s) => s.id !== deletedId)
+          updatePagination()
+        },
+      })
+    }
+    showDeleteModal = false
+    deleteTarget = null
+  }
+
+  function cancelDelete() {
+    showDeleteModal = false
+    deleteTarget = null
   }
 </script>
 
@@ -160,9 +205,14 @@
               {/if}
             </td>
             <td class="border-t px-6 text-center">
-              <button class="inline-flex items-center rounded bg-green-500 p-2 text-white hover:bg-green-600 focus:outline-none" on:click={() => (window.location.href = getEditUrl(surat.type, surat.id))} aria-label="Edit">
-                <Pencil class="h-4 w-4 text-white" />
-              </button>
+              <div class="flex items-center justify-center gap-2">
+                <button class="inline-flex items-center rounded bg-green-500 p-2 text-white hover:bg-green-600 focus:outline-none" on:click={() => (window.location.href = getEditUrl(surat.type, surat.id))} aria-label="Edit">
+                  <Pencil class="h-4 w-4 text-white" />
+                </button>
+                <button class="inline-flex items-center rounded bg-red-500 p-2 text-white hover:bg-red-600 focus:outline-none" on:click={() => confirmDelete(surat.type, surat.id, surat.perihal || surat.nomor || `ID ${surat.id}`)} aria-label="Hapus">
+                  <Trash2 class="h-4 w-4 text-white" />
+                </button>
+              </div>
             </td>
           </tr>
         {:else}
@@ -235,3 +285,17 @@
   </table>
 </div>
 <Pagination {totalPages} {currentPage} onChange={changePage} />
+
+{#if showDeleteModal}
+  <div class="fixed inset-0 z-50 flex items-center justify-center bg-black/50">
+    <div class="w-full max-w-md rounded-lg bg-white p-6 shadow-xl">
+      <h2 class="mb-2 text-lg font-bold text-gray-800">Konfirmasi Hapus</h2>
+      <p class="mb-1 text-gray-600">Apakah Anda yakin ingin menghapus surat ini?</p>
+      <p class="mb-6 truncate font-semibold text-gray-800">"{deleteTarget?.label}"</p>
+      <div class="flex justify-end gap-3">
+        <button class="rounded px-4 py-2 text-gray-600 hover:bg-gray-100 focus:outline-none" on:click={cancelDelete}> Batal </button>
+        <button class="rounded bg-red-500 px-4 py-2 text-white hover:bg-red-600 focus:outline-none" on:click={executeDelete}> Hapus </button>
+      </div>
+    </div>
+  </div>
+{/if}

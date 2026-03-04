@@ -132,6 +132,12 @@ class SuratController extends Controller
         return Redirect::route('dashboard', ['type' => 1])->with('success', 'Sukses Mengupdate Surat Tugas');
     }
 
+    public function destroyTugas(Surat $surat): RedirectResponse
+    {
+        $surat->delete();
+        return Redirect::route('dashboard', ['type' => 1])->with('success', 'Surat Tugas berhasil dihapus.');
+    }
+
 
     public function formSuratUndangan(): Response
     {
@@ -164,7 +170,7 @@ class SuratController extends Controller
         return Redirect::route('dashboard', ['type' => 2])->with('success', 'Surat Undangan Berhasil Dibuat.');
     }
 
-    public function editSuratUndangan(Surat $surat): Response
+    public function editUndangan(Surat $surat): Response
     {
         return Inertia::render('Surat-Undangan/edit', [
             'surat' => [
@@ -184,9 +190,9 @@ class SuratController extends Controller
         ]);
     }
 
-    public function editedSuratUndangan(Surat $surat): RedirectResponse
+    public function updateUndangan(Request $request, Surat $surat): RedirectResponse
     {
-        $surat->update(FacadeRequest::validate([
+        $surat->update($request->validate([
             'type'          => 'required|integer',
             'kode'          => 'required|string',
             'isRahasia'     => 'required|boolean',
@@ -201,6 +207,12 @@ class SuratController extends Controller
         ]));
 
         return Redirect::route('dashboard', ['type' => 2])->with('success', 'Sukses Mengupdate Surat Undangan');
+    }
+
+    public function destroyUndangan(Surat $surat): RedirectResponse
+    {
+        $surat->delete();
+        return Redirect::route('dashboard', ['type' => 2])->with('success', 'Surat Undangan berhasil dihapus.');
     }
 
 
@@ -234,7 +246,7 @@ class SuratController extends Controller
         return Redirect::route('dashboard', ['type' => 3])->with('success', 'Surat Dinas Berhasil Dibuat.');
     }
 
-    public function editSuratDinas(Surat $surat): Response
+    public function editDinas(Surat $surat): Response
     {
         return Inertia::render('Surat-Dinas/edit', [
             'surat' => [
@@ -251,9 +263,9 @@ class SuratController extends Controller
         ]);
     }
 
-    public function editedSuratDinas(Surat $surat): RedirectResponse
+    public function updateDinas(Request $request, Surat $surat): RedirectResponse
     {
-        $surat->update(FacadeRequest::validate([
+        $surat->update($request->validate([
             'type'     => 'required|integer',
             'kode'     => 'required|string',
             'perihal'  => 'required|string',
@@ -266,16 +278,10 @@ class SuratController extends Controller
         return Redirect::route('dashboard', ['type' => 3])->with('success', 'Sukses Mengupdate Surat Dinas');
     }
 
-    public function show(Surat $surat)
+    public function destroyDinas(Surat $surat): RedirectResponse
     {
-    }
-
-    public function update(Request $request, Surat $surat)
-    {
-    }
-
-    public function destroy(Surat $surat)
-    {
+        $surat->delete();
+        return Redirect::route('dashboard', ['type' => 3])->with('success', 'Surat Dinas berhasil dihapus.');
     }
 }
 

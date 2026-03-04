@@ -92,18 +92,30 @@ Route::get('surat-tugas/{surat}/edit', [SuratController::class, 'editSuratTugas'
     ->name('surat-tugas.edit')
     ->middleware('auth');
 
-Route::get('surat-undangan/{surat}/edit', [SuratController::class, 'editSuratUndangan'])
+Route::delete('surat-tugas/{surat}', [SuratController::class, 'destroyTugas'])
+    ->name('surat-tugas.destroy')
+    ->middleware('auth');
+
+Route::get('surat-undangan/{surat}/edit', [SuratController::class, 'editUndangan'])
     ->name('surat-undangan.edit')
     ->middleware('auth');
 
-Route::put('surat-undangan/{surat}', [SuratController::class, 'editedSuratUndangan'])
+Route::put('surat-undangan/{surat}', [SuratController::class, 'updateUndangan'])
     ->name('surat-undangan.update')
     ->middleware('auth');
 
-Route::get('surat-dinas/{surat}/edit', [SuratController::class, 'editSuratDinas'])
+Route::delete('surat-undangan/{surat}', [SuratController::class, 'destroyUndangan'])
+    ->name('surat-undangan.destroy')
+    ->middleware('auth');
+
+Route::get('surat-dinas/{surat}/edit', [SuratController::class, 'editDinas'])
     ->name('surat-dinas.edit')
     ->middleware('auth');
 
-Route::put('surat-dinas/{surat}', [SuratController::class, 'editedSuratDinas'])
+Route::put('surat-dinas/{surat}', [SuratController::class, 'updateDinas'])
     ->name('surat-dinas.update')
+    ->middleware('auth');
+
+Route::delete('surat-dinas/{surat}', [SuratController::class, 'destroyDinas'])
+    ->name('surat-dinas.destroy')
     ->middleware('auth');
