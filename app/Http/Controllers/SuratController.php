@@ -99,7 +99,7 @@ class SuratController extends Controller
             $surat->update(['filepath' => Storage::url($filePath)]);
         }
 
-        return Redirect::route('dashboard', ['type' => 1])->with('success', "Surat Tugas dengan Nomor {$validated['nomor']} berhasil diperbarui.");
+        return Redirect::route('dashboard', ['type' => 1]);
     }
 
     public function editSuratTugas(Surat $surat): Response
@@ -129,13 +129,13 @@ class SuratController extends Controller
             'filepath' => 'nullable|string',
         ]));
 
-        return Redirect::route('dashboard', ['type' => 1])->with('success', 'Sukses Mengupdate Surat Tugas');
+        return Redirect::route('dashboard', ['type' => 1]);
     }
 
     public function destroyTugas(Surat $surat): RedirectResponse
     {
         $surat->delete();
-        return Redirect::route('dashboard', ['type' => 1])->with('success', 'Surat Tugas berhasil dihapus.');
+        return Redirect::route('dashboard', ['type' => 1]);
     }
 
 
@@ -206,13 +206,13 @@ class SuratController extends Controller
             'link'          => 'nullable|string',
         ]));
 
-        return Redirect::route('dashboard', ['type' => 2])->with('success', 'Sukses Mengupdate Surat Undangan');
+        return Redirect::route('dashboard', ['type' => 2]);
     }
 
     public function destroyUndangan(Surat $surat): RedirectResponse
     {
         $surat->delete();
-        return Redirect::route('dashboard', ['type' => 2])->with('success', 'Surat Undangan berhasil dihapus.');
+        return Redirect::route('dashboard', ['type' => 2]);
     }
 
 
@@ -275,13 +275,13 @@ class SuratController extends Controller
             'link'     => 'nullable|string',
         ]));
 
-        return Redirect::route('dashboard', ['type' => 3])->with('success', 'Sukses Mengupdate Surat Dinas');
+        return Redirect::route('dashboard', ['type' => 3]);
     }
 
     public function destroyDinas(Surat $surat): RedirectResponse
     {
         $surat->delete();
-        return Redirect::route('dashboard', ['type' => 3])->with('success', 'Surat Dinas berhasil dihapus.');
+        return Redirect::route('dashboard', ['type' => 3]);
     }
 }
 

@@ -6,8 +6,43 @@
 <script>
   import { onMount } from 'svelte'
   import Pagination from '@/Shared/Pagination.svelte'
-  import { router } from '@inertiajs/svelte'
+  import { router, page } from '@inertiajs/svelte'
   import { Pencil, Trash2 } from 'lucide-svelte'
+
+  let toastMessage = ''
+  let showToast = false
+  let toastTimeout
+
+  let bannerMessage = ''
+  let showBanner = false
+  let bannerTimeout
+
+  function triggerToast(message) {
+    toastMessage = message
+    showToast = true
+    clearTimeout(toastTimeout)
+    toastTimeout = setTimeout(() => {
+      showToast = false
+    }, 3500)
+  }
+
+  function triggerBanner(message) {
+    bannerMessage = message
+    showBanner = true
+    clearTimeout(bannerTimeout)
+    bannerTimeout = setTimeout(() => {
+      showBanner = false
+    }, 10000)
+  }
+
+  $: if ($page?.props?.flash?.success) {
+    const msg = $page.props.flash.success
+    if (msg.includes('Berhasil Dibuat') || msg.includes('Nomor Surat')) {
+      triggerBanner(msg)
+    } else {
+      triggerToast(msg)
+    }
+  }
   export let surat = []
   export let auth
 
@@ -101,6 +136,7 @@
           surat = surat.filter((s) => s.id !== deletedId)
           filteredSurat = filteredSurat.filter((s) => s.id !== deletedId)
           updatePagination()
+          triggerToast('Surat berhasil dihapus.')
         },
       })
     }
@@ -115,34 +151,46 @@
 </script>
 
 <h1 class="mb-4 text-3xl font-bold">Riwayat Surat yang Diajukan</h1>
-<div class="mb-4 flex gap-2">
+
+{#if showBanner}
+  <div class="flex items-center justify-between px-5 py-3 mb-4 text-white bg-green-500 rounded-lg shadow">
+    <div class="flex items-center gap-3">
+      <svg xmlns="http://www.w3.org/2000/svg" class="w-5 h-5 shrink-0" viewBox="0 0 20 20" fill="currentColor">
+        <path fill-rule="evenodd" d="M10 18a8 8 0 100-16 8 8 0 000 16zm3.707-9.293a1 1 0 00-1.414-1.414L9 10.586 7.707 9.293a1 1 0 00-1.414 1.414l2 2a1 1 0 001.414 0l4-4z" clip-rule="evenodd" />
+      </svg>
+      <span class="text-sm font-medium">{bannerMessage}</span>
+    </div>
+    <button class="text-white/70 hover:text-white" on:click={() => (showBanner = false)}>✕</button>
+  </div>
+{/if}
+<div class="flex gap-2 mb-4">
   <button class={`rounded px-4 py-2 focus:outline-none ${activeType === 1 ? 'bg-[#5661B3] font-bold text-white hover:bg-[#2F365F]' : 'bg-white text-[#374151] hover:bg-gray-100'}`} on:click={() => filterByType(1)}> Surat Tugas </button>
   <button class={`rounded px-4 py-2 focus:outline-none ${activeType === 2 ? 'bg-[#5661B3] font-bold text-white hover:bg-[#2F365F]' : 'bg-white text-[#374151] hover:bg-gray-100'}`} on:click={() => filterByType(2)}> Surat Undangan </button>
   <button class={`rounded px-4 py-2 focus:outline-none ${activeType === 3 ? 'bg-[#5661B3] font-bold text-white hover:bg-[#2F365F]' : 'bg-white text-[#374151] hover:bg-gray-100'}`} on:click={() => filterByType(3)}> Surat Dinas </button>
 </div>
-<div class="overflow-x-auto rounded-md bg-white shadow">
+<div class="overflow-x-auto bg-white rounded-md shadow">
   <table class="w-full whitespace-nowrap">
     <thead>
-      <tr class="text-left font-bold">
-        <th class="px-6 pb-4 pt-6">Tanggal</th>
-        <th class="px-6 pb-4 pt-6">Kode Arsip</th>
+      <tr class="font-bold text-left">
+        <th class="px-6 pt-6 pb-4">Tanggal</th>
+        <th class="px-6 pt-6 pb-4">Kode Arsip</th>
         {#if activeType === 1}
-          <th class="px-6 pb-4 pt-6">Untuk (Kegiatan)</th>
-          <th class="px-6 pb-4 pt-6">Kepada</th>
-          <th class="px-6 pb-4 pt-6">Nomor Surat</th>
+          <th class="px-6 pt-6 pb-4">Kegiatan</th>
+          <th class="px-6 pt-6 pb-4">Kepada</th>
+          <th class="px-6 pt-6 pb-4">Nomor Surat</th>
         {:else if activeType === 2}
-          <th class="px-6 pb-4 pt-6">Perihal</th>
-          <th class="px-6 pb-4 pt-6">Tujuan</th>
-          <th class="px-6 pb-4 pt-6">Keperluan Konsumsi</th>
-          <th class="px-6 pb-4 pt-6">Pengelolaan Konsumsi</th>
-          <th class="px-6 pb-4 pt-6">Penggunaan Ruang</th>
+          <th class="px-6 pt-6 pb-4">Perihal</th>
+          <th class="px-6 pt-6 pb-4">Tujuan</th>
+          <th class="px-6 pt-6 pb-4">Keperluan Konsumsi</th>
+          <th class="px-6 pt-6 pb-4">Pengelolaan Konsumsi</th>
+          <th class="px-6 pt-6 pb-4">Penggunaan Ruang</th>
         {:else if activeType === 3}
-          <th class="px-6 pb-4 pt-6">Perihal</th>
-          <th class="px-6 pb-4 pt-6">Tujuan</th>
+          <th class="px-6 pt-6 pb-4">Perihal</th>
+          <th class="px-6 pt-6 pb-4">Tujuan</th>
         {/if}
-        <th class="px-6 pb-4 pt-6">Draft Surat</th>
+        <th class="px-6 pt-6 pb-4">Draft Surat</th>
         {#if auth?.user}
-          <th class="px-6 pb-4 pt-6">Aksi</th>
+          <th class="px-6 pt-6 pb-4">Aksi</th>
         {/if}
       </tr>
     </thead>
@@ -190,7 +238,7 @@
                 <p class="flex items-center px-6 py-4" tabindex="-1">{surat.tujuan || ''}</p>
               </td>
             {/if}
-            <td class="border-t px-6">
+            <td class="px-6 border-t">
               {#if surat.filepath}
                 <button
                   class="rounded bg-[#5661B3] px-4 py-2 text-white hover:bg-[#2F365F]"
@@ -204,13 +252,13 @@
                 <p class="text-gray-500">Belum Ada Draft Surat</p>
               {/if}
             </td>
-            <td class="border-t px-6 text-center">
+            <td class="px-6 text-center border-t">
               <div class="flex items-center justify-center gap-2">
-                <button class="inline-flex items-center rounded bg-green-500 p-2 text-white hover:bg-green-600 focus:outline-none" on:click={() => (window.location.href = getEditUrl(surat.type, surat.id))} aria-label="Edit">
-                  <Pencil class="h-4 w-4 text-white" />
+                <button class="inline-flex items-center p-2 text-white bg-green-500 rounded hover:bg-green-600 focus:outline-none" on:click={() => (window.location.href = getEditUrl(surat.type, surat.id))} aria-label="Edit">
+                  <Pencil class="w-4 h-4 text-white" />
                 </button>
-                <button class="inline-flex items-center rounded bg-red-500 p-2 text-white hover:bg-red-600 focus:outline-none" on:click={() => confirmDelete(surat.type, surat.id, surat.perihal || surat.nomor || `ID ${surat.id}`)} aria-label="Hapus">
-                  <Trash2 class="h-4 w-4 text-white" />
+                <button class="inline-flex items-center p-2 text-white bg-red-500 rounded hover:bg-red-600 focus:outline-none" on:click={() => confirmDelete(surat.type, surat.id, surat.perihal || surat.nomor || `ID ${surat.id}`)} aria-label="Hapus">
+                  <Trash2 class="w-4 h-4 text-white" />
                 </button>
               </div>
             </td>
@@ -257,7 +305,7 @@
                 <p class="flex items-center px-6 py-4" tabindex="-1">{surat.tujuan || ''}</p>
               </td>
             {/if}
-            <td class="border-t px-6">
+            <td class="px-6 border-t">
               <div class="flex items-center justify-center">
                 {#if surat.filepath}
                   <button
@@ -278,7 +326,7 @@
       {/each}
       {#if paginatedSurat.length === 0}
         <tr>
-          <td class="border-t px-6 py-4" colspan="10">Belum Ada Surat yang Diajukan.</td>
+          <td class="px-6 py-4 border-t" colspan="10">Belum Ada Surat yang Diajukan.</td>
         </tr>
       {/if}
     </tbody>
@@ -288,14 +336,24 @@
 
 {#if showDeleteModal}
   <div class="fixed inset-0 z-50 flex items-center justify-center bg-black/50">
-    <div class="w-full max-w-md rounded-lg bg-white p-6 shadow-xl">
+    <div class="w-full max-w-md p-6 bg-white rounded-lg shadow-xl">
       <h2 class="mb-2 text-lg font-bold text-gray-800">Konfirmasi Hapus</h2>
       <p class="mb-1 text-gray-600">Apakah Anda yakin ingin menghapus surat ini?</p>
-      <p class="mb-6 truncate font-semibold text-gray-800">"{deleteTarget?.label}"</p>
+      <p class="mb-6 font-semibold text-gray-800 truncate">"{deleteTarget?.label}"</p>
       <div class="flex justify-end gap-3">
-        <button class="rounded px-4 py-2 text-gray-600 hover:bg-gray-100 focus:outline-none" on:click={cancelDelete}> Batal </button>
-        <button class="rounded bg-red-500 px-4 py-2 text-white hover:bg-red-600 focus:outline-none" on:click={executeDelete}> Hapus </button>
+        <button class="px-4 py-2 text-gray-600 rounded hover:bg-gray-100 focus:outline-none" on:click={cancelDelete}> Batal </button>
+        <button class="px-4 py-2 text-white bg-red-500 rounded hover:bg-red-600 focus:outline-none" on:click={executeDelete}> Hapus </button>
       </div>
     </div>
+  </div>
+{/if}
+
+{#if showToast}
+  <div class="fixed z-50 flex items-center gap-3 px-5 py-3 text-white transition-all bg-green-500 rounded-lg shadow-xl bottom-6 right-6">
+    <svg xmlns="http://www.w3.org/2000/svg" class="w-5 h-5 shrink-0" viewBox="0 0 20 20" fill="currentColor">
+      <path fill-rule="evenodd" d="M10 18a8 8 0 100-16 8 8 0 000 16zm3.707-9.293a1 1 0 00-1.414-1.414L9 10.586 7.707 9.293a1 1 0 00-1.414 1.414l2 2a1 1 0 001.414 0l4-4z" clip-rule="evenodd" />
+    </svg>
+    <span class="text-sm font-medium">{toastMessage}</span>
+    <button class="ml-2 text-white/70 hover:text-white" on:click={() => (showToast = false)}>✕</button>
   </div>
 {/if}
