@@ -21,6 +21,7 @@
   $title = 'Edit Surat Undangan'
 
   let form = useForm(`EditSuratUndangan: ${surat.id}`, {
+    _method: 'put',
     type: surat.type,
     firstSelect: surat.kode ? surat.kode.substring(0, 2) : null,
     kode: surat.kode,
@@ -33,14 +34,30 @@
     tanggal_pelaksanaan: surat.tanggal_pelaksanaan || null,
     filepath: surat.filepath,
     link: surat.link,
+    file: null,
   })
+
+  let selectedFileName = surat.original_filename || (surat.filepath ? surat.filepath.split('/').pop() : 'No file chosen')
+
+  function handleFileChange(e) {
+    const file = e.target.files[0]
+    if (file) {
+      $form.file = file
+      selectedFileName = file.name
+    } else {
+      selectedFileName = surat.original_filename || (surat.filepath ? surat.filepath.split('/').pop() : 'No file chosen')
+      $form.file = null
+    }
+  }
 
   $: if ($form.firstSelect) {
     filterByType($form.firstSelect)
   }
 
   function update() {
-    $form.put(`/surat-undangan/${surat.id}`)
+    $form.post(`/surat-undangan/${surat.id}`, {
+      forceFormData: true,
+    })
   }
 </script>
 
@@ -49,9 +66,9 @@
   <span class="font-medium text-indigo-400">/</span> Edit
 </h1>
 
-<div class="max-w-3xl overflow-hidden bg-white rounded-md shadow">
+<div class="max-w-3xl overflow-hidden rounded-md bg-white shadow">
   <form on:submit|preventDefault={update}>
-    <div class="flex flex-wrap p-8 -mb-8 -mr-6">
+    <div class="-mb-8 -mr-6 flex flex-wrap p-8">
       <SelectInput bind:value={$form.firstSelect} error={$form.errors.firstSelect} class="w-full pb-8 pr-6" label="Kode Arsip Utama">
         <option value={null}>Silakan pilih salah satu opsi</option>
         <option value="PS">PS - Perumusan Kebijakan di Bidang Statistik</option>
@@ -88,7 +105,7 @@
       </SelectInput>
       <TextInput bind:value={$form.perihal} error={$form.errors.perihal} class="w-full pb-8 pr-6" label="Perihal:" />
       <TextInput bind:value={$form.tujuan} error={$form.errors.tujuan} class="w-full pb-8 pr-6" label="Tujuan:" />
-            <div class="w-full pb-8 pr-6">
+      <div class="w-full pb-8 pr-6">
         <label for="tanggal_pelaksanaan" class="form-label">Tanggal Pelaksanaan:</label>
         <input id="tanggal_pelaksanaan" type="date" bind:value={$form.tanggal_pelaksanaan} class="form-input" />
         {#if $form.errors.tanggal_pelaksanaan}
@@ -112,8 +129,27 @@
           <option value="0">Dikelola sendiri</option>
         </SelectInput>
       {/if}
+      <div class="w-full pb-8 pr-6">
+        <label for="file" class="block text-sm font-medium text-gray-700">Ganti File (.docx):</label>
+
+        <!-- Fancy file upload button -->
+        <div class="mt-3 flex items-center">
+          <label for="file" class="inline-flex cursor-pointer items-center rounded-md border border-indigo-500 px-4 py-2 text-indigo-500 shadow-sm transition hover:bg-indigo-500 hover:text-white focus:ring-2 focus:ring-indigo-500 focus:ring-offset-2">
+            <svg class="mr-2 h-5 w-5" xmlns="http://www.w3.org/2000/svg" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round">
+              <path d="M21 15v4a2 2 0 0 1-2 2H5a2 2 0 0 1-2-2v-4M17 8l-5-5-5 5M12 3v12"></path>
+            </svg>
+            Choose File
+          </label>
+          <input id="file" type="file" accept=".docx" on:input={handleFileChange} class="hidden" />
+          <span class="ml-4 text-sm text-gray-500">{selectedFileName}</span>
+        </div>
+
+        {#if $form.errors.file}
+          <p class="mt-2 text-sm text-red-600">{$form.errors.file}</p>
+        {/if}
+      </div>
     </div>
-    <div class="flex items-center justify-end px-8 py-4 border-t border-gray-100 bg-gray-50">
+    <div class="flex items-center justify-end border-t border-gray-100 bg-gray-50 px-8 py-4">
       <LoadingButton loading={$form.processing} class="btn-indigo" type="submit">Simpan Perubahan</LoadingButton>
     </div>
   </form>

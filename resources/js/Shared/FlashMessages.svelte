@@ -8,7 +8,7 @@
   }
 </script>
 
-{#if $page.props.flash.success && show && !$page.props.flash.success.includes('Nomor Surat')}
+{#if $page.props.flash.success && show && !$page.props.flash.success.includes('Nomor Surat') && $page.props.flash.success !== 'Surat berhasil diupdate!'}
   <div class="mb-8 flex max-w-3xl items-center justify-between rounded bg-green-500">
     <div class="flex items-center">
       <svg class="ml-4 mr-2 h-4 w-4 shrink-0 fill-white" viewBox="0 0 20 20">

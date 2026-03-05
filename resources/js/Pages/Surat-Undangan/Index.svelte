@@ -42,6 +42,18 @@
       forceFormData: true,
     })
   }
+
+  let selectedFileName = 'No file chosen'
+
+  function handleFileChange(e) {
+    const file = e.target.files[0]
+    if (file) {
+      $form.file = file
+      selectedFileName = file.name
+    } else {
+      selectedFileName = 'No file chosen'
+    }
+  }
 </script>
 
 <h1 class="mb-8 text-3xl font-bold">
@@ -113,8 +125,20 @@
         </SelectInput>
       {/if}
       <div class="w-full pb-8 pr-6">
-        <label for="file" class="block">Unggah File (.docx):</label>
-        <input type="file" accept=".docx" on:input={(e) => ($form.file = e.target.files[0])} class="block w-full mt-1" />
+        <label for="file" class="block text-sm font-medium text-gray-700">Unggah File (.docx):</label>
+
+        <!-- Fancy file upload button -->
+        <div class="mt-3 flex items-center">
+          <label for="file" class="inline-flex cursor-pointer items-center rounded-md border border-indigo-500 px-4 py-2 text-indigo-500 shadow-sm transition hover:bg-indigo-500 hover:text-white focus:ring-2 focus:ring-indigo-500 focus:ring-offset-2">
+            <svg class="mr-2 h-5 w-5" xmlns="http://www.w3.org/2000/svg" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round">
+              <path d="M21 15v4a2 2 0 0 1-2 2H5a2 2 0 0 1-2-2v-4M17 8l-5-5-5 5M12 3v12"></path>
+            </svg>
+            Choose File
+          </label>
+          <input id="file" type="file" accept=".docx" on:input={handleFileChange} class="hidden" />
+          <span class="ml-4 text-sm text-gray-500">{selectedFileName}</span>
+        </div>
+
         {#if $form.errors.file}
           <p class="mt-2 text-sm text-red-600">{$form.errors.file}</p>
         {/if}
