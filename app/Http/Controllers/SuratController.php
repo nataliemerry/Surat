@@ -326,7 +326,7 @@ class SuratController extends Controller
         return Inertia::render('Surat-Dinas/surat');
     }
 
-    public function updateSuratUDinas(Request $request)
+    public function updateSuratDinas(Request $request)
     {
         $validated = $request->validate([
             'nomor' => 'required|string',
