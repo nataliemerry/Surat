@@ -1,58 +1,7 @@
-<!-- flashcard yang jadi -->
 <script context="module">
   import Layout, { title } from '@/Shared/Layout.svelte'
+  import { inertia, page } from '@inertiajs/svelte'
   export const layout = Layout
-</script>
-
-<script>
-  import { inertia, useForm } from '@inertiajs/svelte'
-  import LoadingButton from '@/Shared/LoadingButton.svelte'
-  import SelectInput from '@/Shared/SelectInput.svelte'
-  import TextInput from '@/Shared/TextInput.svelte'
-
-  export let kode = []
-  let filteredKode = []
-
-  function filterByType(firstSelect) {
-    filteredKode = kode.filter((item) => item.value.includes(firstSelect))
-  }
-
-  $title = 'Tambah Surat Dinas'
-
-  let form = useForm('CreateSurat', {
-    type: 3,
-    firstSelect: null,
-    kode: null,
-    isRahasia: '0',
-    isRuangan: null,
-    isKonsumsi: null,
-    isPengelolaan: null,
-    perihal: null,
-    tujuan: null,
-    file: null,
-  })
-
-  $: if ($form.firstSelect) {
-    filterByType($form.firstSelect)
-  }
-
-  function store() {
-    $form.post('/surat-dinas/create', {
-      forceFormData: true,
-    })
-  }
-
-  let selectedFileName = 'No file chosen'
-
-  function handleFileChange(e) {
-    const file = e.target.files[0]
-    if (file) {
-      $form.file = file
-      selectedFileName = file.name
-    } else {
-      selectedFileName = 'No file chosen'
-    }
-  }
 </script>
 
 <h1 class="mb-8 text-3xl font-bold">
@@ -60,67 +9,26 @@
   <span class="font-medium text-indigo-400">/</span> Create
 </h1>
 
-<div class="max-w-3xl overflow-hidden bg-white rounded-md shadow">
-  <form on:submit|preventDefault={store}>
-    <div class="flex flex-wrap p-8 -mb-8 -mr-6">
-      <SelectInput bind:value={$form.firstSelect} error={$form.errors.firstSelect} class="w-full pb-8 pr-6" label="Kode Arsip Utama">
-        <option value={null}>Silakan pilih salah satu opsi</option>
-        <option value="PS">PS - Perumusan Kebijakan di Bidang Statistik</option>
-        <option value="SS">SS - Sensus Penduduk, Sensus Pertanian dan Sensus Ekonomi</option>
-        <option value="VS">VS - Survei</option>
-        <option value="KS">KS - Konsolidasi Data Statistik</option>
-        <option value="ES">ES - Evaluasi dan Pelaporan Sensus, Survei dan Konsolidasi Data</option>
-        <option value="KU">KU - Keuangan</option>
-        <option value="KP">KP - Kepegawaian</option>
-        <option value="PR">PR - Perencanaan</option>
-        <option value="HK">HK - Hukum</option>
-        <option value="OT">OT - Organisasi dan Tata Laksana</option>
-        <option value="HM">HM - Hubungan Masyarakat</option>
-        <option value="KA">KA - Kearsipan</option>
-        <option value="RT">RT - Kerumahtanggaan</option>
-        <option value="PL">PL - Perlengkapan</option>
-        <option value="DL">DL - Pendidikan dan Pelatihan</option>
-        <option value="PK">PK - Kepustakaan</option>
-        <option value="IF">IF - Informatika</option>
-        <option value="PW">PW - Pengawasan</option>
-        <option value="TS">TS - Transformasi Statistik</option>
-      </SelectInput>
-      {#if $form.firstSelect}
-        <SelectInput bind:value={$form.kode} error={$form.errors.kode} class="w-full pb-8 pr-6" label="Data Berdasarkan Kegiatan:">
-          <option value={null}>Silakan pilih salah satu opsi</option>
-          {#each filteredKode as option}
-            <option value={option.value}>{option.text}</option>
-          {/each}
-        </SelectInput>
-      {/if}
-      <SelectInput bind:value={$form.isRahasia} error={$form.errors.isRahasia} class="w-full pb-8 pr-6" label="Sifat Surat:" id="sifat-surat">
-        <option value="0">Biasa</option>
-        <option value="1">Rahasia</option>
-      </SelectInput>
-      <TextInput bind:value={$form.perihal} error={$form.errors.perihal} class="w-full pb-8 pr-6" label="Perihal:" />
-      <TextInput bind:value={$form.tujuan} error={$form.errors.tujuan} class="w-full pb-8 pr-6" label="Tujuan:" />
-      <div class="w-full pb-8 pr-6">
-        <label for="file" class="block text-sm font-medium text-gray-700">Upload File (.docx):</label>
-
-        <!-- Fancy file upload button -->
-        <div class="mt-3 flex items-center">
-          <label for="file" class="inline-flex cursor-pointer items-center rounded-md border border-indigo-500 px-4 py-2 text-indigo-500 shadow-sm transition hover:bg-indigo-500 hover:text-white focus:ring-2 focus:ring-indigo-500 focus:ring-offset-2">
-            <svg class="mr-2 h-5 w-5" xmlns="http://www.w3.org/2000/svg" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round">
-              <path d="M21 15v4a2 2 0 0 1-2 2H5a2 2 0 0 1-2-2v-4M17 8l-5-5-5 5M12 3v12"></path>
-            </svg>
-            Choose File
-          </label>
-          <input id="file" type="file" accept=".docx" on:input={handleFileChange} class="hidden" />
-          <span class="ml-4 text-sm text-gray-500">{selectedFileName}</span>
-        </div>
-
-        {#if $form.errors.file}
-          <p class="mt-2 text-sm text-red-600">{$form.errors.file}</p>
-        {/if}
+<div class="flex space-x-4">
+  <a use:inertia href="/surat-dinas/form">
+    <div class="flex flex-col items-center justify-center w-48 h-48 transition duration-200 border border-gray-300 rounded-lg cursor-pointer hover:border-2 hover:border-indigo-500">
+      <div class="flex items-center justify-center w-16 h-16 mb-4 bg-gray-200 rounded-full">
+        <svg class="w-8 h-8 text-gray-600" xmlns="http://www.w3.org/2000/svg" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round">
+          <path d="M12 5v14M5 12h14"></path>
+        </svg>
       </div>
+      <p class="font-semibold text-center text-gray-700">Buat Surat Dinas</p>
     </div>
-    <div class="flex items-center justify-end px-8 py-4 border-t border-gray-100 bg-gray-50">
-      <LoadingButton loading={$form.processing} class="btn-indigo" type="submit">Ajukan Surat</LoadingButton>
+  </a>
+
+  <a use:inertia href="/surat-dinas/upload-surat">
+    <div class="flex flex-col items-center justify-center w-48 h-48 transition duration-200 border border-gray-300 rounded-lg cursor-pointer hover:border-2 hover:border-indigo-500">
+      <div class="flex items-center justify-center w-16 h-16 mb-4 bg-gray-200 rounded-full">
+        <svg class="w-8 h-8 text-gray-600" xmlns="http://www.w3.org/2000/svg" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round">
+          <path d="M21 15v4a2 2 0 0 1-2 2H5a2 2 0 0 1-2-2v-4M17 8l-5-5-5 5M12 3v12"></path>
+        </svg>
+      </div>
+      <p class="font-semibold text-center text-gray-700">Upload Dokumen Surat Dinas</p>
     </div>
-  </form>
+  </a>
 </div>

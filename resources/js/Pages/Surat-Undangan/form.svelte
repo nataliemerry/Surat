@@ -9,35 +9,41 @@
   import SelectInput from '@/Shared/SelectInput.svelte'
   import TextInput from '@/Shared/TextInput.svelte'
 
-  export let surat = {}
   export let kode = []
-
   let filteredKode = []
 
   function filterByType(firstSelect) {
     filteredKode = kode.filter((item) => item.value.includes(firstSelect))
   }
 
-  $title = 'Edit Surat Undangan'
+  $title = 'Tambah Surat Undangan'
 
-  let form = useForm(`EditSuratUndangan: ${surat.id}`, {
-    _method: 'put',
-    type: surat.type,
-    firstSelect: surat.kode ? surat.kode.substring(0, 2) : null,
-    kode: surat.kode,
-    isRahasia: surat.isRahasia !== null ? String(surat.isRahasia) : '0',
-    perihal: surat.perihal,
-    tujuan: surat.tujuan,
-    isRuangan: surat.isRuangan !== null ? String(surat.isRuangan) : null,
-    isKonsumsi: surat.isKonsumsi !== null ? String(surat.isKonsumsi) : null,
-    isPengelolaan: surat.isPengelolaan !== null ? String(surat.isPengelolaan) : null,
-    tanggal_pelaksanaan: surat.tanggal_pelaksanaan || null,
-    filepath: surat.filepath,
-    link: surat.link,
+  let form = useForm('CreateSurat', {
+    type: 2,
+    firstSelect: null,
+    kode: null,
+    isRahasia: '0',
+    isRuangan: null,
+    isKonsumsi: null,
+    isPengelolaan: null,
+    perihal: null,
+    tujuan: null,
+    tanggal_pelaksanaan: null,
     file: null,
+    lnk: null,
   })
 
-  let selectedFileName = surat.original_filename || (surat.filepath ? surat.filepath.split('/').pop() : 'No file chosen')
+  $: if ($form.firstSelect) {
+    filterByType($form.firstSelect)
+  }
+
+  function store() {
+    $form.post('/surat-undangan/create', {
+      forceFormData: true,
+    })
+  }
+
+  let selectedFileName = 'No file chosen'
 
   function handleFileChange(e) {
     const file = e.target.files[0]
@@ -45,29 +51,18 @@
       $form.file = file
       selectedFileName = file.name
     } else {
-      selectedFileName = surat.original_filename || (surat.filepath ? surat.filepath.split('/').pop() : 'No file chosen')
-      $form.file = null
+      selectedFileName = 'No file chosen'
     }
-  }
-
-  $: if ($form.firstSelect) {
-    filterByType($form.firstSelect)
-  }
-
-  function update() {
-    $form.post(`/surat-undangan/${surat.id}`, {
-      forceFormData: true,
-    })
   }
 </script>
 
 <h1 class="mb-8 text-3xl font-bold">
-  <a use:inertia href="/?type=2" class="text-indigo-400 hover:text-indigo-600"> Surat Undangan </a>
-  <span class="font-medium text-indigo-400">/</span> Edit
+  <a use:inertia href="/" class="text-indigo-400 hover:text-indigo-600"> Surat Undangan </a>
+  <span class="font-medium text-indigo-400">/</span> Create
 </h1>
 
 <div class="max-w-3xl overflow-hidden bg-white rounded-md shadow">
-  <form on:submit|preventDefault={update}>
+  <form on:submit|preventDefault={store}>
     <div class="flex flex-wrap p-8 -mb-8 -mr-6">
       <SelectInput bind:value={$form.firstSelect} error={$form.errors.firstSelect} class="w-full pb-8 pr-6" label="Kode Arsip Utama">
         <option value={null}>Silakan pilih salah satu opsi</option>
@@ -99,13 +94,13 @@
           {/each}
         </SelectInput>
       {/if}
-      <SelectInput bind:value={$form.isRahasia} error={$form.errors.isRahasia} class="w-full pb-8 pr-6" label="Sifat Surat:">
+      <SelectInput bind:value={$form.isRahasia} error={$form.errors.isRahasia} class="w-full pb-8 pr-6" label="Sifat Surat:" id="sifat-surat">
         <option value="0">Biasa</option>
         <option value="1">Rahasia</option>
       </SelectInput>
       <TextInput bind:value={$form.perihal} error={$form.errors.perihal} class="w-full pb-8 pr-6" label="Perihal:" />
       <TextInput bind:value={$form.tujuan} error={$form.errors.tujuan} class="w-full pb-8 pr-6" label="Tujuan:" />
-      <div class="w-full pb-8 pr-6">
+            <div class="w-full pb-8 pr-6">
         <label for="tanggal_pelaksanaan" class="form-label">Tanggal Pelaksanaan:</label>
         <input id="tanggal_pelaksanaan" type="date" bind:value={$form.tanggal_pelaksanaan} class="form-input" />
         {#if $form.errors.tanggal_pelaksanaan}
@@ -130,7 +125,7 @@
         </SelectInput>
       {/if}
       <div class="w-full pb-8 pr-6">
-        <label for="file" class="block text-sm font-medium text-gray-700">Ganti File (.docx):</label>
+        <label for="file" class="block text-sm font-medium text-gray-700">Unggah File (.docx):</label>
 
         <!-- Fancy file upload button -->
         <div class="flex items-center mt-3">
@@ -150,7 +145,7 @@
       </div>
     </div>
     <div class="flex items-center justify-end px-8 py-4 border-t border-gray-100 bg-gray-50">
-      <LoadingButton loading={$form.processing} class="btn-indigo hover:bg-indigo-700" type="submit">Simpan Perubahan</LoadingButton>
+      <LoadingButton loading={$form.processing} class="btn-indigo hover:bg-indigo-700" type="submit">Ajukan Surat</LoadingButton>
     </div>
   </form>
 </div>
