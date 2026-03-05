@@ -44,7 +44,7 @@
     <div class="flex flex-wrap p-8 -mb-8 -mr-6">
       <TextInput bind:value={$form.nomor} error={$form.errors.nomor} class="w-full pb-8 pr-6" label="Nomor Surat Undangan:" />
       <div class="w-full pb-8 pr-6">
-        <label for="file" class="block text-sm font-medium text-gray-700">Upload File Draft Surat (.docx/.pdf):</label>
+        <label for="file" class="block text-sm font-medium text-gray-700">Upload Dokumen Surat (.docx/.pdf):</label>
 
         <!-- Fancy file upload button -->
         <div class="flex items-center mt-3">

@@ -132,16 +132,27 @@ class SuratController extends Controller
         ]);
     }
 
-    public function editedSuratTugas(Surat $surat): RedirectResponse
+    public function editedSuratTugas(Request $request, Surat $surat): RedirectResponse
     {
-        $surat->update(FacadeRequest::validate([
+        $validated = $request->validate([
             'type'     => 'required|integer',
             'kode'     => 'required|string',
             'perihal'  => 'required|string',
             'tujuan'   => 'required|string',
-            'nomor'    => 'required|string',
+            'nomor'    => 'nullable|string',
             'filepath' => 'nullable|string',
-        ]));
+            'file'     => 'nullable|file|mimes:docx,pdf',
+        ]);
+
+        if ($request->hasFile('file')) {
+            $file = $request->file('file');
+            $filePath = $file->store('uploads', 'public');
+            $validated['filepath']          = Storage::url($filePath);
+            $validated['original_filename'] = $file->getClientOriginalName();
+        }
+
+        unset($validated['file']);
+        $surat->update($validated);
 
         return Redirect::route('dashboard', ['type' => 1])->with('success', 'Surat berhasil diupdate!');
     }

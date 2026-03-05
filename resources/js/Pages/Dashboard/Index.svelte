@@ -206,7 +206,7 @@
           <th class="px-6 pt-6 pb-4">Tujuan</th>
           <th class="px-6 pt-6 pb-4">Nomor Surat</th>
         {/if}
-        <th class="px-6 pt-6 pb-4">Draft Surat</th>
+        <th class="px-6 pt-6 pb-4">Dokumen Surat</th>
         {#if auth?.user}
           <th class="px-6 pt-6 pb-4">Aksi</th>
         {/if}
@@ -276,7 +276,7 @@
                   Download
                 </button>
               {:else}
-                <p class="text-gray-500">Belum Ada Draft Surat</p>
+                <p class="text-gray-500">Belum Ada Dokumen</p>
               {/if}
             </td>
             <td class="px-6 text-center border-t">
@@ -350,7 +350,7 @@
                     Download
                   </button>
                 {:else}
-                  <p class="text-gray-500">Belum Ada Draft Surat</p>
+                  <p class="text-gray-500">Belum Ada Dokumen</p>
                 {/if}
               </div>
             </td>
