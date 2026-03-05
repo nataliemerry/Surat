@@ -43,7 +43,7 @@
 <div class="max-w-3xl overflow-hidden bg-white rounded-md shadow">
     <form on:submit|preventDefault={store}>
         <div class="flex flex-wrap p-8 -mb-8 -mr-6">
-            <SelectInput bind:value={$form.firstSelect} error={$form.errors.firstSelect} class="w-full pb-8 pr-6" label="Kode Arsip Utama:">
+            <SelectInput bind:value={$form.firstSelect} error={$form.errors.firstSelect} class="w-full pb-8 pr-6" label="Kode Arsip Utama:" required>
                 <option value={null}>Silakan pilih salah satu opsi</option>
                 <option value="PS">PS - Perumusan Kebijakan di Bidang Statistik</option>
                 <option value="SS">SS - Sensus Penduduk, Sensus Pertanian dan Sensus Ekonomi</option>
@@ -66,7 +66,7 @@
                 <option value="TS">TS - Transformasi Statistik</option>
             </SelectInput>
             {#if $form.firstSelect}
-            <SelectInput bind:value={$form.kode} error={$form.errors.kode} class="w-full pb-8 pr-6" label="Data Berdasarkan Kegiatan:">
+            <SelectInput bind:value={$form.kode} error={$form.errors.kode} class="w-full pb-8 pr-6" label="Data Berdasarkan Kegiatan:" required  >
                 <option value={null}>Silakan pilih salah satu opsi</option>
                 {#each filteredKode as option}
                     <option value={option.value}>{option.text}</option>

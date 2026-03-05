@@ -64,7 +64,7 @@
 <div class="max-w-3xl overflow-hidden bg-white rounded-md shadow">
   <form on:submit|preventDefault={store}>
     <div class="flex flex-wrap p-8 -mb-8 -mr-6">
-      <SelectInput bind:value={$form.firstSelect} error={$form.errors.firstSelect} class="w-full pb-8 pr-6" label="Kode Arsip Utama">
+      <SelectInput bind:value={$form.firstSelect} error={$form.errors.firstSelect} class="w-full pb-8 pr-6" label="Kode Arsip Utama" required>
         <option value={null}>Silakan pilih salah satu opsi</option>
         <option value="PS">PS - Perumusan Kebijakan di Bidang Statistik</option>
         <option value="SS">SS - Sensus Penduduk, Sensus Pertanian dan Sensus Ekonomi</option>
@@ -87,47 +87,46 @@
         <option value="TS">TS - Transformasi Statistik</option>
       </SelectInput>
       {#if $form.firstSelect}
-        <SelectInput bind:value={$form.kode} error={$form.errors.kode} class="w-full pb-8 pr-6" label="Data Berdasarkan Kegiatan:">
+        <SelectInput bind:value={$form.kode} error={$form.errors.kode} class="w-full pb-8 pr-6" label="Data Berdasarkan Kegiatan:" required>
           <option value={null}>Silakan pilih salah satu opsi</option>
           {#each filteredKode as option}
             <option value={option.value}>{option.text}</option>
           {/each}
         </SelectInput>
       {/if}
-      <SelectInput bind:value={$form.isRahasia} error={$form.errors.isRahasia} class="w-full pb-8 pr-6" label="Sifat Surat:" id="sifat-surat">
+      <SelectInput bind:value={$form.isRahasia} error={$form.errors.isRahasia} class="w-full pb-8 pr-6" label="Sifat Surat:" id="sifat-surat" required>
         <option value="0">Biasa</option>
         <option value="1">Rahasia</option>
       </SelectInput>
       <TextInput bind:value={$form.perihal} error={$form.errors.perihal} class="w-full pb-8 pr-6" label="Perihal:" />
       <TextInput bind:value={$form.tujuan} error={$form.errors.tujuan} class="w-full pb-8 pr-6" label="Tujuan:" />
-            <div class="w-full pb-8 pr-6">
+      <div class="w-full pb-8 pr-6">
         <label for="tanggal_pelaksanaan" class="form-label">Tanggal Pelaksanaan:</label>
-        <input id="tanggal_pelaksanaan" type="date" bind:value={$form.tanggal_pelaksanaan} class="form-input" />
+        <input id="tanggal_pelaksanaan" type="date" bind:value={$form.tanggal_pelaksanaan} class="form-input" required/>
         {#if $form.errors.tanggal_pelaksanaan}
           <div class="form-error">{$form.errors.tanggal_pelaksanaan}</div>
         {/if}
       </div>
-      <SelectInput bind:value={$form.isRuangan} error={$form.errors.isRuangan} class="w-full pb-8 pr-6" label="Apakah menggunakan Ruang Aula?">
+      <SelectInput bind:value={$form.isRuangan} error={$form.errors.isRuangan} class="w-full pb-8 pr-6" label="Apakah menggunakan Ruang Aula?" required>
         <option value={null}>Silakan pilih salah satu opsi</option>
         <option value="1">Ya, Kegiatan menggunakan Ruang Aula</option>
         <option value="0">Tidak, Kegiatan tidak menggunakan Ruang Aula</option>
       </SelectInput>
-      <SelectInput bind:value={$form.isKonsumsi} error={$form.errors.isKonsumsi} class="w-full pb-8 pr-6" label="Keperluan Konsumsi">
+      <SelectInput bind:value={$form.isKonsumsi} error={$form.errors.isKonsumsi} class="w-full pb-8 pr-6" label="Keperluan Konsumsi" required>
         <option value={null}>Silakan pilih salah satu opsi</option>
         <option value="1">Ya, Kegiatan membutuhkan konsumsi</option>
         <option value="0">Tidak, Kegiatan tidak membutuhkan konsumsi</option>
       </SelectInput>
       {#if $form.isKonsumsi == 1}
-        <SelectInput bind:value={$form.isPengelolaan} error={$form.errors.isPengelolaan} class="w-full pb-8 pr-6" label="Siapa yang akan mengelola konsumsi?">
+        <SelectInput bind:value={$form.isPengelolaan} error={$form.errors.isPengelolaan} class="w-full pb-8 pr-6" label="Siapa yang akan mengelola konsumsi?" required>
           <option value={null}>Silakan pilih salah satu opsi</option>
           <option value="1">Dikelola oleh Umum / TU</option>
           <option value="0">Dikelola sendiri</option>
         </SelectInput>
       {/if}
-      <div class="w-full pb-8 pr-6">
+      
+      <!-- <div class="w-full pb-8 pr-6">
         <label for="file" class="block text-sm font-medium text-gray-700">Unggah File (.docx):</label>
-
-        <!-- Fancy file upload button -->
         <div class="flex items-center mt-3">
           <label for="file" class="inline-flex items-center px-4 py-2 text-indigo-500 transition border border-indigo-500 rounded-md shadow-sm cursor-pointer hover:bg-indigo-500 hover:text-white focus:ring-2 focus:ring-indigo-500 focus:ring-offset-2">
             <svg class="w-5 h-5 mr-2" xmlns="http://www.w3.org/2000/svg" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round">
@@ -142,7 +141,8 @@
         {#if $form.errors.file}
           <p class="mt-2 text-sm text-red-600">{$form.errors.file}</p>
         {/if}
-      </div>
+      </div> -->
+      
     </div>
     <div class="flex items-center justify-end px-8 py-4 border-t border-gray-100 bg-gray-50">
       <LoadingButton loading={$form.processing} class="btn-indigo hover:bg-indigo-700" type="submit">Ajukan Surat</LoadingButton>

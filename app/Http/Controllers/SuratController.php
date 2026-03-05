@@ -62,6 +62,10 @@ class SuratController extends Controller
             'filepath'      => 'nullable|string',
             'nomor'         => 'nullable|string',
             'link'          => 'nullable|string',
+            'tanggal_pelaksanaan' => 'nullable|date',
+            'isRuangan'     => 'nullable|boolean',
+            'isRahasia'    => 'nullable|boolean',
+            'original_filename' => 'nullable|string',
         ]);
 
         $formattedNomor = DB::transaction(function () use ($validated) {
@@ -88,13 +92,15 @@ class SuratController extends Controller
     {
         $validated = $request->validate([
             'nomor' => 'required|string',
-            'file'  => 'nullable|file|mimes:docx,pdf',
+            'file'  => 'required|file|mimes:docx,pdf',
         ]);
 
-        $surat = Surat::where('nomor', $validated['nomor'])->first();
+        $surat = Surat::where('nomor', $validated['nomor'])
+            ->where('type', 1)
+            ->first();
 
         if (!$surat) {
-            return Redirect::back()->withErrors(['nomor' => 'Nomor Surat not found.']);
+            return Redirect::back()->withErrors(['nomor' => 'Nomor Surat Tugas tersebut tidak ditemukan.']);
         }
 
         if ($request->hasFile('file')) {
@@ -159,13 +165,14 @@ class SuratController extends Controller
             'isRahasia'            => 'required|boolean',
             'perihal'              => 'required|string',
             'tujuan'               => 'required|string',
-            'isRuangan'            => 'nullable|boolean',
-            'isKonsumsi'           => 'nullable|boolean',
-            'isPengelolaan'        => 'nullable|boolean',
+            'isRuangan'            => 'required|boolean',
+            'isKonsumsi'           => 'required|boolean',
+            'isPengelolaan'        => 'required|boolean',
             'filepath'             => 'nullable|string',
             'nomor'                => 'nullable|string',
             'link'                 => 'nullable|string',
-            'tanggal_pelaksanaan'  => 'nullable|date',
+            'tanggal_pelaksanaan'  => 'required|date',
+            'original_filename'    => 'nullable|string',
         ]);
 
         if ($request->hasFile('file')) {
@@ -199,13 +206,15 @@ class SuratController extends Controller
     {
         $validated = $request->validate([
             'nomor' => 'required|string',
-            'file'  => 'nullable|file|mimes:docx,pdf',
+            'file'  => 'required|file|mimes:docx,pdf',
         ]);
 
-        $surat = Surat::where('nomor', $validated['nomor'])->first();
+        $surat = Surat::where('nomor', $validated['nomor'])
+            ->where('type', 2)
+            ->first();
 
         if (!$surat) {
-            return Redirect::back()->withErrors(['nomor' => 'Nomor Surat not found.']);
+            return Redirect::back()->withErrors(['nomor' => 'Nomor Surat Undangan tersebut tidak ditemukan.']);
         }
 
         if ($request->hasFile('file')) {
@@ -256,8 +265,9 @@ class SuratController extends Controller
             'nomor'                => 'nullable|string',
             'filepath'             => 'nullable|string',
             'link'                 => 'nullable|string',
-            'tanggal_pelaksanaan'  => 'nullable|date',
             'file'                 => 'nullable|file|mimes:docx,pdf',
+            'tanggal_pelaksanaan'  => 'nullable|date',
+            'original_filename'    => 'nullable|string',
         ]);
 
         if ($request->hasFile('file')) {
@@ -330,13 +340,15 @@ class SuratController extends Controller
     {
         $validated = $request->validate([
             'nomor' => 'required|string',
-            'file'  => 'nullable|file|mimes:docx,pdf',
+            'file'  => 'required|file|mimes:docx,pdf',
         ]);
 
-        $surat = Surat::where('nomor', $validated['nomor'])->first();
+        $surat = Surat::where('nomor', $validated['nomor'])
+            ->where('type', 3)
+            ->first();
 
         if (!$surat) {
-            return Redirect::back()->withErrors(['nomor' => 'Nomor Surat not found.']);
+            return Redirect::back()->withErrors(['nomor' => 'Nomor Surat Dinas tersebut tidak ditemukan.']);
         }
 
         if ($request->hasFile('file')) {

@@ -35,14 +35,14 @@
 </script>
 
 <h1 class="mb-8 text-3xl font-bold">
-  <a use:inertia href="/" class="text-indigo-400 hover:text-indigo-600"> Surat Tugas </a>
+  <a use:inertia href="/" class="text-indigo-400 hover:text-indigo-600"> Surat Tugas</a>
   <span class="font-medium text-indigo-400">/</span> Create
 </h1>
 
 <div class="max-w-3xl overflow-hidden bg-white rounded-md shadow">
   <form on:submit|preventDefault={store}>
     <div class="flex flex-wrap p-8 -mb-8 -mr-6">
-      <TextInput bind:value={$form.nomor} error={$form.errors.nomor} class="w-full pb-8 pr-6" label="Nomor Surat Tugas:" />
+      <TextInput bind:value={$form.nomor} error={$form.errors.nomor} class="w-full pb-8 pr-6" label="Nomor Surat Tugas:" required/>
       <div class="w-full pb-8 pr-6">
         <label for="file" class="block text-sm font-medium text-gray-700">Upload File Draft Surat (.docx/.pdf):</label>
 
@@ -54,7 +54,7 @@
             </svg>
             Choose File
           </label>
-          <input id="file" type="file" accept=".docx,.pdf" on:input={handleFileChange} class="hidden" />
+          <input id="file" type="file" accept=".docx,.pdf" on:input={handleFileChange} class="hidden"/>
           <span class="ml-4 text-sm text-gray-500">{selectedFileName}</span>
         </div>
 

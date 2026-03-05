@@ -130,7 +130,7 @@
         </SelectInput>
       {/if}
       <div class="w-full pb-8 pr-6">
-        <label for="file" class="block text-sm font-medium text-gray-700">Ganti File (.docx):</label>
+        <label for="file" class="block text-sm font-medium text-gray-700">File (.docx, .pdf):</label>
 
         <!-- Fancy file upload button -->
         <div class="flex items-center mt-3">
@@ -140,7 +140,7 @@
             </svg>
             Choose File
           </label>
-          <input id="file" type="file" accept=".docx" on:input={handleFileChange} class="hidden" />
+          <input id="file" type="file" accept=".docx,.pdf" on:input={handleFileChange} class="hidden" />
           <span class="ml-4 text-sm text-gray-500">{selectedFileName}</span>
         </div>
 
