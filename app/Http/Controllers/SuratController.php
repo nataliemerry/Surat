@@ -149,17 +149,18 @@ class SuratController extends Controller
     public function storeSuratUndangan(Request $request)
     {
         $validated = $request->validate([
-            'type'          => 'required|integer',
-            'kode'          => 'required|string',
-            'isRahasia'     => 'required|boolean',
-            'perihal'       => 'required|string',
-            'tujuan'        => 'required|string',
-            'isRuangan'     => 'nullable|boolean',
-            'isKonsumsi'    => 'nullable|boolean',
-            'isPengelolaan' => 'nullable|boolean',
-            'filepath'      => 'nullable|string',
-            'nomor'         => 'nullable|string',
-            'link'          => 'nullable|string',
+            'type'                 => 'required|integer',
+            'kode'                 => 'required|string',
+            'isRahasia'            => 'required|boolean',
+            'perihal'              => 'required|string',
+            'tujuan'               => 'required|string',
+            'isRuangan'            => 'nullable|boolean',
+            'isKonsumsi'           => 'nullable|boolean',
+            'isPengelolaan'        => 'nullable|boolean',
+            'filepath'             => 'nullable|string',
+            'nomor'                => 'nullable|string',
+            'link'                 => 'nullable|string',
+            'tanggal_pelaksanaan'  => 'nullable|date',
         ]);
 
         if ($request->hasFile('file')) {
@@ -181,17 +182,18 @@ class SuratController extends Controller
     {
         return Inertia::render('Surat-Undangan/edit', [
             'surat' => [
-                'id'            => $surat->id,
-                'type'          => $surat->type,
-                'kode'          => $surat->kode,
-                'isRahasia'     => $surat->isRahasia,
-                'perihal'       => $surat->perihal,
-                'tujuan'        => $surat->tujuan,
-                'isKonsumsi'    => $surat->isKonsumsi,
-                'isPengelolaan' => $surat->isPengelolaan,
-                'isRuangan'     => $surat->isRuangan,
-                'filepath'      => $surat->filepath,
-                'link'          => $surat->link,
+                'id'                   => $surat->id,
+                'type'                 => $surat->type,
+                'kode'                 => $surat->kode,
+                'isRahasia'            => $surat->isRahasia,
+                'perihal'              => $surat->perihal,
+                'tujuan'               => $surat->tujuan,
+                'isKonsumsi'           => $surat->isKonsumsi,
+                'isPengelolaan'        => $surat->isPengelolaan,
+                'isRuangan'            => $surat->isRuangan,
+                'filepath'             => $surat->filepath,
+                'link'                 => $surat->link,
+                'tanggal_pelaksanaan'  => $surat->tanggal_pelaksanaan,
             ],
             'kode' => $this->kodeOptions(),
         ]);
@@ -200,17 +202,18 @@ class SuratController extends Controller
     public function updateUndangan(Request $request, Surat $surat): RedirectResponse
     {
         $surat->update($request->validate([
-            'type'          => 'required|integer',
-            'kode'          => 'required|string',
-            'isRahasia'     => 'required|boolean',
-            'perihal'       => 'required|string',
-            'tujuan'        => 'required|string',
-            'isKonsumsi'    => 'nullable|boolean',
-            'isPengelolaan' => 'nullable|boolean',
-            'isRuangan'     => 'nullable|boolean',
-            'nomor'         => 'nullable|string',
-            'filepath'      => 'nullable|string',
-            'link'          => 'nullable|string',
+            'type'                 => 'required|integer',
+            'kode'                 => 'required|string',
+            'isRahasia'            => 'required|boolean',
+            'perihal'              => 'required|string',
+            'tujuan'               => 'required|string',
+            'isKonsumsi'           => 'nullable|boolean',
+            'isPengelolaan'        => 'nullable|boolean',
+            'isRuangan'            => 'nullable|boolean',
+            'nomor'                => 'nullable|string',
+            'filepath'             => 'nullable|string',
+            'link'                 => 'nullable|string',
+            'tanggal_pelaksanaan'  => 'nullable|date',
         ]));
 
         return Redirect::route('dashboard', ['type' => 2]);

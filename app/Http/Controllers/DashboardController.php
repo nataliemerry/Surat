@@ -27,6 +27,7 @@ class DashboardController extends Controller
                     'isPengelolaan' => $surat->isPengelolaan,
                     'isRuangan' => $surat->isRuangan,
                     'isRahasia' => $surat->isRahasia,
+                    'tanggal_pelaksanaan' => $surat->tanggal_pelaksanaan,
                 ]),
         ]);
     }

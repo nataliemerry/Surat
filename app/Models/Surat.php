@@ -20,7 +20,8 @@ class Surat extends Model
         'nomor',
         'link',
         'isRuangan',
-        'isRahasia'
+        'isRahasia',
+        'tanggal_pelaksanaan'
     ];
 
     public $timestamps = true;

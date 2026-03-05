@@ -28,6 +28,7 @@
     isPengelolaan: null,
     perihal: null,
     tujuan: null,
+    tanggal_pelaksanaan: null,
     file: null,
     lnk: null,
   })
@@ -87,6 +88,13 @@
       </SelectInput>
       <TextInput bind:value={$form.perihal} error={$form.errors.perihal} class="w-full pb-8 pr-6" label="Perihal:" />
       <TextInput bind:value={$form.tujuan} error={$form.errors.tujuan} class="w-full pb-8 pr-6" label="Tujuan:" />
+            <div class="w-full pb-8 pr-6">
+        <label for="tanggal_pelaksanaan" class="form-label">Tanggal Pelaksanaan:</label>
+        <input id="tanggal_pelaksanaan" type="date" bind:value={$form.tanggal_pelaksanaan} class="form-input" />
+        {#if $form.errors.tanggal_pelaksanaan}
+          <div class="form-error">{$form.errors.tanggal_pelaksanaan}</div>
+        {/if}
+      </div>
       <SelectInput bind:value={$form.isRuangan} error={$form.errors.isRuangan} class="w-full pb-8 pr-6" label="Apakah menggunakan Ruang Aula?">
         <option value={null}>Silakan pilih salah satu opsi</option>
         <option value="1">Ya, Kegiatan menggunakan Ruang Aula</option>
