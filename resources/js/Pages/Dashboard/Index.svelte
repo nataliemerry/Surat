@@ -35,12 +35,17 @@
     }, 10000)
   }
 
+  let lastFlashMessage = ''
+
   $: if ($page?.props?.flash?.success) {
     const msg = $page.props.flash.success
-    if (msg.includes('Berhasil Dibuat') || msg.includes('Nomor Surat')) {
-      triggerBanner(msg)
-    } else {
-      triggerToast(msg)
+    if (msg && msg !== lastFlashMessage) {
+      lastFlashMessage = msg
+      if (msg.includes('Berhasil Dibuat') || msg.includes('Nomor Surat')) {
+        triggerBanner(msg)
+      } else {
+        triggerToast(msg)
+      }
     }
   }
   export let surat = []
@@ -181,12 +186,14 @@
         {:else if activeType === 2}
           <th class="px-6 pt-6 pb-4">Perihal</th>
           <th class="px-6 pt-6 pb-4">Tujuan</th>
+          <th class="px-6 pt-6 pb-4">Nomor Surat</th>
           <th class="px-6 pt-6 pb-4">Keperluan Konsumsi</th>
           <th class="px-6 pt-6 pb-4">Pengelolaan Konsumsi</th>
-          <th class="px-6 pt-6 pb-4">Penggunaan Ruang</th>
+          <th class="px-6 pt-6 pb-4">Penggunaan Aula</th>
         {:else if activeType === 3}
           <th class="px-6 pt-6 pb-4">Perihal</th>
           <th class="px-6 pt-6 pb-4">Tujuan</th>
+          <th class="px-6 pt-6 pb-4">Nomor Surat</th>
         {/if}
         <th class="px-6 pt-6 pb-4">Draft Surat</th>
         {#if auth?.user}
@@ -222,6 +229,9 @@
                 <p class="flex items-center px-6 py-4" tabindex="-1">{surat.tujuan || ''}</p>
               </td>
               <td class="border-t">
+                <p class="flex items-center px-6 py-4" tabindex="-1">{surat.nomor || ''}</p>
+              </td>
+              <td class="border-t">
                 <p class="flex items-center px-6 py-4" tabindex="-1">{surat.isKonsumsi ? 'Iya' : 'Tidak'}</p>
               </td>
               <td class="border-t">
@@ -236,6 +246,9 @@
               </td>
               <td class="border-t">
                 <p class="flex items-center px-6 py-4" tabindex="-1">{surat.tujuan || ''}</p>
+              </td>
+              <td class="border-t">
+                <p class="flex items-center px-6 py-4" tabindex="-1">{surat.nomor || ''}</p>
               </td>
             {/if}
             <td class="px-6 border-t">
@@ -289,6 +302,9 @@
                 <p class="flex items-center px-6 py-4" tabindex="-1">{surat.tujuan || ''}</p>
               </td>
               <td class="border-t">
+                <p class="flex items-center px-6 py-4" tabindex="-1">{surat.nomor || ''}</p>
+              </td>
+              <td class="border-t">
                 <p class="flex items-center px-6 py-4" tabindex="-1">{surat.isKonsumsi ? 'Iya' : 'Tidak'}</p>
               </td>
               <td class="border-t">
@@ -303,6 +319,9 @@
               </td>
               <td class="border-t">
                 <p class="flex items-center px-6 py-4" tabindex="-1">{surat.tujuan || ''}</p>
+              </td>
+              <td class="border-t">
+                <p class="flex items-center px-6 py-4" tabindex="-1">{surat.nomor || ''}</p>
               </td>
             {/if}
             <td class="px-6 border-t">

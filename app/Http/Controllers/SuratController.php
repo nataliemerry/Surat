@@ -1,9 +1,13 @@
 <?php
+
 namespace App\Http\Controllers;
+
 use App\Models\Surat;
 use App\Models\Kode;
+use App\Services\NomorSuratService;
 use Illuminate\Http\RedirectResponse;
 use Illuminate\Http\Request;
+use Illuminate\Support\Facades\DB;
 use Illuminate\Support\Facades\Request as FacadeRequest;
 use Illuminate\Support\Facades\Redirect;
 use Illuminate\Support\Facades\Storage;
@@ -12,6 +16,8 @@ use Inertia\Response;
 
 class SuratController extends Controller
 {
+    public function __construct(private readonly NomorSuratService $nomorService) {}
+
     public function index()
     {
     }
@@ -39,7 +45,6 @@ class SuratController extends Controller
             ])->toArray();
     }
 
-
     public function formSuratTugas(): Response
     {
         return Inertia::render('Surat-Tugas/form', ['kode' => $this->kodeOptions()]);
@@ -59,14 +64,12 @@ class SuratController extends Controller
             'link'          => 'nullable|string',
         ]);
 
-        $surat = Surat::create($validated);
-        $formattedNomor = sprintf(
-            'B-%s/33080/%s/%s',
-            str_pad($surat->id, 3, '0', STR_PAD_LEFT),
-            $surat->kode,
-            date('Y', strtotime($surat->created_at))
-        );
-        $surat->update(['nomor' => $formattedNomor]);
+        $formattedNomor = DB::transaction(function () use ($validated) {
+            $surat = Surat::create($validated);
+            $nomor = $this->nomorService->generate($surat);
+            $surat->update(['nomor' => $nomor]);
+            return $nomor;
+        });
 
         return Redirect::route('dashboard', ['type' => 1])->with('success', "Nomor Surat Tugas Anda: $formattedNomor");
     }
@@ -138,7 +141,6 @@ class SuratController extends Controller
         return Redirect::route('dashboard', ['type' => 1]);
     }
 
-
     public function formSuratUndangan(): Response
     {
         return Inertia::render('Surat-Undangan/Index', ['kode' => $this->kodeOptions()]);
@@ -165,9 +167,14 @@ class SuratController extends Controller
             $validated['filepath'] = Storage::url($filePath);
         }
 
-        Surat::create($validated);
+        $formattedNomor = DB::transaction(function () use ($validated) {
+            $surat = Surat::create($validated);
+            $nomor = $this->nomorService->generate($surat);
+            $surat->update(['nomor' => $nomor]);
+            return $nomor;
+        });
 
-        return Redirect::route('dashboard', ['type' => 2])->with('success', 'Surat Undangan Berhasil Dibuat.');
+        return Redirect::route('dashboard', ['type' => 2])->with('success', "Nomor Surat Undangan Anda: $formattedNomor");
     }
 
     public function editUndangan(Surat $surat): Response
@@ -215,7 +222,6 @@ class SuratController extends Controller
         return Redirect::route('dashboard', ['type' => 2]);
     }
 
-
     public function formSuratDinas(): Response
     {
         return Inertia::render('Surat-Dinas/Index', ['kode' => $this->kodeOptions()]);
@@ -241,9 +247,14 @@ class SuratController extends Controller
             $validated['filepath'] = Storage::url($filePath);
         }
 
-        Surat::create($validated);
+        $formattedNomor = DB::transaction(function () use ($validated) {
+            $surat = Surat::create($validated);
+            $nomor = $this->nomorService->generate($surat);
+            $surat->update(['nomor' => $nomor]);
+            return $nomor;
+        });
 
-        return Redirect::route('dashboard', ['type' => 3])->with('success', 'Surat Dinas Berhasil Dibuat.');
+        return Redirect::route('dashboard', ['type' => 3])->with('success', "Nomor Surat Dinas Anda: $formattedNomor");
     }
 
     public function editDinas(Surat $surat): Response
@@ -284,4 +295,3 @@ class SuratController extends Controller
         return Redirect::route('dashboard', ['type' => 3]);
     }
 }
-

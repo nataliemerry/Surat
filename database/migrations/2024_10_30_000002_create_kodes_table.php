@@ -6,20 +6,17 @@ use Illuminate\Support\Facades\Schema;
 
 return new class extends Migration
 {
-    /**
-     * Run the migrations.
-     */
     public function up(): void
     {
-        Schema::table('surats', function (Blueprint $table) {
-            $table->timestamps();
+        Schema::create('kodes', function (Blueprint $table) {
+            $table->id();
+            $table->string('kode');
+            $table->string('detail');
         });
     }
 
     public function down(): void
     {
-        Schema::table('surats', function (Blueprint $table) {
-            $table->dropTimestamps();
-        });
+        Schema::dropIfExists('kodes');
     }
 };

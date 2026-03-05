@@ -19,7 +19,8 @@ class Surat extends Model
         'filepath',
         'nomor',
         'link',
-        'isRuangan'
+        'isRuangan',
+        'isRahasia'
     ];
 
     public $timestamps = true;
