@@ -1,26 +1,25 @@
 <?php
-
 namespace App\Http\Controllers;
 
 use App\Models\Surat;
 use App\Models\Kode;
 use App\Services\NomorSuratService;
+use App\Services\SuratFileService;
 use Illuminate\Http\RedirectResponse;
 use Illuminate\Http\Request;
 use Illuminate\Support\Facades\DB;
-use Illuminate\Support\Facades\Request as FacadeRequest;
 use Illuminate\Support\Facades\Redirect;
-use Illuminate\Support\Facades\Storage;
 use Inertia\Inertia;
 use Inertia\Response;
 
 class SuratController extends Controller
 {
-    public function __construct(private readonly NomorSuratService $nomorService) {}
+    public function __construct(
+        private readonly NomorSuratService $nomorService,
+        private readonly SuratFileService $suratFileService,
+    ) {}
 
-    public function index()
-    {
-    }
+    public function index() {}
 
     public function getSecondOptions($type)
     {
@@ -45,27 +44,27 @@ class SuratController extends Controller
             ])->toArray();
     }
 
+    // ─── Surat Tugas ──────────────────────────────────────────────────────────
+
     public function formSuratTugas(): Response
     {
         return Inertia::render('Surat-Tugas/form', ['kode' => $this->kodeOptions()]);
     }
 
-    public function storeSuratTugas(Request $request)
+    public function storeSuratTugas(Request $request): RedirectResponse
     {
         $validated = $request->validate([
-            'type'          => 'required|integer',
-            'kode'          => 'required|string',
-            'perihal'       => 'required|string',
-            'tujuan'        => 'required|string',
-            'isKonsumsi'    => 'nullable|boolean',
-            'isPengelolaan' => 'nullable|boolean',
-            'filepath'      => 'nullable|string',
-            'nomor'         => 'nullable|string',
-            'link'          => 'nullable|string',
+            'type'                => 'required|integer',
+            'kode'                => 'required|string',
+            'perihal'             => 'required|string',
+            'tujuan'              => 'required|string',
+            'isKonsumsi'          => 'nullable|boolean',
+            'isPengelolaan'       => 'nullable|boolean',
+            'nomor'               => 'nullable|string',
+            'link'                => 'nullable|string',
+            'isRuangan'           => 'nullable|boolean',
+            'isRahasia'           => 'nullable|boolean',
             'tanggal_pelaksanaan' => 'nullable|date',
-            'isRuangan'     => 'nullable|boolean',
-            'isRahasia'    => 'nullable|boolean',
-            'original_filename' => 'nullable|string',
         ]);
 
         $formattedNomor = DB::transaction(function () use ($validated) {
@@ -75,7 +74,8 @@ class SuratController extends Controller
             return $nomor;
         });
 
-        return Redirect::route('dashboard', ['type' => 1])->with('success', "Nomor Surat Tugas Anda: $formattedNomor");
+        return Redirect::route('dashboard', ['type' => 1])
+            ->with('success', "Nomor Surat Tugas Anda: $formattedNomor");
     }
 
     public function optionSuratTugas(): Response
@@ -88,14 +88,17 @@ class SuratController extends Controller
         return Inertia::render('Surat-Tugas/surat');
     }
 
-    public function updateSuratTugas(Request $request)
+    /**
+     * Upload file ke Drive untuk surat tugas yang sudah dibuat (via halaman upload).
+     */
+    public function updateSuratTugas(Request $request): RedirectResponse
     {
-        $validated = $request->validate([
+        $request->validate([
             'nomor' => 'required|string',
-            'file'  => 'required|file|mimes:docx,pdf',
+            'file'  => 'required|file|mimes:docx,pdf|max:10240',
         ]);
 
-        $surat = Surat::where('nomor', $validated['nomor'])
+        $surat = Surat::where('nomor', $request->nomor)
             ->where('type', 1)
             ->first();
 
@@ -103,14 +106,11 @@ class SuratController extends Controller
             return Redirect::back()->withErrors(['nomor' => 'Nomor Surat Tugas tersebut tidak ditemukan.']);
         }
 
-        if ($request->hasFile('file')) {
-            $file = $request->file('file');
-            $filePath = $file->store('uploads', 'public');
-            $surat->update([
-                'filepath'          => Storage::url($filePath),
-                'original_filename' => $file->getClientOriginalName(),
-            ]);
-        }
+        $file      = $request->file('file');
+        $driveData = $this->suratFileService->replace($surat, $file);
+        $surat->update(array_merge($driveData, [
+            'original_filename' => $file->getClientOriginalName(),
+        ]));
 
         return Redirect::route('dashboard', ['type' => 1]);
     }
@@ -125,7 +125,7 @@ class SuratController extends Controller
                 'perihal'           => $surat->perihal,
                 'tujuan'            => $surat->tujuan,
                 'nomor'             => $surat->nomor,
-                'filepath'          => $surat->filepath,
+                'link'              => $surat->link,
                 'original_filename' => $surat->original_filename,
             ],
             'kode' => $this->kodeOptions(),
@@ -135,72 +135,79 @@ class SuratController extends Controller
     public function editedSuratTugas(Request $request, Surat $surat): RedirectResponse
     {
         $validated = $request->validate([
-            'type'     => 'required|integer',
-            'kode'     => 'required|string',
-            'perihal'  => 'required|string',
-            'tujuan'   => 'required|string',
-            'nomor'    => 'nullable|string',
-            'filepath' => 'nullable|string',
-            'file'     => 'nullable|file|mimes:docx,pdf',
+            'type'    => 'required|integer',
+            'kode'    => 'required|string',
+            'perihal' => 'required|string',
+            'tujuan'  => 'required|string',
+            'nomor'   => 'nullable|string',
+            'file'    => 'nullable|file|mimes:docx,pdf|max:10240',
         ]);
 
         if ($request->hasFile('file')) {
-            $file = $request->file('file');
-            $filePath = $file->store('uploads', 'public');
-            $validated['filepath']          = Storage::url($filePath);
-            $validated['original_filename'] = $file->getClientOriginalName();
+            $file      = $request->file('file');
+            $driveData = $this->suratFileService->replace($surat, $file);
+            $validated = array_merge($validated, $driveData, [
+                'original_filename' => $file->getClientOriginalName(),
+            ]);
         }
 
         unset($validated['file']);
         $surat->update($validated);
 
-        return Redirect::route('dashboard', ['type' => 1])->with('success', 'Surat berhasil diupdate!');
+        return Redirect::route('dashboard', ['type' => 1])
+            ->with('success', 'Surat berhasil diupdate!');
     }
 
     public function destroySuratTugas(Surat $surat): RedirectResponse
     {
+        $this->suratFileService->delete($surat);
         $surat->delete();
+
         return Redirect::route('dashboard', ['type' => 1]);
     }
 
-        public function formSuratUndangan(): Response
+    // ─── Surat Undangan ───────────────────────────────────────────────────────
+
+    public function formSuratUndangan(): Response
     {
         return Inertia::render('Surat-Undangan/form', ['kode' => $this->kodeOptions()]);
     }
 
-    public function storeSuratUndangan(Request $request)
+    public function storeSuratUndangan(Request $request): RedirectResponse
     {
         $validated = $request->validate([
-            'type'                 => 'required|integer',
-            'kode'                 => 'required|string',
-            'isRahasia'            => 'required|boolean',
-            'perihal'              => 'required|string',
-            'tujuan'               => 'required|string',
-            'isRuangan'            => 'required|boolean',
-            'isKonsumsi'           => 'required|boolean',
-            'isPengelolaan'        => 'required|boolean',
-            'filepath'             => 'nullable|string',
-            'nomor'                => 'nullable|string',
-            'link'                 => 'nullable|string',
-            'tanggal_pelaksanaan'  => 'required|date',
-            'original_filename'    => 'nullable|string',
+            'type'                => 'required|integer',
+            'kode'                => 'required|string',
+            'isRahasia'           => 'required|boolean',
+            'perihal'             => 'required|string',
+            'tujuan'              => 'required|string',
+            'isRuangan'           => 'required|boolean',
+            'isKonsumsi'          => 'required|boolean',
+            'isPengelolaan'       => 'required|boolean',
+            'nomor'               => 'nullable|string',
+            'link'                => 'nullable|string',
+            'tanggal_pelaksanaan' => 'required|date',
+            'file'                => 'nullable|file|mimes:docx,pdf|max:10240',
         ]);
 
-        if ($request->hasFile('file')) {
-            $file = $request->file('file');
-            $filePath = $file->store('uploads', 'public');
-            $validated['filepath']          = Storage::url($filePath);
-            $validated['original_filename'] = $file->getClientOriginalName();
-        }
-
-        $formattedNomor = DB::transaction(function () use ($validated) {
-            $surat = Surat::create($validated);
+        [$formattedNomor, $surat] = DB::transaction(function () use ($validated) {
+            $surat = Surat::create(collect($validated)->except('file')->toArray());
             $nomor = $this->nomorService->generate($surat);
             $surat->update(['nomor' => $nomor]);
-            return $nomor;
+            $surat->refresh();
+            return [$nomor, $surat];
         });
 
-        return Redirect::route('dashboard', ['type' => 2])->with('success', "Nomor Surat Undangan Anda: $formattedNomor");
+        if ($request->hasFile('file')) {
+            $file      = $request->file('file');
+            $driveData = $this->suratFileService->upload($surat, $file);
+            $surat->update(array_merge($driveData, [
+                'original_filename' => $file->getClientOriginalName(),
+            ]));
+        }
+
+        return Redirect::route('dashboard', ['type' => 2])
+            ->with('success', "Nomor Surat Undangan Anda: $formattedNomor");
     }
 
     public function optionSuratUndangan(): Response
@@ -213,14 +220,14 @@ class SuratController extends Controller
         return Inertia::render('Surat-Undangan/surat');
     }
 
-    public function updateSuratUndangan(Request $request)
+    public function updateSuratUndangan(Request $request): RedirectResponse
     {
-        $validated = $request->validate([
+        $request->validate([
             'nomor' => 'required|string',
-            'file'  => 'required|file|mimes:docx,pdf',
+            'file'  => 'required|file|mimes:docx,pdf|max:10240',
         ]);
 
-        $surat = Surat::where('nomor', $validated['nomor'])
+        $surat = Surat::where('nomor', $request->nomor)
             ->where('type', 2)
             ->first();
 
@@ -228,14 +235,11 @@ class SuratController extends Controller
             return Redirect::back()->withErrors(['nomor' => 'Nomor Surat Undangan tersebut tidak ditemukan.']);
         }
 
-        if ($request->hasFile('file')) {
-            $file = $request->file('file');
-            $filePath = $file->store('uploads', 'public');
-            $surat->update([
-                'filepath'          => Storage::url($filePath),
-                'original_filename' => $file->getClientOriginalName(),
-            ]);
-        }
+        $file      = $request->file('file');
+        $driveData = $this->suratFileService->replace($surat, $file);
+        $surat->update(array_merge($driveData, [
+            'original_filename' => $file->getClientOriginalName(),
+        ]));
 
         return Redirect::route('dashboard', ['type' => 2]);
     }
@@ -244,68 +248,71 @@ class SuratController extends Controller
     {
         return Inertia::render('Surat-Undangan/edit', [
             'surat' => [
-                'id'                   => $surat->id,
-                'type'                 => $surat->type,
-                'kode'                 => $surat->kode,
-                'isRahasia'            => $surat->isRahasia,
-                'perihal'              => $surat->perihal,
-                'tujuan'               => $surat->tujuan,
-                'isKonsumsi'           => $surat->isKonsumsi,
-                'isPengelolaan'        => $surat->isPengelolaan,
-                'isRuangan'            => $surat->isRuangan,
-                'filepath'             => $surat->filepath,
-                'original_filename'    => $surat->original_filename,
-                'link'                 => $surat->link,
-                'tanggal_pelaksanaan'  => $surat->tanggal_pelaksanaan,
+                'id'                  => $surat->id,
+                'type'                => $surat->type,
+                'kode'                => $surat->kode,
+                'isRahasia'           => $surat->isRahasia,
+                'perihal'             => $surat->perihal,
+                'tujuan'              => $surat->tujuan,
+                'isKonsumsi'          => $surat->isKonsumsi,
+                'isPengelolaan'       => $surat->isPengelolaan,
+                'isRuangan'           => $surat->isRuangan,
+                'link'                => $surat->link,
+                'original_filename'   => $surat->original_filename,
+                'tanggal_pelaksanaan' => $surat->tanggal_pelaksanaan,
             ],
             'kode' => $this->kodeOptions(),
         ]);
     }
 
-    public function editedSuratTugasUndangan(Request $request, Surat $surat): RedirectResponse
+    public function editedSuratUndangan(Request $request, Surat $surat): RedirectResponse
     {
         $validated = $request->validate([
-            'type'                 => 'required|integer',
-            'kode'                 => 'required|string',
-            'isRahasia'            => 'required|boolean',
-            'perihal'              => 'required|string',
-            'tujuan'               => 'required|string',
-            'isKonsumsi'           => 'nullable|boolean',
-            'isPengelolaan'        => 'nullable|boolean',
-            'isRuangan'            => 'nullable|boolean',
-            'nomor'                => 'nullable|string',
-            'filepath'             => 'nullable|string',
-            'link'                 => 'nullable|string',
-            'file'                 => 'nullable|file|mimes:docx,pdf',
-            'tanggal_pelaksanaan'  => 'nullable|date',
-            'original_filename'    => 'nullable|string',
+            'type'                => 'required|integer',
+            'kode'                => 'required|string',
+            'isRahasia'           => 'required|boolean',
+            'perihal'             => 'required|string',
+            'tujuan'              => 'required|string',
+            'isKonsumsi'          => 'nullable|boolean',
+            'isPengelolaan'       => 'nullable|boolean',
+            'isRuangan'           => 'nullable|boolean',
+            'nomor'               => 'nullable|string',
+            'link'                => 'nullable|string',
+            'tanggal_pelaksanaan' => 'nullable|date',
+            'file'                => 'nullable|file|mimes:docx,pdf|max:10240',
         ]);
 
         if ($request->hasFile('file')) {
-            $file = $request->file('file');
-            $filePath = $file->store('uploads', 'public');
-            $validated['filepath']          = Storage::url($filePath);
-            $validated['original_filename'] = $file->getClientOriginalName();
+            $file      = $request->file('file');
+            $driveData = $this->suratFileService->replace($surat, $file);
+            $validated = array_merge($validated, $driveData, [
+                'original_filename' => $file->getClientOriginalName(),
+            ]);
         }
 
         unset($validated['file']);
         $surat->update($validated);
 
-        return Redirect::route('dashboard', ['type' => 2])->with('success', 'Surat berhasil diupdate!');
+        return Redirect::route('dashboard', ['type' => 2])
+            ->with('success', 'Surat berhasil diupdate!');
     }
 
     public function destroySuratUndangan(Surat $surat): RedirectResponse
     {
+        $this->suratFileService->delete($surat);
         $surat->delete();
+
         return Redirect::route('dashboard', ['type' => 2]);
     }
+
+    // ─── Surat Dinas ──────────────────────────────────────────────────────────
 
     public function formSuratDinas(): Response
     {
         return Inertia::render('Surat-Dinas/form', ['kode' => $this->kodeOptions()]);
     }
 
-    public function storeSuratDinas(Request $request)
+    public function storeSuratDinas(Request $request): RedirectResponse
     {
         $validated = $request->validate([
             'type'          => 'required|integer',
@@ -315,26 +322,29 @@ class SuratController extends Controller
             'tujuan'        => 'required|string',
             'isKonsumsi'    => 'nullable|boolean',
             'isPengelolaan' => 'nullable|boolean',
-            'filepath'      => 'nullable|string',
             'nomor'         => 'nullable|string',
             'link'          => 'nullable|string',
+            'file'          => 'nullable|file|mimes:docx,pdf|max:10240',
         ]);
 
-        if ($request->hasFile('file')) {
-            $file = $request->file('file');
-            $filePath = $file->store('uploads', 'public');
-            $validated['filepath'] = Storage::url($filePath);
-            $validated['original_filename'] = $file->getClientOriginalName();
-        }
-
-        $formattedNomor = DB::transaction(function () use ($validated) {
-            $surat = Surat::create($validated);
+        [$formattedNomor, $surat] = DB::transaction(function () use ($validated) {
+            $surat = Surat::create(collect($validated)->except('file')->toArray());
             $nomor = $this->nomorService->generate($surat);
             $surat->update(['nomor' => $nomor]);
-            return $nomor;
+            $surat->refresh();
+            return [$nomor, $surat];
         });
 
-        return Redirect::route('dashboard', ['type' => 3])->with('success', "Nomor Surat Dinas Anda: $formattedNomor");
+        if ($request->hasFile('file')) {
+            $file      = $request->file('file');
+            $driveData = $this->suratFileService->upload($surat, $file);
+            $surat->update(array_merge($driveData, [
+                'original_filename' => $file->getClientOriginalName(),
+            ]));
+        }
+
+        return Redirect::route('dashboard', ['type' => 3])
+            ->with('success', "Nomor Surat Dinas Anda: $formattedNomor");
     }
 
     public function optionSuratDinas(): Response
@@ -347,14 +357,14 @@ class SuratController extends Controller
         return Inertia::render('Surat-Dinas/surat');
     }
 
-    public function updateSuratDinas(Request $request)
+    public function updateSuratDinas(Request $request): RedirectResponse
     {
-        $validated = $request->validate([
+        $request->validate([
             'nomor' => 'required|string',
-            'file'  => 'required|file|mimes:docx,pdf',
+            'file'  => 'required|file|mimes:docx,pdf|max:10240',
         ]);
 
-        $surat = Surat::where('nomor', $validated['nomor'])
+        $surat = Surat::where('nomor', $request->nomor)
             ->where('type', 3)
             ->first();
 
@@ -362,14 +372,11 @@ class SuratController extends Controller
             return Redirect::back()->withErrors(['nomor' => 'Nomor Surat Dinas tersebut tidak ditemukan.']);
         }
 
-        if ($request->hasFile('file')) {
-            $file = $request->file('file');
-            $filePath = $file->store('uploads', 'public');
-            $surat->update([
-                'filepath'          => Storage::url($filePath),
-                'original_filename' => $file->getClientOriginalName(),
-            ]);
-        }
+        $file      = $request->file('file');
+        $driveData = $this->suratFileService->replace($surat, $file);
+        $surat->update(array_merge($driveData, [
+            'original_filename' => $file->getClientOriginalName(),
+        ]));
 
         return Redirect::route('dashboard', ['type' => 3]);
     }
@@ -384,43 +391,46 @@ class SuratController extends Controller
                 'isRahasia'         => $surat->isRahasia,
                 'perihal'           => $surat->perihal,
                 'tujuan'            => $surat->tujuan,
-                'filepath'          => $surat->filepath,
-                'original_filename' => $surat->original_filename,
                 'link'              => $surat->link,
+                'original_filename' => $surat->original_filename,
             ],
             'kode' => $this->kodeOptions(),
         ]);
     }
 
-    public function editedSuratTugasDinas(Request $request, Surat $surat): RedirectResponse
+    public function editedSuratDinas(Request $request, Surat $surat): RedirectResponse
     {
         $validated = $request->validate([
-            'type'     => 'required|integer',
-            'kode'     => 'required|string',
-            'perihal'  => 'required|string',
-            'tujuan'   => 'required|string',
-            'nomor'    => 'nullable|string',
-            'filepath' => 'nullable|string',
-            'link'     => 'nullable|string',
-            'file'     => 'nullable|file|mimes:docx,pdf',
+            'type'      => 'required|integer',
+            'kode'      => 'required|string',
+            'isRahasia' => 'nullable|boolean',
+            'perihal'   => 'required|string',
+            'tujuan'    => 'required|string',
+            'nomor'     => 'nullable|string',
+            'link'      => 'nullable|string',
+            'file'      => 'nullable|file|mimes:docx,pdf|max:10240',
         ]);
 
         if ($request->hasFile('file')) {
-            $file = $request->file('file');
-            $filePath = $file->store('uploads', 'public');
-            $validated['filepath']          = Storage::url($filePath);
-            $validated['original_filename'] = $file->getClientOriginalName();
+            $file      = $request->file('file');
+            $driveData = $this->suratFileService->replace($surat, $file);
+            $validated = array_merge($validated, $driveData, [
+                'original_filename' => $file->getClientOriginalName(),
+            ]);
         }
 
         unset($validated['file']);
         $surat->update($validated);
 
-        return Redirect::route('dashboard', ['type' => 3])->with('success', 'Surat berhasil diupdate!');
+        return Redirect::route('dashboard', ['type' => 3])
+            ->with('success', 'Surat berhasil diupdate!');
     }
 
     public function destroySuratDinas(Surat $surat): RedirectResponse
     {
+        $this->suratFileService->delete($surat);
         $surat->delete();
+
         return Redirect::route('dashboard', ['type' => 3]);
     }
 }
