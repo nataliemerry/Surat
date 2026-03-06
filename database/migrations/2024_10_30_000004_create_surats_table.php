@@ -6,29 +6,25 @@ use Illuminate\Support\Facades\Schema;
 
 return new class extends Migration
 {
-    /**
-     * Run the migrations.
-     */
     public function up(): void
     {
         Schema::create('surats', function (Blueprint $table) {
             $table->id();
             $table->integer('type');
-            $table->date('date');
-            $table->string('kode');
+            $table->boolean('isRahasia')->default(false);
+            $table->string('kode')->nullable();
             $table->string('perihal');
             $table->string('tujuan');
             $table->boolean('isKonsumsi')->nullable();
             $table->boolean('isPengelolaan')->nullable();
+            $table->boolean('isRuangan')->nullable()->default(0);
             $table->string('filepath')->nullable();
             $table->string('nomor')->nullable();
             $table->string('link')->nullable();
+            $table->timestamps();
         });
     }
 
-    /**
-     * Reverse the migrations.
-     */
     public function down(): void
     {
         Schema::dropIfExists('surats');

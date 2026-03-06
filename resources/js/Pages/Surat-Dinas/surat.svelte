@@ -8,7 +8,7 @@
   import LoadingButton from '@/Shared/LoadingButton.svelte'
   import TextInput from '@/Shared/TextInput.svelte'
 
-  $title = 'Tambah Surat Tugas'
+  $title = 'Tambah Surat Dinas'
 
   let form = useForm('CreateSurat', {
     nomor: null,
@@ -28,21 +28,21 @@
   }
 
   function store() {
-    $form.post('/surat-tugas/update', {
+    $form.post('/surat-dinas/update', {
       forceFormData: true,
     })
   }
 </script>
 
 <h1 class="mb-8 text-3xl font-bold">
-  <a use:inertia href="/" class="text-indigo-400 hover:text-indigo-600"> Surat Tugas</a>
+  <a use:inertia href="/" class="text-indigo-400 hover:text-indigo-600"> Surat Dinas </a>
   <span class="font-medium text-indigo-400">/</span> Create
 </h1>
 
 <div class="max-w-3xl overflow-hidden bg-white rounded-md shadow">
   <form on:submit|preventDefault={store}>
     <div class="flex flex-wrap p-8 -mb-8 -mr-6">
-      <TextInput bind:value={$form.nomor} error={$form.errors.nomor} class="w-full pb-8 pr-6" label="Nomor Surat Tugas:" required/>
+      <TextInput bind:value={$form.nomor} error={$form.errors.nomor} class="w-full pb-8 pr-6" label="Nomor Surat Dinas:" />
       <div class="w-full pb-8 pr-6">
         <label for="file" class="block text-sm font-medium text-gray-700">Upload Dokumen Surat (.docx/.pdf):</label>
 
@@ -54,7 +54,7 @@
             </svg>
             Choose File
           </label>
-          <input id="file" type="file" accept=".docx,.pdf" on:input={handleFileChange} class="hidden"/>
+          <input id="file" type="file" accept=".docx,.pdf" on:input={handleFileChange} class="hidden" />
           <span class="ml-4 text-sm text-gray-500">{selectedFileName}</span>
         </div>
 
@@ -64,7 +64,7 @@
       </div>
     </div>
     <div class="flex items-center justify-end px-8 py-4 border-t border-gray-100 bg-gray-50">
-      <LoadingButton loading={$form.processing} class="btn-indigo hover:bg-indigo-700" type="submit">Upload Dokumen Surat Tugas</LoadingButton>
+      <LoadingButton loading={$form.processing} class="btn-indigo hover:bg-indigo-700" type="submit">Upload Dokumen Surat Dinas</LoadingButton>
     </div>
   </form>
 </div>

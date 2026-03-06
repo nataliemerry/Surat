@@ -6,20 +6,17 @@ use Illuminate\Support\Facades\Schema;
 
 return new class extends Migration
 {
-    /**
-     * Run the migrations.
-     */
-    public function up():void
+    public function up(): void
     {
         Schema::table('surats', function (Blueprint $table) {
-            $table->boolean('isRuangan')->nullable()->default(0);
+            $table->date('tanggal_pelaksanaan')->nullable()->after('isRuangan');
         });
     }
 
-    public function down():void
+    public function down(): void
     {
         Schema::table('surats', function (Blueprint $table) {
-            $table->dropColumn('isRuangan');
+            $table->dropColumn('tanggal_pelaksanaan');
         });
     }
 };

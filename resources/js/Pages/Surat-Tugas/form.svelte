@@ -43,9 +43,7 @@
 <div class="max-w-3xl overflow-hidden bg-white rounded-md shadow">
     <form on:submit|preventDefault={store}>
         <div class="flex flex-wrap p-8 -mb-8 -mr-6">
-            <TextInput bind:value={$form.perihal} error={$form.errors.perihal} class="w-full pb-8 pr-6" label="Perihal:" />
-            <TextInput bind:value={$form.tujuan} error={$form.errors.tujuan} class="w-full pb-8 pr-6" label="Tujuan:" />
-            <SelectInput bind:value={$form.firstSelect} error={$form.errors.firstSelect} class="w-full pb-8 pr-6" label="Kode Arsip Utama">
+            <SelectInput bind:value={$form.firstSelect} error={$form.errors.firstSelect} class="w-full pb-8 pr-6" label="Kode Arsip Utama:" required>
                 <option value={null}>Silakan pilih salah satu opsi</option>
                 <option value="PS">PS - Perumusan Kebijakan di Bidang Statistik</option>
                 <option value="SS">SS - Sensus Penduduk, Sensus Pertanian dan Sensus Ekonomi</option>
@@ -68,16 +66,18 @@
                 <option value="TS">TS - Transformasi Statistik</option>
             </SelectInput>
             {#if $form.firstSelect}
-            <SelectInput bind:value={$form.kode} error={$form.errors.kode} class="w-full pb-8 pr-6" label="Data Berdasarkan Kegiatan:">
+            <SelectInput bind:value={$form.kode} error={$form.errors.kode} class="w-full pb-8 pr-6" label="Data Berdasarkan Kegiatan:" required  >
                 <option value={null}>Silakan pilih salah satu opsi</option>
                 {#each filteredKode as option}
                     <option value={option.value}>{option.text}</option>
                 {/each}
             </SelectInput>
             {/if}
+            <TextInput bind:value={$form.perihal} error={$form.errors.perihal} class="w-full pb-8 pr-6" label="Perihal:" />
+            <TextInput bind:value={$form.tujuan} error={$form.errors.tujuan} class="w-full pb-8 pr-6" label="Tujuan:" />
         </div>
         <div class="flex items-center justify-end px-8 py-4 border-t border-gray-100 bg-gray-50">
-            <LoadingButton loading={$form.processing} class="btn-indigo" type="submit">Ajukan Surat</LoadingButton>
+            <LoadingButton loading={$form.processing} class="btn-indigo hover:bg-indigo-700" type="submit">Ajukan Surat</LoadingButton>
         </div>
     </form>
 </div>
