@@ -22,7 +22,7 @@ class DashboardController extends Controller
                     'tujuan' => $surat->tujuan,
                     'nomor' => $surat->nomor,
                     'type' => $surat->type,
-                    'filepath' => $surat->filepath,
+                    'link' => $surat->link,
                     'isKonsumsi' => $surat->isKonsumsi,
                     'isPengelolaan' => $surat->isPengelolaan,
                     'isRuangan' => $surat->isRuangan,

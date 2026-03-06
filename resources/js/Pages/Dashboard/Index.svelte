@@ -266,12 +266,12 @@
               </td>
             {/if}
             <td class="px-6 border-t">
-              {#if surat.filepath}
+              {#if surat.link}
                 <button
                   class="rounded bg-[#5661B3] px-4 py-2 text-white hover:bg-[#2F365F]"
                   on:click={(e) => {
                     e.stopPropagation()
-                    downloadFile(surat.filepath)
+                    window.open(surat.link, '_blank')
                   }}>
                   Download
                 </button>
@@ -339,13 +339,13 @@
               </td>
             {/if}
             <td class="px-6 border-t">
-              <div class="flex items-center justify-center">
-                {#if surat.filepath}
+              <div class="flex items-center">
+                {#if surat.link}
                   <button
                     class="rounded bg-[#5661B3] px-4 py-2 text-white hover:bg-[#2F365F]"
                     on:click={(e) => {
                       e.stopPropagation()
-                      downloadFile(surat.filepath)
+                      window.open(surat.link, '_blank')
                     }}>
                     Download
                   </button>
