@@ -16,12 +16,13 @@ class Surat extends Model
         'tujuan',
         'isKonsumsi',
         'isPengelolaan',
-        'filepath',
         'nomor',
         'link',
+        'drive_file_id',
+        'original_filename',
         'isRuangan',
         'isRahasia',
-        'tanggal_pelaksanaan'
+        'tanggal_pelaksanaan',
     ];
 
     public $timestamps = true;
