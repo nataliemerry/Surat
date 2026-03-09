@@ -58,13 +58,6 @@ class SuratController extends Controller
             'kode'                => 'required|string',
             'perihal'             => 'required|string',
             'tujuan'              => 'required|string',
-            'isKonsumsi'          => 'nullable|boolean',
-            'isPengelolaan'       => 'nullable|boolean',
-            'nomor'               => 'nullable|string',
-            'link'                => 'nullable|string',
-            'isRuangan'           => 'nullable|boolean',
-            'isRahasia'           => 'nullable|boolean',
-            'tanggal_pelaksanaan' => 'nullable|date',
         ]);
 
         $formattedNomor = DB::transaction(function () use ($validated) {
@@ -95,8 +88,13 @@ class SuratController extends Controller
     {
         $request->validate([
             'nomor' => 'required|string',
-            'file'  => 'required|file|mimes:docx,pdf|max:10240',
-        ]);
+                'file'  => 'required|file|mimes:docx,pdf|max:1024',
+        ],
+        [
+            'file.max' => 'Ukuran file tidak boleh lebih dari 1 MB.',
+            'file.mimes' => 'File harus berupa PDF atau DOCX.',
+        ]
+        );
 
         $surat = Surat::where('nomor', $request->nomor)
             ->where('type', 1)
@@ -139,9 +137,13 @@ class SuratController extends Controller
             'kode'    => 'required|string',
             'perihal' => 'required|string',
             'tujuan'  => 'required|string',
-            'nomor'   => 'nullable|string',
-            'file'    => 'nullable|file|mimes:docx,pdf|max:10240',
-        ]);
+            'file'    => 'nullable|file|mimes:docx,pdf|max:1024',
+        ],
+        [
+            'file.max' => 'Ukuran file tidak boleh lebih dari 1 MB.',
+            'file.mimes' => 'File harus berupa PDF atau DOCX.',
+        ]
+        );
 
         if ($request->hasFile('file')) {
             $file      = $request->file('file');
@@ -184,10 +186,7 @@ class SuratController extends Controller
             'isRuangan'           => 'required|boolean',
             'isKonsumsi'          => 'required|boolean',
             'isPengelolaan'       => 'required|boolean',
-            'nomor'               => 'nullable|string',
-            'link'                => 'nullable|string',
             'tanggal_pelaksanaan' => 'required|date',
-            'file'                => 'nullable|file|mimes:docx,pdf|max:10240',
         ]);
 
         [$formattedNomor, $surat] = DB::transaction(function () use ($validated) {
@@ -224,8 +223,13 @@ class SuratController extends Controller
     {
         $request->validate([
             'nomor' => 'required|string',
-            'file'  => 'required|file|mimes:docx,pdf|max:10240',
-        ]);
+                'file'  => 'required|file|mimes:docx,pdf|max:1024',
+        ],
+        [
+            'file.max' => 'Ukuran file tidak boleh lebih dari 1 MB.',
+            'file.mimes' => 'File harus berupa PDF atau DOCX.',
+        ]
+        );
 
         $surat = Surat::where('nomor', $request->nomor)
             ->where('type', 2)
@@ -273,14 +277,17 @@ class SuratController extends Controller
             'isRahasia'           => 'required|boolean',
             'perihal'             => 'required|string',
             'tujuan'              => 'required|string',
-            'isKonsumsi'          => 'nullable|boolean',
-            'isPengelolaan'       => 'nullable|boolean',
-            'isRuangan'           => 'nullable|boolean',
-            'nomor'               => 'nullable|string',
-            'link'                => 'nullable|string',
-            'tanggal_pelaksanaan' => 'nullable|date',
-            'file'                => 'nullable|file|mimes:docx,pdf|max:10240',
-        ]);
+            'isKonsumsi'          => 'required|boolean',
+            'isPengelolaan'       => 'required|boolean',
+            'isRuangan'           => 'required|boolean',
+            'tanggal_pelaksanaan' => 'required|date',
+            'file'                => 'nullable|file|mimes:docx,pdf|max:1024',
+        ],
+        [
+            'file.max' => 'Ukuran file tidak boleh lebih dari 1 MB.',
+            'file.mimes' => 'File harus berupa PDF atau DOCX.',
+        ]
+        );
 
         if ($request->hasFile('file')) {
             $file      = $request->file('file');
@@ -320,11 +327,6 @@ class SuratController extends Controller
             'isRahasia'     => 'required|boolean',
             'perihal'       => 'required|string',
             'tujuan'        => 'required|string',
-            'isKonsumsi'    => 'nullable|boolean',
-            'isPengelolaan' => 'nullable|boolean',
-            'nomor'         => 'nullable|string',
-            'link'          => 'nullable|string',
-            'file'          => 'nullable|file|mimes:docx,pdf|max:10240',
         ]);
 
         [$formattedNomor, $surat] = DB::transaction(function () use ($validated) {
@@ -361,8 +363,13 @@ class SuratController extends Controller
     {
         $request->validate([
             'nomor' => 'required|string',
-            'file'  => 'required|file|mimes:docx,pdf|max:10240',
-        ]);
+                'file'  => 'required|file|mimes:docx,pdf|max:1024',
+        ],
+        [
+            'file.max' => 'Ukuran file tidak boleh lebih dari 1 MB.',
+            'file.mimes' => 'File harus berupa PDF atau DOCX.',
+        ]
+        );
 
         $surat = Surat::where('nomor', $request->nomor)
             ->where('type', 3)
@@ -403,12 +410,10 @@ class SuratController extends Controller
         $validated = $request->validate([
             'type'      => 'required|integer',
             'kode'      => 'required|string',
-            'isRahasia' => 'nullable|boolean',
+            'isRahasia' => 'required|boolean',
             'perihal'   => 'required|string',
             'tujuan'    => 'required|string',
-            'nomor'     => 'nullable|string',
-            'link'      => 'nullable|string',
-            'file'      => 'nullable|file|mimes:docx,pdf|max:10240',
+            'file'      => 'nullable|file|mimes:docx,pdf|max:1024',
         ]);
 
         if ($request->hasFile('file')) {
