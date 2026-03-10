@@ -57,7 +57,6 @@ Route::get('/img/{path}', [ImagesController::class, 'show'])
 Route::get('/surat', [DashboardController::class, 'index'])
     ->name('dashboard');
 
-// ─── Surat Tugas ──────────────────────────────────────────────────────────────
 Route::prefix('surat/tugas')->group(function () {
     Route::get('/', [SuratController::class, 'optionSuratTugas'])->name('surat.tugas.index');
     Route::get('/form', [SuratController::class, 'formSuratTugas'])->name('surat.tugas.form');
@@ -69,7 +68,6 @@ Route::prefix('surat/tugas')->group(function () {
     Route::delete('/{surat}', [SuratController::class, 'destroySuratTugas'])->name('surat.tugas.destroy')->middleware('auth');
 });
 
-// ─── Surat Undangan ───────────────────────────────────────────────────────────
 Route::prefix('surat/undangan')->group(function () {
     Route::get('/', [SuratController::class, 'optionSuratUndangan'])->name('surat.undangan.index');
     Route::get('/form', [SuratController::class, 'formSuratUndangan'])->name('surat.undangan.form');
@@ -81,7 +79,6 @@ Route::prefix('surat/undangan')->group(function () {
     Route::delete('/{surat}', [SuratController::class, 'destroySuratUndangan'])->name('surat.undangan.destroy')->middleware('auth');
 });
 
-// ─── Surat Dinas ──────────────────────────────────────────────────────────────
 Route::prefix('surat/dinas')->group(function () {
     Route::get('/', [SuratController::class, 'optionSuratDinas'])->name('surat.dinas.index');
     Route::get('/form', [SuratController::class, 'formSuratDinas'])->name('surat.dinas.form');
@@ -93,7 +90,6 @@ Route::prefix('surat/dinas')->group(function () {
     Route::delete('/{surat}', [SuratController::class, 'destroySuratDinas'])->name('surat.dinas.destroy')->middleware('auth');
 });
 
-// ─── ATK ──────────────────────────────────────────────────────────────────────
 Route::prefix('atk')->group(function () {
     Route::get('/form', [App\Http\Controllers\AtkController::class, 'form'])->name('atk.form');
     Route::post('/store', [App\Http\Controllers\AtkController::class, 'store'])->name('atk.store');

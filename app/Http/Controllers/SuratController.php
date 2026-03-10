@@ -44,11 +44,9 @@ class SuratController extends Controller
             ])->toArray();
     }
 
-    // ─── Surat Tugas ──────────────────────────────────────────────────────────
-
     public function formSuratTugas(): Response
     {
-        return Inertia::render('Surat/Tugas/form', ['kode' => $this->kodeOptions()]);
+        return Inertia::render('Surat/Tugas/Form', ['kode' => $this->kodeOptions()]);
     }
 
     public function storeSuratTugas(Request $request): RedirectResponse
@@ -81,9 +79,6 @@ class SuratController extends Controller
         return Inertia::render('Surat/Tugas/Upload');
     }
 
-    /**
-     * Upload file ke Drive untuk surat tugas yang sudah dibuat (via halaman upload).
-     */
     public function updateSuratTugas(Request $request): RedirectResponse
     {
         $request->validate([
