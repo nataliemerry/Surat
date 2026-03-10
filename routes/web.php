@@ -3,6 +3,7 @@
 use App\Http\Controllers\Auth\AuthenticatedSessionController;
 use App\Http\Controllers\ContactsController;
 use App\Http\Controllers\DashboardController;
+use App\Http\Controllers\HomeController;
 use App\Http\Controllers\ImagesController;
 use App\Http\Controllers\OrganizationsController;
 use App\Http\Controllers\ReportsController;
@@ -10,6 +11,9 @@ use App\Http\Controllers\SuratController;
 use App\Http\Controllers\UsersController;
 use Illuminate\Support\Facades\Route;
 
+
+Route::get('/', [HomeController::class, 'index'])
+    ->name('home');
 
 Route::get('login', [AuthenticatedSessionController::class, 'create'])
     ->name('login')
@@ -91,6 +95,7 @@ Route::prefix('surat/dinas')->group(function () {
 });
 
 Route::prefix('atk')->group(function () {
+    Route::get('/', [App\Http\Controllers\AtkController::class, 'index'])->name('atk.index');
     Route::get('/form', [App\Http\Controllers\AtkController::class, 'form'])->name('atk.form');
     Route::post('/store', [App\Http\Controllers\AtkController::class, 'store'])->name('atk.store');
 });

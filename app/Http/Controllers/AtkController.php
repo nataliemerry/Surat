@@ -10,6 +10,11 @@ use Illuminate\Support\Facades\Redirect;
 
 class AtkController extends Controller
 {
+    public function index(): Response
+    {
+        return Inertia::render('Atk/Index');
+    }
+
     public function form(): Response
     {
         return Inertia::render('Atk/form');
