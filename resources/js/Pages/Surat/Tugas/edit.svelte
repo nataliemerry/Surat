@@ -50,7 +50,7 @@
   }
 
   function update() {
-    $form.post(`/surat-tugas/${surat.id}`, {
+    $form.post(`/surat/tugas/${surat.id}`, {
       forceFormData: true,
     })
   }

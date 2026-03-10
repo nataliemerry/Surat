@@ -22,9 +22,6 @@ Route::post('login', [AuthenticatedSessionController::class, 'store'])
 Route::delete('logout', [AuthenticatedSessionController::class, 'destroy'])
     ->name('logout');
 
-Route::get('/', [DashboardController::class, 'index'])
-    ->name('dashboard');
-
 Route::get('users', [UsersController::class, 'index'])
     ->name('users')
     ->middleware('auth');
@@ -57,83 +54,47 @@ Route::get('/img/{path}', [ImagesController::class, 'show'])
     ->where('path', '.*')
     ->name('image');
 
-Route::get('/surat-tugas', [SuratController::class, 'optionSuratTugas'])
-    ->name('option.surat-tugas');
+Route::get('/surat', [DashboardController::class, 'index'])
+    ->name('dashboard');
 
-Route::get('/surat-dinas', [SuratController::class, 'optionSuratDinas'])
-    ->name('option.surat-dinas');
+// ─── Surat Tugas ──────────────────────────────────────────────────────────────
+Route::prefix('surat/tugas')->group(function () {
+    Route::get('/', [SuratController::class, 'optionSuratTugas'])->name('surat.tugas.index');
+    Route::get('/form', [SuratController::class, 'formSuratTugas'])->name('surat.tugas.form');
+    Route::post('/store', [SuratController::class, 'storeSuratTugas'])->name('surat.tugas.store');
+    Route::get('/upload', [SuratController::class, 'uploadSuratTugas'])->name('surat.tugas.upload');
+    Route::post('/upload', [SuratController::class, 'updateSuratTugas'])->name('surat.tugas.upload.store');
+    Route::get('/{surat}/edit', [SuratController::class, 'editSuratTugas'])->name('surat.tugas.edit')->middleware('auth');
+    Route::put('/{surat}', [SuratController::class, 'editedSuratTugas'])->name('surat.tugas.update')->middleware('auth');
+    Route::delete('/{surat}', [SuratController::class, 'destroySuratTugas'])->name('surat.tugas.destroy')->middleware('auth');
+});
 
-Route::get('/surat-undangan', [SuratController::class, 'optionSuratUndangan'])
-    ->name('option.surat-undangan');
+// ─── Surat Undangan ───────────────────────────────────────────────────────────
+Route::prefix('surat/undangan')->group(function () {
+    Route::get('/', [SuratController::class, 'optionSuratUndangan'])->name('surat.undangan.index');
+    Route::get('/form', [SuratController::class, 'formSuratUndangan'])->name('surat.undangan.form');
+    Route::post('/store', [SuratController::class, 'storeSuratUndangan'])->name('surat.undangan.store');
+    Route::get('/upload', [SuratController::class, 'uploadSuratUndangan'])->name('surat.undangan.upload');
+    Route::post('/upload', [SuratController::class, 'updateSuratUndangan'])->name('surat.undangan.upload.store');
+    Route::get('/{surat}/edit', [SuratController::class, 'editSuratUndangan'])->name('surat.undangan.edit')->middleware('auth');
+    Route::put('/{surat}', [SuratController::class, 'editedSuratUndangan'])->name('surat.undangan.update')->middleware('auth');
+    Route::delete('/{surat}', [SuratController::class, 'destroySuratUndangan'])->name('surat.undangan.destroy')->middleware('auth');
+});
 
-Route::get('/surat-dinas/form', [SuratController::class, 'formSuratDinas'])
-    ->name('form.surat.dinas');
+// ─── Surat Dinas ──────────────────────────────────────────────────────────────
+Route::prefix('surat/dinas')->group(function () {
+    Route::get('/', [SuratController::class, 'optionSuratDinas'])->name('surat.dinas.index');
+    Route::get('/form', [SuratController::class, 'formSuratDinas'])->name('surat.dinas.form');
+    Route::post('/store', [SuratController::class, 'storeSuratDinas'])->name('surat.dinas.store');
+    Route::get('/upload', [SuratController::class, 'uploadSuratDinas'])->name('surat.dinas.upload');
+    Route::post('/upload', [SuratController::class, 'updateSuratDinas'])->name('surat.dinas.upload.store');
+    Route::get('/{surat}/edit', [SuratController::class, 'editSuratDinas'])->name('surat.dinas.edit')->middleware('auth');
+    Route::put('/{surat}', [SuratController::class, 'editedSuratDinas'])->name('surat.dinas.update')->middleware('auth');
+    Route::delete('/{surat}', [SuratController::class, 'destroySuratDinas'])->name('surat.dinas.destroy')->middleware('auth');
+});
 
-Route::get('/surat-undangan/form', [SuratController::class, 'formSuratUndangan'])
-    ->name('form.surat.undangan');
-
-Route::get('/surat-tugas/form', [SuratController::class, 'formSuratTugas'])
-    ->name('form.surat.tugas');
-
-Route::get('/surat-dinas/upload-surat', [SuratController::class, 'uploadSuratDinas'])
-    ->name('surat-dinas.upload-surat');
-
-Route::get('/surat-undangan/upload-surat', [SuratController::class, 'uploadSuratUndangan'])
-    ->name('surat-undangan.upload-surat');
-
-Route::get('/surat-tugas/upload-surat', [SuratController::class, 'uploadSuratTugas'])
-    ->name('surat-tugas.upload-surat');
-
-Route::post('/surat-dinas/create', [SuratController::class, 'storeSuratDinas'])
-    ->name('surat.store.dinas');
-
-Route::post('/surat-undangan/create', [SuratController::class, 'storeSuratUndangan'])
-    ->name('surat.store.undangan');
-
-Route::post('/surat-tugas/create', [SuratController::class, 'storeSuratTugas'])
-    ->name('surat.store.tugas');
-
-Route::post('/surat-tugas/update', [SuratController::class, 'updateSuratTugas'])
-    ->name('surat.update.tugas');
-
-Route::post('/surat-undangan/update', [SuratController::class, 'updateSuratUndangan'])
-    ->name('surat.update.undangan');
-
-Route::post('/surat-dinas/update', [SuratController::class, 'updateSuratDinas'])
-    ->name('surat.update.dinas');
-
-Route::put('surat-tugas/{surat}', [SuratController::class, 'editedSuratTugas'])
-    ->name('surat-tugas.update')
-    ->middleware('auth');
-
-Route::get('surat-tugas/{surat}/edit', [SuratController::class, 'editSuratTugas'])
-    ->name('surat-tugas.edit')
-    ->middleware('auth');
-
-Route::delete('surat-tugas/{surat}', [SuratController::class, 'destroySuratTugas'])
-    ->name('surat-tugas.destroy')
-    ->middleware('auth');
-
-Route::get('surat-undangan/{surat}/edit', [SuratController::class, 'editSuratUndangan'])
-    ->name('surat-undangan.edit')
-    ->middleware('auth');
-
-Route::put('surat-undangan/{surat}', [SuratController::class, 'editedSuratUndangan'])
-    ->name('surat-undangan.update')
-    ->middleware('auth');
-
-Route::delete('surat-undangan/{surat}', [SuratController::class, 'destroySuratUndangan'])
-    ->name('surat-undangan.destroy')
-    ->middleware('auth');
-
-Route::get('surat-dinas/{surat}/edit', [SuratController::class, 'editSuratDinas'])
-    ->name('surat-dinas.edit')
-    ->middleware('auth');
-
-Route::put('surat-dinas/{surat}', [SuratController::class, 'editedSuratDinas'])
-    ->name('surat-dinas.update')
-    ->middleware('auth');
-
-Route::delete('surat-dinas/{surat}', [SuratController::class, 'destroySuratDinas'])
-    ->name('surat-dinas.destroy')
-    ->middleware('auth');
+// ─── ATK ──────────────────────────────────────────────────────────────────────
+Route::prefix('atk')->group(function () {
+    Route::get('/form', [App\Http\Controllers\AtkController::class, 'form'])->name('atk.form');
+    Route::post('/store', [App\Http\Controllers\AtkController::class, 'store'])->name('atk.store');
+});
