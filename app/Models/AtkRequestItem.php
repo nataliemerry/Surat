@@ -10,13 +10,13 @@ class AtkRequestItem extends Model
     use HasFactory;
 
     protected $fillable = [
-        'atk_request_id',
+        'request_id',
         'item_id',
         'qty_requested',
     ];
 
     public function request()
     {
-        return $this->belongsTo(AtkRequest::class, 'atk_request_id');
+        return $this->belongsTo(AtkRequest::class, 'request_id');
     }
 }

@@ -1,99 +1,421 @@
 <script context="module">
-  import Layout from '@/Shared/Layout.svelte'
-  export const layout = Layout
+  import LayoutAlatTulis from '@/Shared/LayoutAlatTulis.svelte'
+  export const layout = LayoutAlatTulis
 </script>
 
 <script>
   import { inertia } from '@inertiajs/svelte'
   import { useForm } from '@inertiajs/svelte'
   import LoadingButton from '@/Shared/LoadingButton.svelte'
+  import { onMount } from 'svelte'
+  import { title as pageTitle } from '@/Shared/LayoutAlatTulis.svelte'
+
+  onMount(() => {
+    pageTitle.set('Form Permintaan ATK')
+  })
 
   export let teams = []
   export let categories = []
   export let items = []
 
+  let step = 1
+  let searchQuery = ''
+  let activeCategory = null
+  let showErrors = false
+
+  let cart = {}
+
   const form = useForm({
     requester_name: '',
     team_id: '',
     activity: '',
-    items: [{ item_id: '', qty_requested: 1 }],
+    items: [],
   })
 
-  function addItem() {
-    $form.items = [...$form.items, { item_id: '', qty_requested: 1 }]
+  $: step1Valid = $form.requester_name.trim() !== '' && $form.team_id !== '' && $form.activity.trim() !== ''
+
+  $: filteredItems = items.filter((item) => {
+    const matchSearch = !searchQuery.trim() || item.name.toLowerCase().includes(searchQuery.trim().toLowerCase())
+    const matchCat = activeCategory === null || item.category_id === activeCategory
+    return matchSearch && matchCat
+  })
+
+  $: selectedItems = Object.entries(cart)
+    .filter(([, qty]) => qty > 0)
+    .map(([id, qty]) => {
+      const found = items.find((i) => i.id === parseInt(id))
+      return found ? { ...found, qty_requested: qty } : null
+    })
+    .filter(Boolean)
+
+  $: cartedByCategory = categories.reduce((acc, cat) => {
+    acc[cat.id] = items.filter((i) => i.category_id === cat.id && (cart[i.id] || 0) > 0).length
+    return acc
+  }, {})
+
+  $: selectedTeam = teams.find((t) => t.id == $form.team_id)
+
+  function getQty(item_id) {
+    return cart[item_id] || 0
   }
 
-  function removeItem(index) {
-    $form.items = $form.items.filter((_, i) => i !== index)
+  function toggleItem(item_id) {
+    if (cart[item_id]) {
+      const { [item_id]: _, ...rest } = cart
+      cart = rest
+    } else {
+      cart = { ...cart, [item_id]: 1 }
+    }
+  }
+
+  function setQty(item_id, value) {
+    const num = parseInt(value)
+    if (isNaN(num) || num < 1) {
+      cart = { ...cart, [item_id]: 1 }
+    } else {
+      cart = { ...cart, [item_id]: num }
+    }
+  }
+
+  function increment(item_id) {
+    cart = { ...cart, [item_id]: (cart[item_id] || 1) + 1 }
+  }
+
+  function decrement(item_id) {
+    const cur = cart[item_id] || 1
+    cart = { ...cart, [item_id]: Math.max(1, cur - 1) }
+  }
+
+  function removeFromCart(item_id) {
+    const { [item_id]: _, ...rest } = cart
+    cart = rest
+  }
+
+  function goStep2() {
+    showErrors = true
+    if (!step1Valid) return
+    showErrors = false
+    step = 2
+  }
+
+  function goStep3() {
+    if (selectedItems.length === 0) return
+    step = 3
   }
 
   function submit() {
+    $form.items = selectedItems.map((i) => ({
+      item_id: i.id,
+      qty_requested: i.qty_requested,
+    }))
     $form.post('/atk/store')
   }
 </script>
 
-<h1 class="mb-8 text-3xl font-bold">
-  <a use:inertia href="/" class="text-indigo-400 hover:text-indigo-600">ATK</a>
-  <span class="font-medium text-indigo-400">/</span> Permintaan
-</h1>
+<div class="max-w-5xl">
+  <div class="mb-6">
+    <h1 class="text-3xl font-bold text-gray-800">
+      <a use:inertia href="/atk" class="text-indigo-500 hover:text-indigo-700">ATK</a>
+      <span class="mx-1 font-medium text-indigo-400">/</span>
+      Form Permintaan
+    </h1>
+  </div>
 
-<div class="max-w-3xl overflow-hidden rounded-md bg-white shadow">
-  <form on:submit|preventDefault={submit}>
-    <div class="-mb-8 -mr-6 flex flex-wrap p-8">
-      <div class="w-full pb-8 pr-6">
-        <label class="mb-1 block text-sm font-medium text-gray-700">Nama <span class="text-red-500">*</span></label>
-        <input type="text" bind:value={$form.requester_name} class="w-full rounded border px-3 py-2" required />
-        {#if $form.errors.requester_name}
-          <p class="mt-1 text-sm text-red-500">{$form.errors.requester_name}</p>
-        {/if}
+  <div class="mb-6 flex items-center gap-1">
+    {#each [{ n: 1, label: 'Identitas' }, { n: 2, label: 'Pilih Barang' }, { n: 3, label: 'Review' }] as s}
+      <div class="flex items-center gap-1.5 sm:gap-2">
+        <div
+          class="flex h-7 w-7 items-center justify-center rounded-full text-xs font-bold transition-colors sm:h-8 sm:w-8 sm:text-sm
+            {step > s.n ? 'bg-indigo-600 text-white' : step === s.n ? 'bg-indigo-600 text-white' : 'bg-gray-200 text-gray-400'}">
+          {#if step > s.n}
+            <svg class="h-3.5 w-3.5" fill="none" stroke="currentColor" stroke-width="3" viewBox="0 0 24 24">
+              <path stroke-linecap="round" stroke-linejoin="round" d="M5 13l4 4L19 7" />
+            </svg>
+          {:else}
+            {s.n}
+          {/if}
+        </div>
+        <span class="text-xs font-medium sm:text-sm {step === s.n ? 'text-indigo-700' : step > s.n ? 'text-gray-500' : 'text-gray-400'}">{s.label}</span>
+      </div>
+      {#if s.n < 3}
+        <div class="mx-1 h-px w-5 flex-shrink-0 transition-colors sm:mx-2 sm:w-8 {step > s.n ? 'bg-indigo-400' : 'bg-gray-300'}"></div>
+      {/if}
+    {/each}
+  </div>
+
+  {#if step === 1}
+    <div class="max-w-2xl overflow-hidden rounded-xl border border-gray-200 bg-white shadow-sm">
+      <div class="border-b border-gray-100 px-5 py-4 sm:px-8 sm:py-5">
+        <h2 class="text-base font-semibold text-gray-800">Data Pengaju</h2>
+        <p class="text-sm text-gray-500">Lengkapi identitas dan tujuan permintaan.</p>
       </div>
 
-      <div class="w-full pb-8 pr-6">
-        <label class="mb-1 block text-sm font-medium text-gray-700">Tim <span class="text-red-500">*</span></label>
-        <select bind:value={$form.team_id} class="w-full rounded border px-3 py-2" required>
-          <option value="">Pilih Tim</option>
-          {#each teams as team}
-            <option value={team.id}>{team.name}</option>
-          {/each}
-        </select>
-        {#if $form.errors.team_id}
-          <p class="mt-1 text-sm text-red-500">{$form.errors.team_id}</p>
-        {/if}
+      <div class="space-y-5 px-5 py-5 sm:px-8 sm:py-6">
+        <div>
+          <label for="requester_name" class="mb-1 block text-sm font-medium text-gray-700">
+            Nama Pengaju <span class="text-red-500">*</span>
+          </label>
+          <input id="requester_name" type="text" bind:value={$form.requester_name} placeholder="Masukkan nama lengkap Anda" class="form-input {showErrors && !$form.requester_name.trim() ? 'error' : ''}" />
+          {#if showErrors && !$form.requester_name.trim()}
+            <p class="form-error">Nama tidak boleh kosong.</p>
+          {:else if $form.errors.requester_name}
+            <p class="form-error">{$form.errors.requester_name}</p>
+          {/if}
+        </div>
+
+        <div>
+          <label for="team_id" class="mb-1 block text-sm font-medium text-gray-700">
+            Tim <span class="text-red-500">*</span>
+          </label>
+          <select id="team_id" bind:value={$form.team_id} class="form-select {showErrors && !$form.team_id ? 'error' : ''}">
+            <option value="">Pilih Tim Kerja </option>
+            {#each teams as team}
+              <option value={team.id}>{team.name}</option>
+            {/each}
+          </select>
+          {#if showErrors && !$form.team_id}
+            <p class="form-error">Tim Kerja harus dipilih.</p>
+          {:else if $form.errors.team_id}
+            <p class="form-error">{$form.errors.team_id}</p>
+          {/if}
+        </div>
+
+        <div>
+          <label for="activity" class="mb-1 block text-sm font-medium text-gray-700">
+            Nama Kegiatan <span class="text-red-500">*</span>
+          </label>
+          <input id="activity" type="text" bind:value={$form.activity} placeholder="Contoh: Susenas, Pengolahan, dll" class="form-input {showErrors && !$form.activity.trim() ? 'error' : ''}" />
+          {#if showErrors && !$form.activity.trim()}
+            <p class="form-error">Nama kegiatan tidak boleh kosong.</p>
+          {:else if $form.errors.activity}
+            <p class="form-error">{$form.errors.activity}</p>
+          {/if}
+        </div>
       </div>
 
-      <div class="w-full pb-8 pr-6">
-        <label class="mb-1 block text-sm font-medium text-gray-700">Kegiatan <span class="text-red-500">*</span></label>
-        <input type="text" bind:value={$form.activity} class="w-full rounded border px-3 py-2" required />
-        {#if $form.errors.activity}
-          <p class="mt-1 text-sm text-red-500">{$form.errors.activity}</p>
-        {/if}
+      <div class="flex items-center justify-end border-t border-gray-100 bg-gray-50 px-5 py-4 sm:px-8">
+        <button type="button" on:click={goStep2} class="btn-indigo">Selanjutnya</button>
+      </div>
+    </div>
+  {/if}
+
+  {#if step === 2}
+    <!-- Mobile: category pill bar on top, desktop: sidebar+panel -->
+    <div class="overflow-hidden rounded-xl border border-gray-200 bg-white shadow-sm">
+      <!-- Toolbar: title + search -->
+      <div class="flex flex-col gap-3 border-b border-gray-100 px-4 py-4 sm:flex-row sm:items-center sm:justify-between sm:px-6">
+        <div>
+          <h2 class="text-base font-semibold text-gray-800">Katalog Barang</h2>
+          <p class="text-sm text-gray-500">Centang barang yang dibutuhkan, lalu atur jumlahnya.</p>
+        </div>
+        <div class="relative w-full sm:w-64">
+          <svg class="pointer-events-none absolute left-3 top-1/2 h-4 w-4 -translate-y-1/2 text-gray-400" fill="none" stroke="currentColor" stroke-width="2" viewBox="0 0 24 24">
+            <circle cx="11" cy="11" r="8" /><path stroke-linecap="round" d="m21 21-4.35-4.35" />
+          </svg>
+          <input type="search" bind:value={searchQuery} placeholder="Cari nama barang..." class="form-input py-2 pl-9 text-sm" />
+        </div>
       </div>
 
-      <div class="w-full pb-4 pr-6">
-        <label class="mb-2 block text-sm font-medium text-gray-700">Daftar Barang <span class="text-red-500">*</span></label>
-        {#each $form.items as item, i}
-          <div class="mb-2 flex gap-2">
-            <select bind:value={item.item_id} class="flex-1 rounded border px-3 py-2" required>
-              <option value="">Pilih Barang</option>
-              {#each categories as cat}
-                <optgroup label={cat.name}>
-                  {#each items.filter((it) => it.category_id === cat.id) as atk_item}
-                    <option value={atk_item.id}>{atk_item.name} ({atk_item.satuan})</option>
-                  {/each}
-                </optgroup>
-              {/each}
-            </select>
-            <input type="number" bind:value={item.qty_requested} min="1" class="w-24 rounded border px-3 py-2" required />
-            {#if $form.items.length > 1}
-              <button type="button" on:click={() => removeItem(i)} class="rounded bg-red-500 px-3 py-2 text-white hover:bg-red-600">-</button>
+      <!-- Mobile: horizontal pill bar for categories -->
+      <div class="flex gap-2 overflow-x-auto border-b border-gray-100 bg-gray-50 px-4 py-2.5 md:hidden">
+        <button
+          type="button"
+          on:click={() => {
+            activeCategory = null
+            searchQuery = ''
+          }}
+          class="shrink-0 rounded-full border px-3 py-1 text-xs font-medium transition
+            {activeCategory === null && !searchQuery ? 'border-indigo-600 bg-indigo-600 text-white' : 'border-gray-200 bg-white text-gray-600 hover:border-indigo-300 hover:text-indigo-600'}">
+          Semua
+        </button>
+        {#each categories as cat}
+          {@const badge = cartedByCategory[cat.id] || 0}
+          <button
+            type="button"
+            on:click={() => {
+              activeCategory = cat.id
+              searchQuery = ''
+            }}
+            class="relative shrink-0 rounded-full border px-3 py-1 text-xs font-medium transition
+              {activeCategory === cat.id ? 'border-indigo-600 bg-indigo-600 text-white' : 'border-gray-200 bg-white text-gray-600 hover:border-indigo-300 hover:text-indigo-600'}">
+            {cat.name}
+            {#if badge > 0}
+              <span class="absolute -right-1 -top-1 flex h-4 w-4 items-center justify-center rounded-full bg-orange-400 text-[9px] font-bold leading-none text-white">{badge}</span>
             {/if}
-          </div>
+          </button>
         {/each}
-        <button type="button" on:click={addItem} class="mt-2 rounded bg-indigo-500 px-4 py-2 text-sm text-white hover:bg-indigo-600">+ Tambah Barang</button>
+      </div>
+
+      <!-- Desktop: sidebar + item panel (fixed height, each scrollable independently) -->
+      <div class="hidden md:flex" style="height: 460px;">
+        <!-- Left sidebar -->
+        <nav class="w-48 shrink-0 overflow-y-auto border-r border-gray-100 bg-gray-50">
+          <button
+            type="button"
+            on:click={() => {
+              activeCategory = null
+              searchQuery = ''
+            }}
+            class="flex w-full items-center justify-between px-4 py-2.5 text-left text-sm transition
+              {activeCategory === null && !searchQuery ? 'bg-indigo-50 font-semibold text-indigo-700' : 'text-gray-600 hover:bg-gray-100 hover:text-gray-900'}">
+            <span>Semua Kategori</span>
+          </button>
+          {#each categories as cat}
+            {@const badge = cartedByCategory[cat.id] || 0}
+            <button
+              type="button"
+              on:click={() => {
+                activeCategory = cat.id
+                searchQuery = ''
+              }}
+              class="flex w-full items-center justify-between px-4 py-2.5 text-left text-sm transition
+                {activeCategory === cat.id ? 'bg-indigo-50 font-semibold text-indigo-700' : 'text-gray-600 hover:bg-gray-100 hover:text-gray-900'}">
+              <span class="leading-tight">{cat.name}</span>
+              {#if badge > 0}
+                <span class="ml-1 shrink-0 rounded-full bg-orange-400 px-1.5 py-0.5 text-[10px] font-bold leading-none text-white">{badge}</span>
+              {/if}
+            </button>
+          {/each}
+        </nav>
+
+        <!-- Right: item list (scrollable) -->
+        <div class="flex-1 overflow-y-auto">
+          {#if filteredItems.length === 0}
+            <div class="flex h-full items-center justify-center py-16 text-center">
+              <div>
+                <svg class="mx-auto mb-3 h-10 w-10 text-gray-200" fill="none" stroke="currentColor" stroke-width="1.5" viewBox="0 0 24 24">
+                  <circle cx="11" cy="11" r="8" /><path stroke-linecap="round" d="m21 21-4.35-4.35" />
+                </svg>
+                <p class="text-sm text-gray-400">Tidak ada barang ditemukan.</p>
+              </div>
+            </div>
+          {:else}
+            <ul class="divide-y divide-gray-100">
+              {#each filteredItems as item (item.id)}
+                <li class="flex items-center gap-4 px-5 py-3 transition-colors {cart[item.id] > 0 ? 'bg-indigo-50' : 'hover:bg-gray-50'}">
+                  <input type="checkbox" id="item-d-{item.id}" checked={cart[item.id] > 0} on:change={() => toggleItem(item.id)} class="h-4 w-4 shrink-0 cursor-pointer accent-indigo-600" />
+                  <label for="item-d-{item.id}" class="min-w-0 flex-1 cursor-pointer">
+                    <span class="block text-sm font-medium leading-snug {cart[item.id] > 0 ? 'text-indigo-800' : 'text-gray-800'}">{item.name}</span>
+                    <span class="text-[11px] text-gray-400">per {item.satuan}</span>
+                  </label>
+                  {#if cart[item.id] > 0}
+                    <div class="flex shrink-0 items-center overflow-hidden rounded-md border border-gray-300">
+                      <button type="button" on:click={() => decrement(item.id)} class="flex h-8 w-8 select-none items-center justify-center text-base text-gray-500 transition hover:bg-indigo-50 hover:text-indigo-600">−</button>
+                      <input type="text" inputmode="numeric" value={cart[item.id]} on:change={(e) => setQty(item.id, e.target.value)} class="h-8 w-10 border-x border-gray-300 text-center text-sm font-semibold text-gray-800 focus:bg-indigo-50 focus:outline-none" />
+                      <button type="button" on:click={() => increment(item.id)} class="flex h-8 w-8 select-none items-center justify-center text-base text-gray-500 transition hover:bg-indigo-50 hover:text-indigo-600">+</button>
+                    </div>
+                  {:else}
+                    <span class="w-[104px] shrink-0"></span>
+                  {/if}
+                </li>
+              {/each}
+            </ul>
+          {/if}
+        </div>
+      </div>
+
+      <!-- Mobile: item list (no sidebar, just the list below the pill bar) -->
+      <div class="md:hidden" style="max-height: 420px; overflow-y: auto;">
+        {#if filteredItems.length === 0}
+          <div class="py-12 text-center">
+            <svg class="mx-auto mb-3 h-10 w-10 text-gray-200" fill="none" stroke="currentColor" stroke-width="1.5" viewBox="0 0 24 24">
+              <circle cx="11" cy="11" r="8" /><path stroke-linecap="round" d="m21 21-4.35-4.35" />
+            </svg>
+            <p class="text-sm text-gray-400">Tidak ada barang ditemukan.</p>
+          </div>
+        {:else}
+          <ul class="divide-y divide-gray-100">
+            {#each filteredItems as item (item.id)}
+              <li class="flex items-center gap-3 px-4 py-3 transition-colors {cart[item.id] > 0 ? 'bg-indigo-50' : 'hover:bg-gray-50'}">
+                <input type="checkbox" id="item-m-{item.id}" checked={cart[item.id] > 0} on:change={() => toggleItem(item.id)} class="h-4 w-4 shrink-0 cursor-pointer accent-indigo-600" />
+                <label for="item-m-{item.id}" class="min-w-0 flex-1 cursor-pointer">
+                  <span class="block text-sm font-medium leading-snug {cart[item.id] > 0 ? 'text-indigo-800' : 'text-gray-800'}">{item.name}</span>
+                  <span class="text-[11px] text-gray-400">per {item.satuan}</span>
+                </label>
+                {#if cart[item.id] > 0}
+                  <div class="flex shrink-0 items-center overflow-hidden rounded-md border border-gray-300">
+                    <button type="button" on:click={() => decrement(item.id)} class="flex h-8 w-8 select-none items-center justify-center text-base text-gray-500 transition hover:bg-indigo-50 hover:text-indigo-600">−</button>
+                    <input type="text" inputmode="numeric" value={cart[item.id]} on:change={(e) => setQty(item.id, e.target.value)} class="h-8 w-10 border-x border-gray-300 text-center text-sm font-semibold text-gray-800 focus:bg-indigo-50 focus:outline-none" />
+                    <button type="button" on:click={() => increment(item.id)} class="flex h-8 w-8 select-none items-center justify-center text-base text-gray-500 transition hover:bg-indigo-50 hover:text-indigo-600">+</button>
+                  </div>
+                {/if}
+              </li>
+            {/each}
+          </ul>
+        {/if}
+      </div>
+
+      <!-- Footer -->
+      <div class="flex items-center justify-between border-t border-gray-100 bg-gray-50 px-4 py-4 sm:px-6">
+        <button type="button" on:click={() => (step = 1)} class="text-sm text-gray-500 hover:text-gray-700 hover:underline">← Kembali</button>
+        <div class="flex items-center gap-3">
+          {#if selectedItems.length > 0}
+            <span class="hidden text-sm text-gray-500 sm:inline">{selectedItems.length} barang dipilih</span>
+          {/if}
+          <button type="button" on:click={goStep3} disabled={selectedItems.length === 0} class="btn-indigo {selectedItems.length === 0 ? 'cursor-not-allowed opacity-50' : ''}"> Tinjau → </button>
+        </div>
       </div>
     </div>
-    <div class="flex items-center justify-end border-t border-gray-100 bg-gray-50 px-8 py-4">
-      <LoadingButton loading={$form.processing} class="btn-indigo hover:bg-indigo-700" type="submit">Ajukan Permintaan</LoadingButton>
+  {/if}
+
+  {#if step === 3}
+    <div class="max-w-2xl overflow-hidden rounded-xl border border-gray-200 bg-white shadow-sm">
+      <div class="border-b border-gray-100 px-5 py-4 sm:px-8 sm:py-5">
+        <h2 class="text-base font-semibold text-gray-800">Tinjau Permintaan</h2>
+        <p class="text-sm text-gray-500">Pastikan semua data sudah benar sebelum diajukan.</p>
+      </div>
+
+      <div class="divide-y divide-gray-100">
+        <div class="px-5 py-4 sm:px-8 sm:py-5">
+          <h3 class="mb-3 text-xs font-semibold uppercase tracking-wide text-gray-400">Identitas</h3>
+          <dl class="space-y-2 text-sm">
+            <div class="flex gap-4">
+              <dt class="w-32 shrink-0 text-gray-500">Nama Pengaju</dt>
+              <dd class="font-medium text-gray-800">{$form.requester_name}</dd>
+            </div>
+            <div class="flex gap-4">
+              <dt class="w-32 shrink-0 text-gray-500">Tim</dt>
+              <dd class="font-medium capitalize text-gray-800">{selectedTeam?.name ?? '-'}</dd>
+            </div>
+            <div class="flex gap-4">
+              <dt class="w-32 shrink-0 text-gray-500">Kegiatan</dt>
+              <dd class="font-medium text-gray-800">{$form.activity}</dd>
+            </div>
+          </dl>
+        </div>
+
+        <div class="px-5 py-4 sm:px-8 sm:py-5">
+          <h3 class="mb-3 text-xs font-semibold uppercase tracking-wide text-gray-400">
+            Daftar Barang ({selectedItems.length} item)
+          </h3>
+          <ul class="space-y-2">
+            {#each selectedItems as si, i}
+              <li class="flex items-center gap-3 rounded-lg border border-gray-100 bg-gray-50 px-4 py-2.5">
+                <span class="flex h-6 w-6 shrink-0 items-center justify-center rounded-full bg-indigo-100 text-xs font-bold text-indigo-600">{i + 1}</span>
+                <span class="flex-1 text-sm text-gray-800">{si.name}</span>
+                <span class="shrink-0 rounded-full bg-indigo-100 px-2.5 py-0.5 text-xs font-semibold text-indigo-700">
+                  {si.qty_requested}
+                  {si.satuan}
+                </span>
+                <button type="button" on:click={() => removeFromCart(si.id)} class="shrink-0 text-gray-300 transition hover:text-red-500" title="Hapus">✕</button>
+              </li>
+            {/each}
+          </ul>
+        </div>
+      </div>
+
+      {#if $form.errors.items}
+        <div class="px-5 pb-4 sm:px-8">
+          <p class="form-error">{$form.errors.items}</p>
+        </div>
+      {/if}
+
+      <div class="flex items-center justify-between border-t border-gray-100 bg-gray-50 px-5 py-4 sm:px-8">
+        <button type="button" on:click={() => (step = 2)} class="text-sm text-gray-500 hover:text-gray-700 hover:underline">Kembali</button>
+        <form on:submit|preventDefault={submit}>
+          <LoadingButton loading={$form.processing} class="btn-indigo" type="submit">Ajukan Permintaan</LoadingButton>
+        </form>
+      </div>
     </div>
-  </form>
+  {/if}
 </div>

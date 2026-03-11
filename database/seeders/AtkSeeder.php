@@ -12,7 +12,7 @@ class AtkSeeder extends Seeder
     public function run(): void
     {
         // ATK Teams
-        $teams = ['distribusi', 'produksi', 'ipds', 'nerwilis', 'sosial umum'];
+        $teams = ['Distribusi', 'Produksi', 'IPDS', 'Nerwilis', 'Sosial', 'Umum'];
         foreach ($teams as $team) {
             AtkTeam::firstOrCreate(['name' => $team]);
         }

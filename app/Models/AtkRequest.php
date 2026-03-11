@@ -18,6 +18,6 @@ class AtkRequest extends Model
 
     public function items()
     {
-        return $this->hasMany(AtkRequestItem::class);
+        return $this->hasMany(AtkRequestItem::class, 'request_id');
     }
 }

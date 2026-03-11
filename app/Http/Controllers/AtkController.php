@@ -17,7 +17,11 @@ class AtkController extends Controller
 
     public function form(): Response
     {
-        return Inertia::render('Atk/form');
+        return Inertia::render('Atk/form', [
+            'teams'      => \App\Models\AtkTeam::orderBy('name')->get(),
+            'categories' => \App\Models\AtkCategory::orderBy('name')->get(),
+            'items'      => \App\Models\AtkItem::orderBy('name')->get(),
+        ]);
     }
 
     public function store(Request $request): RedirectResponse
