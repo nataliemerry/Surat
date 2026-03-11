@@ -18,10 +18,104 @@
   export let categories = []
   export let items = []
 
+  const staffNames = [
+    'Kus Haryono, S.Si., M.Si',
+    'Ahmad Taufiq, S.ST, M.M.',
+    'Akhmad Wahyudin',
+    'Alfitri Suryaningsih, S.Si., MA',
+    'Ali Gufront, B.St.',
+    'Andry Sulistyo, S.E.',
+    'Ari Nurvitasari, S.ST.',
+    'Bagus Budiarta',
+    'Basuki Abdullah',
+    'Clara Sherly Rifera Putri, S.ST.',
+    'Diana Larasati, S.Si., M.M.',
+    'Eko Hermawati Agustin Setiyaningrum, S.ST., M.E.',
+    'Eko Indarmawan, A.Md.',
+    'Etania Harum Yonanda, S.ST., M.Ec.Dev.',
+    'Fardiana, S.P.',
+    'Fetia Nursih Handayani, S.P.',
+    'Fitri Hapsari, A.Md.',
+    'Handy Wida Suryanto',
+    'Heny Widiastuti, S.ST., M.Sc.',
+    'Hevi Dwi Susanti, S.E.',
+    'J. Enggar Catur Septiono',
+    'Jadhi Kurniawan HS',
+    'Joko Permono',
+    'Joko Prasetiyo, S.ST., M.Si.',
+    'Khairunnisa Dewi Maharani, S.Tr.Stat.',
+    'Lucky Kurniati, S.ST.',
+    'Lutfiah Adela Arzie, S.ST.',
+    'Mevi Purbiyanto, A.Md.',
+    'Muhamad Muhklasin',
+    'Munfiati Lestari, S.Si.',
+    'Nanda Buanita Addien',
+    'Nur Samsul Bichan',
+    'Okder Insantri',
+    'Ossy Sanityasa Rahajeng, S.Tr.Stat.',
+    'Ratih Kusuma Dewi, S.ST., M.Si.',
+    'Restu Asih Trianto, S.ST., M.M.',
+    'Retno Puji Kartinindyah, A.Md.',
+    'Rika Dwi Apriliyanti',
+    'Rina Arifatul Khoridah, S.ST.',
+    'Sadjana Yoga Hidayat, S.Si.',
+    'Septania Ayu Wardhani, S.ST.',
+    'Setyo Dwi Kuncoro',
+    'Slamet Subagyo',
+    'Sofa Nur Khamama, S.ST.',
+    'Suroso, S.E.',
+    'Tri Murni Hati Khasanah, S.ST.',
+    "Verliya Gadis Rhoma'idah, S.ST.",
+    'Wahyu Herry Wibowo, S.ST., M.E.',
+    'Yuli Cahyono, S.M.',
+    'Yuliana Himmatul Ulya, A.Md.',
+    'Septi Nurhayati',
+    'Muhamad Azis',
+    'Muttaqin',
+    'Misbachul Munir',
+    'Rahayu Rachmawati, S.ST., M.Si.',
+  ]
+
   let step = 1
   let searchQuery = ''
   let activeCategory = null
   let showErrors = false
+
+  let nameQuery = ''
+  let nameDropdownOpen = false
+  let nameHighlightIdx = -1
+
+  $: nameFilteredList = nameQuery.trim() ? staffNames.filter((n) => n.toLowerCase().includes(nameQuery.trim().toLowerCase())) : staffNames
+
+  function selectStaffName(name) {
+    $form.requester_name = name
+    nameQuery = name
+    nameDropdownOpen = false
+    nameHighlightIdx = -1
+  }
+
+  function onNameInput(e) {
+    nameQuery = e.target.value
+    $form.requester_name = e.target.value
+    nameDropdownOpen = true
+    nameHighlightIdx = -1
+  }
+
+  function onNameKeydown(e) {
+    if (!nameDropdownOpen || nameFilteredList.length === 0) return
+    if (e.key === 'ArrowDown') {
+      e.preventDefault()
+      nameHighlightIdx = Math.min(nameHighlightIdx + 1, nameFilteredList.length - 1)
+    } else if (e.key === 'ArrowUp') {
+      e.preventDefault()
+      nameHighlightIdx = Math.max(nameHighlightIdx - 1, 0)
+    } else if (e.key === 'Enter' && nameHighlightIdx >= 0) {
+      e.preventDefault()
+      selectStaffName(nameFilteredList[nameHighlightIdx])
+    } else if (e.key === 'Escape') {
+      nameDropdownOpen = false
+    }
+  }
 
   let cart = {}
 
@@ -146,16 +240,44 @@
   {#if step === 1}
     <div class="max-w-2xl overflow-hidden rounded-xl border border-gray-200 bg-white shadow-sm">
       <div class="border-b border-gray-100 px-5 py-4 sm:px-8 sm:py-5">
-        <h2 class="text-base font-semibold text-gray-800">Data Pengaju</h2>
+        <h2 class="text-base font-semibold text-gray-800">Data Pemohon</h2>
         <p class="text-sm text-gray-500">Lengkapi identitas dan tujuan permintaan.</p>
       </div>
 
       <div class="space-y-5 px-5 py-5 sm:px-8 sm:py-6">
         <div>
           <label for="requester_name" class="mb-1 block text-sm font-medium text-gray-700">
-            Nama Pengaju <span class="text-red-500">*</span>
+            Nama Pemohon <span class="text-red-500">*</span>
           </label>
-          <input id="requester_name" type="text" bind:value={$form.requester_name} placeholder="Masukkan nama lengkap Anda" class="form-input {showErrors && !$form.requester_name.trim() ? 'error' : ''}" />
+          <div class="relative">
+            <input
+              id="requester_name"
+              type="text"
+              value={nameQuery}
+              on:input={onNameInput}
+              on:focus={() => {
+                nameDropdownOpen = true
+              }}
+              on:keydown={onNameKeydown}
+              on:blur={() =>
+                setTimeout(() => {
+                  nameDropdownOpen = false
+                }, 150)}
+              placeholder="Cari atau ketik nama pemohon..."
+              autocomplete="off"
+              class="form-input {showErrors && !$form.requester_name.trim() ? 'error' : ''}" />
+            {#if nameDropdownOpen && nameFilteredList.length > 0}
+              <ul class="absolute z-20 mt-1 max-h-56 w-full overflow-y-auto rounded-lg border border-gray-200 bg-white text-sm shadow-lg">
+                {#each nameFilteredList as name, i}
+                  <li>
+                    <button type="button" on:mousedown|preventDefault={() => selectStaffName(name)} class="w-full px-4 py-2 text-left transition-colors {i === nameHighlightIdx ? 'bg-indigo-50 font-medium text-indigo-700' : 'text-gray-700 hover:bg-gray-50'}">
+                      {name}
+                    </button>
+                  </li>
+                {/each}
+              </ul>
+            {/if}
+          </div>
           {#if showErrors && !$form.requester_name.trim()}
             <p class="form-error">Nama tidak boleh kosong.</p>
           {:else if $form.errors.requester_name}
@@ -200,9 +322,7 @@
   {/if}
 
   {#if step === 2}
-    <!-- Mobile: category pill bar on top, desktop: sidebar+panel -->
     <div class="overflow-hidden rounded-xl border border-gray-200 bg-white shadow-sm">
-      <!-- Toolbar: title + search -->
       <div class="flex flex-col gap-3 border-b border-gray-100 px-4 py-4 sm:flex-row sm:items-center sm:justify-between sm:px-6">
         <div>
           <h2 class="text-base font-semibold text-gray-800">Katalog Barang</h2>
@@ -216,7 +336,6 @@
         </div>
       </div>
 
-      <!-- Mobile: horizontal pill bar for categories -->
       <div class="flex gap-2 overflow-x-auto border-b border-gray-100 bg-gray-50 px-4 py-2.5 md:hidden">
         <button
           type="button"
@@ -246,9 +365,7 @@
         {/each}
       </div>
 
-      <!-- Desktop: sidebar + item panel (fixed height, each scrollable independently) -->
       <div class="hidden md:flex" style="height: 460px;">
-        <!-- Left sidebar -->
         <nav class="w-48 shrink-0 overflow-y-auto border-r border-gray-100 bg-gray-50">
           <button
             type="button"
@@ -278,7 +395,6 @@
           {/each}
         </nav>
 
-        <!-- Right: item list (scrollable) -->
         <div class="flex-1 overflow-y-auto">
           {#if filteredItems.length === 0}
             <div class="flex h-full items-center justify-center py-16 text-center">
@@ -314,7 +430,6 @@
         </div>
       </div>
 
-      <!-- Mobile: item list (no sidebar, just the list below the pill bar) -->
       <div class="md:hidden" style="max-height: 420px; overflow-y: auto;">
         {#if filteredItems.length === 0}
           <div class="py-12 text-center">
@@ -345,7 +460,6 @@
         {/if}
       </div>
 
-      <!-- Footer -->
       <div class="flex items-center justify-between border-t border-gray-100 bg-gray-50 px-4 py-4 sm:px-6">
         <button type="button" on:click={() => (step = 1)} class="text-sm text-gray-500 hover:text-gray-700 hover:underline">← Kembali</button>
         <div class="flex items-center gap-3">
@@ -370,7 +484,7 @@
           <h3 class="mb-3 text-xs font-semibold uppercase tracking-wide text-gray-400">Identitas</h3>
           <dl class="space-y-2 text-sm">
             <div class="flex gap-4">
-              <dt class="w-32 shrink-0 text-gray-500">Nama Pengaju</dt>
+              <dt class="w-32 shrink-0 text-gray-500">Nama Pemohon</dt>
               <dd class="font-medium text-gray-800">{$form.requester_name}</dd>
             </div>
             <div class="flex gap-4">
