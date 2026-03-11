@@ -90,4 +90,74 @@ class AtkController extends Controller
 
         return Redirect::route('atk.index')->with('success', 'Permintaan ATK telah disetujui.');
     }
+
+    public function kelola(): Response
+    {
+        return Inertia::render('Atk/kelola', [
+            'categories' => \App\Models\AtkCategory::withCount('items')->orderBy('name')->get()->map(fn($c) => [
+                'id'          => $c->id,
+                'name'        => $c->name,
+                'items_count' => $c->items_count,
+            ]),
+            'items' => \App\Models\AtkItem::with('category')->orderBy('name')->get()->map(fn($i) => [
+                'id'          => $i->id,
+                'name'        => $i->name,
+                'satuan'      => $i->satuan,
+                'category_id' => $i->category_id,
+                'category'    => $i->category ? ['id' => $i->category->id, 'name' => $i->category->name] : null,
+            ]),
+        ]);
+    }
+
+    public function storeCategory(Request $request): RedirectResponse
+    {
+        $validated = $request->validate([
+            'name' => 'required|string|max:255|unique:atk_categories,name',
+        ]);
+        \App\Models\AtkCategory::create(['name' => $validated['name']]);
+        return Redirect::route('atk.barang')->with('success', 'Kategori berhasil ditambahkan.');
+    }
+
+    public function updateCategory(Request $request, \App\Models\AtkCategory $category): RedirectResponse
+    {
+        $validated = $request->validate([
+            'name' => 'required|string|max:255|unique:atk_categories,name,' . $category->id,
+        ]);
+        $category->update(['name' => $validated['name']]);
+        return Redirect::route('atk.barang')->with('success', 'Kategori berhasil diperbarui.');
+    }
+
+    public function destroyCategory(\App\Models\AtkCategory $category): RedirectResponse
+    {
+        $category->delete();
+        return Redirect::route('atk.barang')->with('success', 'Kategori beserta barangnya berhasil dihapus.');
+    }
+
+    public function storeItem(Request $request): RedirectResponse
+    {
+        $validated = $request->validate([
+            'category_id' => 'required|integer|exists:atk_categories,id',
+            'name'        => 'required|string|max:255',
+            'satuan'      => 'required|string|max:50',
+        ]);
+        \App\Models\AtkItem::create($validated);
+        return Redirect::route('atk.barang')->with('success', 'Barang berhasil ditambahkan.');
+    }
+
+    public function updateItem(Request $request, \App\Models\AtkItem $item): RedirectResponse
+    {
+        $validated = $request->validate([
+            'category_id' => 'required|integer|exists:atk_categories,id',
+            'name'        => 'required|string|max:255',
+            'satuan'      => 'required|string|max:50',
+        ]);
+        $item->update($validated);
+        return Redirect::route('atk.barang')->with('success', 'Barang berhasil diperbarui.');
+    }
+
+    public function destroyItem(\App\Models\AtkItem $item): RedirectResponse
+    {
+        $item->delete();
+        return Redirect::route('atk.barang')->with('success', 'Barang berhasil dihapus.');
+    }
 }

@@ -99,4 +99,14 @@ Route::prefix('atk')->group(function () {
     Route::get('/form', [App\Http\Controllers\AtkController::class, 'form'])->name('atk.form');
     Route::post('/store', [App\Http\Controllers\AtkController::class, 'store'])->name('atk.store');
     Route::put('/{atkRequest}/approve', [App\Http\Controllers\AtkController::class, 'approve'])->name('atk.approve')->middleware('auth');
+
+    Route::middleware('auth')->group(function () {
+        Route::get('/barang', [App\Http\Controllers\AtkController::class, 'kelola'])->name('atk.barang');
+        Route::post('/barang/kategori', [App\Http\Controllers\AtkController::class, 'storeCategory'])->name('atk.barang.kategori.store');
+        Route::put('/barang/kategori/{category}', [App\Http\Controllers\AtkController::class, 'updateCategory'])->name('atk.barang.kategori.update');
+        Route::delete('/barang/kategori/{category}', [App\Http\Controllers\AtkController::class, 'destroyCategory'])->name('atk.barang.kategori.destroy');
+        Route::post('/barang/item', [App\Http\Controllers\AtkController::class, 'storeItem'])->name('atk.barang.item.store');
+        Route::put('/barang/item/{item}', [App\Http\Controllers\AtkController::class, 'updateItem'])->name('atk.barang.item.update');
+        Route::delete('/barang/item/{item}', [App\Http\Controllers\AtkController::class, 'destroyItem'])->name('atk.barang.item.destroy');
+    });
 });

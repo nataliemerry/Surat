@@ -10,30 +10,30 @@
     return urls.filter((url) => currentUrl.startsWith(url)).length
   }
 
-  $: isAdmin = $page.props?.user?.is_admin
+  $: isAdmin = $page.props?.auth?.user?.owner
 </script>
 
 <div {...$$restProps}>
   <div class="mb-4">
-    <a use:inertia href="/atk" class="group flex items-center py-3 md:px-2">
+    <a use:inertia href="/atk" class="flex items-center py-3 group md:px-2">
       <LayoutDashboard class="mr-2 h-4 w-4 {isUrl('atk') ? 'text-white' : 'text-indigo-400 group-hover:text-white'}" />
       <div class={isUrl('atk') ? 'text-white' : 'text-indigo-300 group-hover:text-white'}>Beranda</div>
     </a>
   </div>
-  <div class="mb-2 rounded bg-indigo-900 px-3 py-2 sm:px-2">
-    <div class="group flex items-start py-1">
+  <div class="px-3 py-2 mb-2 bg-indigo-900 rounded sm:px-2">
+    <div class="flex items-start py-1 group">
       <div class="text-xs text-indigo-600">PENGAJUAN ALAT TULIS</div>
     </div>
-    <div class="group flex items-start py-2">
+    <div class="flex items-start py-2 group">
       <a use:inertia href="/atk/form">
         <div class={isUrl('atk/form') ? 'text-white' : 'text-indigo-300 group-hover:text-white'}>Form Pengajuan</div>
       </a>
     </div>
     {#if isAdmin}
-      <div class="group flex items-start py-2">
+      <div class="flex items-start py-2 group">
         <a use:inertia href="/atk/barang">
           <div class={isUrl('atk/barang') ? 'text-white' : 'text-indigo-300 group-hover:text-white'}>
-            <Boxes class="mr-2 inline h-4 w-4" /> Kelola Barang
+            Kelola Barang
           </div>
         </a>
       </div>

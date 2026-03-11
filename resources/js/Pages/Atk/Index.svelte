@@ -68,7 +68,6 @@
   <div class="flex flex-col gap-3 mb-6 sm:flex-row sm:items-center sm:justify-between">
     <div>
       <h1 class="text-2xl font-bold text-gray-800 sm:text-3xl">Riwayat Permintaan ATK</h1>
-      <p class="mt-1 text-gray-500">Daftar seluruh permintaan alat tulis kantor yang telah diajukan.</p>
     </div>
     <a use:inertia href="/atk/form" class="inline-flex items-center gap-2 px-4 py-2 text-sm font-semibold text-white bg-indigo-600 rounded-lg shadow w-fit hover:bg-indigo-700">
       <svg class="w-4 h-4" fill="none" stroke="currentColor" stroke-width="2" viewBox="0 0 24 24">
