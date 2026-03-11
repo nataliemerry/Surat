@@ -13,10 +13,16 @@ class AtkRequestItem extends Model
         'request_id',
         'item_id',
         'qty_requested',
+        'qty_approved',
     ];
 
     public function request()
     {
         return $this->belongsTo(AtkRequest::class, 'request_id');
+    }
+
+    public function item()
+    {
+        return $this->belongsTo(AtkItem::class, 'item_id');
     }
 }

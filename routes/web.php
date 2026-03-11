@@ -98,4 +98,5 @@ Route::prefix('atk')->group(function () {
     Route::get('/', [App\Http\Controllers\AtkController::class, 'index'])->name('atk.index');
     Route::get('/form', [App\Http\Controllers\AtkController::class, 'form'])->name('atk.form');
     Route::post('/store', [App\Http\Controllers\AtkController::class, 'store'])->name('atk.store');
+    Route::put('/{atkRequest}/approve', [App\Http\Controllers\AtkController::class, 'approve'])->name('atk.approve')->middleware('auth');
 });

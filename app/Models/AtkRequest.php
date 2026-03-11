@@ -20,4 +20,9 @@ class AtkRequest extends Model
     {
         return $this->hasMany(AtkRequestItem::class, 'request_id');
     }
+
+    public function team()
+    {
+        return $this->belongsTo(AtkTeam::class, 'team_id');
+    }
 }
