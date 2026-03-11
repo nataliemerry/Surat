@@ -1,11 +1,11 @@
 .form-label {
-  @apply mb-2 block text-gray-700 select-none;
+  @apply mb-2 block select-none text-gray-700;
 }
 
 .form-input,
 .form-textarea,
 .form-select {
-  @apply p-2 leading-normal block w-full border text-gray-700 bg-white font-sans rounded text-left appearance-none relative focus:border-indigo-400 focus:ring;
+  @apply relative block w-full appearance-none rounded border bg-white p-2 text-left font-sans leading-normal text-gray-700 focus:border-indigo-400 focus:ring;
 
   &::placeholder {
     @apply text-gray-500 opacity-100;
@@ -32,5 +32,5 @@
 }
 
 .form-error {
-  @apply text-red-700 mt-2 text-sm;
+  @apply mt-2 text-sm text-red-700;
 }
