@@ -99,6 +99,7 @@ Route::prefix('atk')->group(function () {
     Route::get('/form', [App\Http\Controllers\AtkController::class, 'form'])->name('atk.form');
     Route::post('/store', [App\Http\Controllers\AtkController::class, 'store'])->name('atk.store');
     Route::put('/{atkRequest}/approve', [App\Http\Controllers\AtkController::class, 'approve'])->name('atk.approve')->middleware('auth');
+    Route::get('/{atkRequest}/download', [App\Http\Controllers\AtkController::class, 'downloadExcel'])->name('atk.download')->middleware('auth');
 
     Route::middleware('auth')->group(function () {
         Route::get('/barang', [App\Http\Controllers\AtkController::class, 'kelola'])->name('atk.barang');

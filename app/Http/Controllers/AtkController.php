@@ -160,4 +160,55 @@ class AtkController extends Controller
         $item->delete();
         return Redirect::route('atk.barang')->with('success', 'Barang berhasil dihapus.');
     }
+
+    public function downloadExcel(\App\Models\AtkRequest $atkRequest): \Symfony\Component\HttpFoundation\BinaryFileResponse
+    {
+        $atkRequest->load('items.item');
+
+        $bulanId = [
+            1 => 'Januari', 2 => 'Februari', 3 => 'Maret', 4 => 'April',
+            5 => 'Mei', 6 => 'Juni', 7 => 'Juli', 8 => 'Agustus',
+            9 => 'September', 10 => 'Oktober', 11 => 'November', 12 => 'Desember',
+        ];
+
+        $tanggal    = $atkRequest->updated_at;
+        $tanggalJ3  = $tanggal->day . ' ' . $bulanId[$tanggal->month] . ' ' . $tanggal->year;
+        $tanggalI39 = 'Kota Mungkid, ' . $tanggal->day . ' ' . $bulanId[$tanggal->month] . ' ' . $tanggal->year;
+
+        $templatePath = storage_path('app/templates/template_atk.xlsx');
+        $spreadsheet  = \PhpOffice\PhpSpreadsheet\IOFactory::load($templatePath);
+        $sheet        = $spreadsheet->getActiveSheet();
+
+        // Tanggal di J3 dan I39
+        $sheet->setCellValue('J3', $tanggalJ3);
+        $sheet->setCellValue('I39', $tanggalI39);
+
+        // Nama pemohon di I45
+        $sheet->setCellValue('I45', $atkRequest->requester_name);
+
+        // Data barang mulai baris 10
+        foreach ($atkRequest->items as $index => $requestItem) {
+            $row = 10 + $index;
+            $sheet->setCellValue('A' . $row, $index + 1);
+            $sheet->setCellValue('B' . $row, $requestItem->item?->name ?? '');
+            $sheet->setCellValue('D' . $row, $requestItem->item?->satuan ?? '');
+            $sheet->setCellValue('E' . $row, $requestItem->qty_requested);
+            $sheet->setCellValue('F' . $row, $requestItem->qty_approved ?? 0);
+        }
+
+        $safeName = preg_replace('/[^A-Za-z0-9_\-]/', '_', $atkRequest->requester_name);
+        $dateStr  = $tanggal->format('Ymd');
+        $writer   = new \PhpOffice\PhpSpreadsheet\Writer\Xlsx($spreadsheet);
+        $filename = 'atk_' . $safeName . '_' . $dateStr . '.xlsx';
+        $tempDir  = storage_path('app/temp');
+
+        if (! is_dir($tempDir)) {
+            mkdir($tempDir, 0755, true);
+        }
+
+        $tempPath = $tempDir . DIRECTORY_SEPARATOR . $filename;
+        $writer->save($tempPath);
+
+        return response()->download($tempPath, $filename)->deleteFileAfterSend(true);
+    }
 }

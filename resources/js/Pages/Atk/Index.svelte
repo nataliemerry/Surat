@@ -124,6 +124,14 @@
                   {#if isAdmin && req.status === 'pending'}
                     <button on:click={() => openReview(req)} class="rounded-lg bg-indigo-600 px-3 py-1.5 text-sm font-medium text-white shadow-sm hover:bg-indigo-700"> Review </button>
                   {/if}
+                  {#if isAdmin && req.status === 'approved'}
+                    <a href={`/atk/${req.id}/download`} class="inline-flex items-center gap-1.5 rounded-lg bg-green-600 px-3 py-1.5 text-sm font-medium text-white shadow-sm hover:bg-green-700">
+                      <svg class="h-3.5 w-3.5" fill="none" stroke="currentColor" stroke-width="2" viewBox="0 0 24 24">
+                        <path stroke-linecap="round" stroke-linejoin="round" d="M4 16v2a2 2 0 002 2h12a2 2 0 002-2v-2M7 10l5 5 5-5M12 3v12" />
+                      </svg>
+                      Excel
+                    </a>
+                  {/if}
                 </div>
               </td>
             </tr>
@@ -208,7 +216,17 @@
         </div>
       </div>
 
-      <div class="flex justify-end px-6 py-4 border-t">
+      <div class="flex items-center justify-between px-6 py-4 border-t">
+        <div>
+          {#if detailRequest.status === 'approved'}
+            <a href={`/atk/${detailRequest.id}/download`} class="inline-flex items-center gap-2 px-4 py-2 text-sm font-semibold text-white bg-green-600 rounded-lg shadow hover:bg-green-700">
+              <svg class="w-4 h-4" fill="none" stroke="currentColor" stroke-width="2" viewBox="0 0 24 24">
+                <path stroke-linecap="round" stroke-linejoin="round" d="M4 16v2a2 2 0 002 2h12a2 2 0 002-2v-2M7 10l5 5 5-5M12 3v12" />
+              </svg>
+              Download Excel
+            </a>
+          {/if}
+        </div>
         <button on:click={closeDetail} class="px-4 py-2 text-sm font-medium text-gray-700 bg-gray-100 rounded-lg hover:bg-gray-200">Tutup</button>
       </div>
     </div>
