@@ -56,13 +56,13 @@
 </script>
 
 <h1 class="mb-8 text-3xl font-bold">
-  <a use:inertia href="/form" class="text-indigo-400 hover:text-indigo-600"> Surat Dinas </a>
+  <a use:inertia href="/surat/dinas" class="text-indigo-400 hover:text-indigo-600"> Surat Dinas </a>
   <span class="font-medium text-indigo-400">/</span> Create
 </h1>
 
-<div class="max-w-3xl overflow-hidden rounded-md bg-white shadow">
+<div class="max-w-3xl overflow-hidden bg-white rounded-md shadow">
   <form on:submit|preventDefault={store}>
-    <div class="-mb-8 -mr-6 flex flex-wrap p-8">
+    <div class="flex flex-wrap p-8 -mb-8 -mr-6">
       <SelectInput bind:value={$form.firstSelect} error={$form.errors.firstSelect} class="w-full pb-8 pr-6" label="Kode Arsip Utama" required>
         <option value={null}>Silakan pilih salah satu opsi</option>
         <option value="PS">PS - Perumusan Kebijakan di Bidang Statistik</option>
@@ -119,7 +119,7 @@
         {/if}
       </div> -->
     </div>
-    <div class="flex items-center justify-end border-t border-gray-100 bg-gray-50 px-8 py-4">
+    <div class="flex items-center justify-end px-8 py-4 border-t border-gray-100 bg-gray-50">
       <LoadingButton loading={$form.processing} class="btn-indigo hover:bg-indigo-700" type="submit">Ajukan Surat</LoadingButton>
     </div>
   </form>

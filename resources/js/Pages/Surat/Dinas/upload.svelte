@@ -35,21 +35,21 @@
 </script>
 
 <h1 class="mb-8 text-3xl font-bold">
-  <a use:inertia href="/" class="text-indigo-400 hover:text-indigo-600"> Surat Dinas </a>
-  <span class="font-medium text-indigo-400">/</span> Create
+  <a use:inertia href="/surat/dinas" class="text-indigo-400 hover:text-indigo-600"> Surat Dinas </a>
+  <span class="font-medium text-indigo-400">/</span> Upload
 </h1>
 
-<div class="max-w-3xl overflow-hidden rounded-md bg-white shadow">
+<div class="max-w-3xl overflow-hidden bg-white rounded-md shadow">
   <form on:submit|preventDefault={store}>
-    <div class="-mb-8 -mr-6 flex flex-wrap p-8">
+    <div class="flex flex-wrap p-8 -mb-8 -mr-6">
       <TextInput bind:value={$form.nomor} error={$form.errors.nomor} class="w-full pb-8 pr-6" label="Nomor Surat Dinas:" />
       <div class="w-full pb-8 pr-6">
         <label for="file" class="block text-sm font-medium text-gray-700">Upload Dokumen Surat (.docx/.pdf):</label>
 
         <!-- Fancy file upload button -->
-        <div class="mt-3 flex items-center">
-          <label for="file" class="inline-flex cursor-pointer items-center rounded-md border border-indigo-500 px-4 py-2 text-indigo-500 shadow-sm transition hover:bg-indigo-500 hover:text-white focus:ring-2 focus:ring-indigo-500 focus:ring-offset-2">
-            <svg class="mr-2 h-5 w-5" xmlns="http://www.w3.org/2000/svg" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round">
+        <div class="flex items-center mt-3">
+          <label for="file" class="inline-flex items-center px-4 py-2 text-indigo-500 transition border border-indigo-500 rounded-md shadow-sm cursor-pointer hover:bg-indigo-500 hover:text-white focus:ring-2 focus:ring-indigo-500 focus:ring-offset-2">
+            <svg class="w-5 h-5 mr-2" xmlns="http://www.w3.org/2000/svg" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round">
               <path d="M21 15v4a2 2 0 0 1-2 2H5a2 2 0 0 1-2-2v-4M17 8l-5-5-5 5M12 3v12"></path>
             </svg>
             Choose File
@@ -63,7 +63,7 @@
         {/if}
       </div>
     </div>
-    <div class="flex items-center justify-end border-t border-gray-100 bg-gray-50 px-8 py-4">
+    <div class="flex items-center justify-end px-8 py-4 border-t border-gray-100 bg-gray-50">
       <LoadingButton loading={$form.processing} class="btn-indigo hover:bg-indigo-700" type="submit">Upload Dokumen Surat Dinas</LoadingButton>
     </div>
   </form>

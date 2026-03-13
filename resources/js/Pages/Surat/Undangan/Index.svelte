@@ -5,8 +5,7 @@
 </script>
 
 <h1 class="mb-8 text-2xl font-bold sm:text-3xl">
-  <a use:inertia href="/" class="text-indigo-400 hover:text-indigo-600"> Surat Undangan </a>
-  <span class="font-medium text-indigo-400">/</span> Create
+  <a use:inertia href="/surat?type=2" class="text-indigo-400 hover:text-indigo-600"> Surat Undangan </a>
 </h1>
 
 <div class="grid grid-cols-1 gap-4 sm:grid-cols-2">

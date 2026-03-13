@@ -36,7 +36,7 @@
 </script>
 
 <h1 class="mb-8 text-3xl font-bold">
-  <a use:inertia href="/surat" class="text-indigo-400 hover:text-indigo-600"> Surat Tugas </a>
+  <a use:inertia href="/surat/tugas" class="text-indigo-400 hover:text-indigo-600"> Surat Tugas </a>
   <span class="font-medium text-indigo-400">/</span> Create
 </h1>
 

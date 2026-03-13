@@ -39,22 +39,22 @@
     <div class="flex flex-col items-center justify-start w-full py-4 mt-6 sm:mt-20">
       <div class="mb-2 text-center">
         <div class="mb-2 text-2xl font-bold text-white sm:text-4xl">Pelayanan Sub Bagian Umum Terintegrasi (PINTER)</div>
-        <div class="text-lg font-semibold text-indigo-200 sm:text-2xl">BPS Kabupaten Magelang</div>
+        <div class="text-xl font-bold text-indigo-200 sm:text-2xl">BPS Kabupaten Magelang</div>
       </div>
       <div class="grid w-full max-w-xs gap-4 mt-4 sm:mt-10 sm:max-w-2xl sm:grid-cols-2 sm:gap-6">
         <a use:inertia href="/surat" class="flex flex-col items-center justify-center px-4 py-6 text-center transition bg-white shadow-xl group rounded-2xl hover:bg-indigo-50 hover:shadow-2xl sm:px-8 sm:py-10">
           <div class="flex items-center justify-center w-12 h-12 mb-3 bg-indigo-100 rounded-full group-hover:bg-indigo-200 sm:mb-4 sm:h-16 sm:w-16">
             <MailOpen class="w-6 h-6 text-indigo-700 sm:h-8 sm:w-8" />
           </div>
-          <h2 class="text-base font-bold text-gray-800 sm:text-lg">Penomoran Surat Otomatis</h2>
-          <p class="mt-2 text-xs text-gray-500 sm:text-base">Ajukan permintaan nomor surat secara otomatis.</p>
+          <h2 class="text-lg font-bold text-gray-800 sm:text-lg">Penomoran Surat Otomatis</h2>
+          <p class="mt-2 text-sm text-gray-500 sm:text-base">Ajukan permintaan nomor surat secara otomatis.</p>
         </a>
         <a use:inertia href="/atk" class="flex flex-col items-center justify-center px-4 py-6 text-center transition bg-white shadow-xl group rounded-2xl hover:bg-indigo-50 hover:shadow-2xl sm:px-8 sm:py-10">
           <div class="flex items-center justify-center w-12 h-12 mb-3 bg-indigo-100 rounded-full group-hover:bg-indigo-200 sm:mb-4 sm:h-16 sm:w-16">
             <NotebookPen class="w-6 h-6 text-indigo-700 sm:h-8 sm:w-8" />
           </div>
-          <h2 class="text-base font-bold text-gray-800 sm:text-lg">Permintaan Alat Tulis Kantor</h2>
-          <p class="mt-2 text-xs text-gray-500 sm:text-base">Ajukan permintaan alat tulis kantor untuk kebutuhan Anda.</p>
+          <h2 class="text-lg font-bold text-gray-800 sm:text-lg">Permintaan Alat Tulis Kantor</h2>
+          <p class="mt-2 text-sm text-gray-500 sm:text-base">Ajukan permintaan alat tulis kantor untuk kebutuhan Anda.</p>
         </a>
       </div>
     </div>
