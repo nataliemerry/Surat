@@ -163,8 +163,6 @@ class SuratController extends Controller
         return Redirect::route('dashboard', ['type' => 1]);
     }
 
-    // ─── Surat Undangan ───────────────────────────────────────────────────────
-
     public function formSuratUndangan(): Response
     {
         return Inertia::render('Surat/Undangan/Form', ['kode' => $this->kodeOptions()]);
@@ -306,8 +304,6 @@ class SuratController extends Controller
 
         return Redirect::route('dashboard', ['type' => 2]);
     }
-
-    // ─── Surat Dinas ──────────────────────────────────────────────────────────
 
     public function formSuratDinas(): Response
     {
