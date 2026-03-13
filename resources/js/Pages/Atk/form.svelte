@@ -17,64 +17,7 @@
   export let teams = []
   export let categories = []
   export let items = []
-
-  const staffNames = [
-    'Kus Haryono, S.Si., M.Si',
-    'Ahmad Taufiq, SST, M.M.',
-    'Akhmad Wahyudin',
-    'Alfitri Suryaningsih, S.Si., MA',
-    'Ali Gufront, B.St.',
-    'Andry Sulistyo, S.E.',
-    'Ari Nurvitasari, SST',
-    'Bagus Budiarta',
-    'Basuki Abdullah',
-    'Clara Sherly Rifera Putri, S.ST.',
-    'Diana Larasati, S.Si., M.M.',
-    'Eko Hermawati Agustin Setiyaningrum, SST, M.E.',
-    'Eko Indarmawan, A.Md.',
-    'Etania Harum Yonanda, SST, M.Ec.Dev.',
-    'Fardiana, S.P.',
-    'Fetia Nursih Handayani, S.P.',
-    'Fitri Hapsari, A.Md.',
-    'Handy Wida Suryanto',
-    'Heny Widiastuti, SST, M.Sc.',
-    'Hevi Dwi Susanti, S.E.',
-    'J. Enggar Catur Septiono',
-    'Jadhi Kurniawan HS',
-    'Joko Permono',
-    'Joko Prasetiyo, SST, M.Si.',
-    'Khairunnisa Dewi Maharani, S.Tr.Stat.',
-    'Lucky Kurniati, SST',
-    'Lutfiah Adela Arzie, SST',
-    'Mevi Purbiyanto, A.Md.',
-    'Muhamad Muhklasin',
-    'Munfiati Lestari, S.Si.',
-    'Nanda Buanita Addien',
-    'Nur Samsul Bichan',
-    'Okder Insantri',
-    'Ossy Sanityasa Rahajeng, S.Tr.Stat.',
-    'Ratih Kusuma Dewi, SST, M.Si.',
-    'Restu Asih Trianto, SST, M.M.',
-    'Retno Puji Kartinindyah, A.Md.',
-    'Rika Dwi Apriliyanti',
-    'Rina Arifatul Khoridah, SST',
-    'Sadjana Yoga Hidayat, S.Si.',
-    'Septania Ayu Wardhani, SST',
-    'Setyo Dwi Kuncoro',
-    'Slamet Subagyo',
-    'Sofa Nur Khamama, SST',
-    'Suroso, S.E.',
-    'Tri Murni Hati Khasanah, SST',
-    "Verliya Gadis Rhoma'idah, SST",
-    'Wahyu Herry Wibowo, SST, M.E.',
-    'Yuli Cahyono, S.M.',
-    'Yuliana Himmatul Ulya, A.Md.',
-    'Septi Nurhayati',
-    'Muhamad Azis',
-    'Muttaqin',
-    'Misbachul Munir',
-    'Rahayu Rachmawati, SST, M.Si.',
-  ]
+  export let pegawais = []
 
   let step = 1
   let searchQuery = ''
@@ -85,18 +28,18 @@
   let nameDropdownOpen = false
   let nameHighlightIdx = -1
 
-  $: nameFilteredList = nameQuery.trim() ? staffNames.filter((n) => n.toLowerCase().includes(nameQuery.trim().toLowerCase())) : staffNames
+  $: nameFilteredList = nameQuery.trim() ? pegawais.filter((p) => p.nama.toLowerCase().includes(nameQuery.trim().toLowerCase())) : pegawais
 
-  function selectStaffName(name) {
-    $form.requester_name = name
-    nameQuery = name
+  function selectStaffName(pegawai) {
+    $form.pegawai_id = pegawai.id
+    nameQuery = pegawai.nama
     nameDropdownOpen = false
     nameHighlightIdx = -1
   }
 
   function onNameInput(e) {
     nameQuery = e.target.value
-    $form.requester_name = e.target.value
+    $form.pegawai_id = ''
     nameDropdownOpen = true
     nameHighlightIdx = -1
   }
@@ -120,13 +63,13 @@
   let cart = {}
 
   const form = useForm({
-    requester_name: '',
+    pegawai_id: '',
     team_id: '',
     activity: '',
     items: [],
   })
 
-  $: step1Valid = $form.requester_name.trim() !== '' && $form.team_id !== '' && $form.activity.trim() !== ''
+  $: step1Valid = $form.pegawai_id !== '' && $form.team_id !== '' && $form.activity.trim() !== ''
 
   $: filteredItems = items.filter((item) => {
     const matchSearch = !searchQuery.trim() || item.name.toLowerCase().includes(searchQuery.trim().toLowerCase())
@@ -215,7 +158,7 @@
     </h1>
   </div>
 
-  <div class="flex items-center gap-1 mb-6">
+  <div class="mb-6 flex items-center gap-1">
     {#each [{ n: 1, label: 'Identitas' }, { n: 2, label: 'Pilih Barang' }, { n: 3, label: 'Review' }] as s}
       <div class="flex items-center gap-1.5 sm:gap-2">
         <div
@@ -238,20 +181,20 @@
   </div>
 
   {#if step === 1}
-    <div class="max-w-2xl overflow-hidden bg-white border border-gray-200 shadow-sm rounded-xl">
-      <div class="px-5 py-4 border-b border-gray-100 sm:px-8 sm:py-5">
+    <div class="max-w-2xl overflow-hidden rounded-xl border border-gray-200 bg-white shadow-sm">
+      <div class="border-b border-gray-100 px-5 py-4 sm:px-8 sm:py-5">
         <h2 class="text-base font-semibold text-gray-800">Data Pemohon</h2>
         <p class="text-sm text-gray-500">Lengkapi identitas dan tujuan permintaan.</p>
       </div>
 
-      <div class="px-5 py-5 space-y-5 sm:px-8 sm:py-6">
+      <div class="space-y-5 px-5 py-5 sm:px-8 sm:py-6">
         <div>
-          <label for="requester_name" class="block mb-1 text-sm font-medium text-gray-700">
+          <label for="requester_name" class="mb-1 block text-sm font-medium text-gray-700">
             Nama Pemohon <span class="text-red-500">*</span>
           </label>
           <div class="relative">
             <input
-              id="requester_name"
+              id="pegawai_nama"
               type="text"
               value={nameQuery}
               on:input={onNameInput}
@@ -265,28 +208,28 @@
                 }, 150)}
               placeholder="Cari atau ketik nama pemohon..."
               autocomplete="off"
-              class="form-input {showErrors && !$form.requester_name.trim() ? 'error' : ''}" />
+              class="form-input {showErrors && !$form.pegawai_id ? 'error' : ''}" />
             {#if nameDropdownOpen && nameFilteredList.length > 0}
-              <ul class="absolute z-20 w-full mt-1 overflow-y-auto text-sm bg-white border border-gray-200 rounded-lg shadow-lg max-h-56">
-                {#each nameFilteredList as name, i}
+              <ul class="absolute z-20 mt-1 max-h-56 w-full overflow-y-auto rounded-lg border border-gray-200 bg-white text-sm shadow-lg">
+                {#each nameFilteredList as pegawai, i}
                   <li>
-                    <button type="button" on:mousedown|preventDefault={() => selectStaffName(name)} class="w-full px-4 py-2 text-left transition-colors {i === nameHighlightIdx ? 'bg-indigo-50 font-medium text-indigo-700' : 'text-gray-700 hover:bg-gray-50'}">
-                      {name}
+                    <button type="button" on:mousedown|preventDefault={() => selectStaffName(pegawai)} class="w-full px-4 py-2 text-left transition-colors {i === nameHighlightIdx ? 'bg-indigo-50 font-medium text-indigo-700' : 'text-gray-700 hover:bg-gray-50'}">
+                      {pegawai.nama}
                     </button>
                   </li>
                 {/each}
               </ul>
             {/if}
           </div>
-          {#if showErrors && !$form.requester_name.trim()}
+          {#if showErrors && !$form.pegawai_id}
             <p class="form-error">Nama tidak boleh kosong.</p>
-          {:else if $form.errors.requester_name}
-            <p class="form-error">{$form.errors.requester_name}</p>
+          {:else if $form.errors.pegawai_id}
+            <p class="form-error">{$form.errors.pegawai_id}</p>
           {/if}
         </div>
 
         <div>
-          <label for="team_id" class="block mb-1 text-sm font-medium text-gray-700">
+          <label for="team_id" class="mb-1 block text-sm font-medium text-gray-700">
             Tim <span class="text-red-500">*</span>
           </label>
           <select id="team_id" bind:value={$form.team_id} class="form-select {showErrors && !$form.team_id ? 'error' : ''}">
@@ -303,7 +246,7 @@
         </div>
 
         <div>
-          <label for="activity" class="block mb-1 text-sm font-medium text-gray-700">
+          <label for="activity" class="mb-1 block text-sm font-medium text-gray-700">
             Nama Kegiatan <span class="text-red-500">*</span>
           </label>
           <input id="activity" type="text" bind:value={$form.activity} placeholder="Contoh: Susenas, Pengolahan, dll" class="form-input {showErrors && !$form.activity.trim() ? 'error' : ''}" />
@@ -315,24 +258,24 @@
         </div>
       </div>
 
-      <div class="flex items-center justify-end px-5 py-4 border-t border-gray-100 bg-gray-50 sm:px-8">
+      <div class="flex items-center justify-end border-t border-gray-100 bg-gray-50 px-5 py-4 sm:px-8">
         <button type="button" on:click={goStep2} class="btn-indigo hover:bg-indigo-700">Selanjutnya</button>
       </div>
     </div>
   {/if}
 
   {#if step === 2}
-    <div class="overflow-hidden bg-white border border-gray-200 shadow-sm rounded-xl">
-      <div class="flex flex-col gap-3 px-4 py-4 border-b border-gray-100 sm:flex-row sm:items-center sm:justify-between sm:px-6">
+    <div class="overflow-hidden rounded-xl border border-gray-200 bg-white shadow-sm">
+      <div class="flex flex-col gap-3 border-b border-gray-100 px-4 py-4 sm:flex-row sm:items-center sm:justify-between sm:px-6">
         <div>
           <h2 class="text-base font-semibold text-gray-800">Katalog Barang</h2>
           <p class="text-sm text-gray-500">Centang barang yang dibutuhkan, lalu atur jumlahnya.</p>
         </div>
         <div class="relative w-full sm:w-64">
-          <svg class="absolute w-4 h-4 text-gray-400 -translate-y-1/2 pointer-events-none left-3 top-1/2" fill="none" stroke="currentColor" stroke-width="2" viewBox="0 0 24 24">
+          <svg class="pointer-events-none absolute left-3 top-1/2 h-4 w-4 -translate-y-1/2 text-gray-400" fill="none" stroke="currentColor" stroke-width="2" viewBox="0 0 24 24">
             <circle cx="11" cy="11" r="8" /><path stroke-linecap="round" d="m21 21-4.35-4.35" />
           </svg>
-          <input type="search" bind:value={searchQuery} placeholder="Cari nama barang..." class="py-2 text-sm form-input pl-9" />
+          <input type="search" bind:value={searchQuery} placeholder="Cari nama barang..." class="form-input py-2 pl-9 text-sm" />
         </div>
       </div>
 
@@ -366,7 +309,7 @@
       </div>
 
       <div class="hidden md:flex" style="height: 460px;">
-        <nav class="w-48 overflow-y-auto border-r border-gray-100 shrink-0 bg-gray-50">
+        <nav class="w-48 shrink-0 overflow-y-auto border-r border-gray-100 bg-gray-50">
           <button
             type="button"
             on:click={() => {
@@ -397,9 +340,9 @@
 
         <div class="flex-1 overflow-y-auto">
           {#if filteredItems.length === 0}
-            <div class="flex items-center justify-center h-full py-16 text-center">
+            <div class="flex h-full items-center justify-center py-16 text-center">
               <div>
-                <svg class="w-10 h-10 mx-auto mb-3 text-gray-200" fill="none" stroke="currentColor" stroke-width="1.5" viewBox="0 0 24 24">
+                <svg class="mx-auto mb-3 h-10 w-10 text-gray-200" fill="none" stroke="currentColor" stroke-width="1.5" viewBox="0 0 24 24">
                   <circle cx="11" cy="11" r="8" /><path stroke-linecap="round" d="m21 21-4.35-4.35" />
                 </svg>
                 <p class="text-sm text-gray-400">Tidak ada barang ditemukan.</p>
@@ -409,16 +352,16 @@
             <ul class="divide-y divide-gray-100">
               {#each filteredItems as item (item.id)}
                 <li class="flex items-center gap-4 px-5 py-3 transition-colors {cart[item.id] > 0 ? 'bg-indigo-50' : 'hover:bg-gray-50'}">
-                  <input type="checkbox" id="item-d-{item.id}" checked={cart[item.id] > 0} on:change={() => toggleItem(item.id)} class="w-4 h-4 cursor-pointer shrink-0 accent-indigo-600" />
-                  <label for="item-d-{item.id}" class="flex-1 min-w-0 cursor-pointer">
+                  <input type="checkbox" id="item-d-{item.id}" checked={cart[item.id] > 0} on:change={() => toggleItem(item.id)} class="h-4 w-4 shrink-0 cursor-pointer accent-indigo-600" />
+                  <label for="item-d-{item.id}" class="min-w-0 flex-1 cursor-pointer">
                     <span class="block text-sm font-medium leading-snug {cart[item.id] > 0 ? 'text-indigo-800' : 'text-gray-800'}">{item.name}</span>
                     <span class="text-[11px] text-gray-400">per {item.satuan}</span>
                   </label>
                   {#if cart[item.id] > 0}
-                    <div class="flex items-center overflow-hidden border border-gray-300 rounded-md shrink-0">
-                      <button type="button" on:click={() => decrement(item.id)} class="flex items-center justify-center w-8 h-8 text-base text-gray-500 transition select-none hover:bg-indigo-50 hover:text-indigo-600">−</button>
-                      <input type="text" inputmode="numeric" value={cart[item.id]} on:change={(e) => setQty(item.id, e.target.value)} class="w-10 h-8 text-sm font-semibold text-center text-gray-800 border-gray-300 border-x focus:bg-indigo-50 focus:outline-none" />
-                      <button type="button" on:click={() => increment(item.id)} class="flex items-center justify-center w-8 h-8 text-base text-gray-500 transition select-none hover:bg-indigo-50 hover:text-indigo-600">+</button>
+                    <div class="flex shrink-0 items-center overflow-hidden rounded-md border border-gray-300">
+                      <button type="button" on:click={() => decrement(item.id)} class="flex h-8 w-8 select-none items-center justify-center text-base text-gray-500 transition hover:bg-indigo-50 hover:text-indigo-600">−</button>
+                      <input type="text" inputmode="numeric" value={cart[item.id]} on:change={(e) => setQty(item.id, e.target.value)} class="h-8 w-10 border-x border-gray-300 text-center text-sm font-semibold text-gray-800 focus:bg-indigo-50 focus:outline-none" />
+                      <button type="button" on:click={() => increment(item.id)} class="flex h-8 w-8 select-none items-center justify-center text-base text-gray-500 transition hover:bg-indigo-50 hover:text-indigo-600">+</button>
                     </div>
                   {:else}
                     <span class="w-[104px] shrink-0"></span>
@@ -433,7 +376,7 @@
       <div class="md:hidden" style="max-height: 420px; overflow-y: auto;">
         {#if filteredItems.length === 0}
           <div class="py-12 text-center">
-            <svg class="w-10 h-10 mx-auto mb-3 text-gray-200" fill="none" stroke="currentColor" stroke-width="1.5" viewBox="0 0 24 24">
+            <svg class="mx-auto mb-3 h-10 w-10 text-gray-200" fill="none" stroke="currentColor" stroke-width="1.5" viewBox="0 0 24 24">
               <circle cx="11" cy="11" r="8" /><path stroke-linecap="round" d="m21 21-4.35-4.35" />
             </svg>
             <p class="text-sm text-gray-400">Tidak ada barang ditemukan.</p>
@@ -442,16 +385,16 @@
           <ul class="divide-y divide-gray-100">
             {#each filteredItems as item (item.id)}
               <li class="flex items-center gap-3 px-4 py-3 transition-colors {cart[item.id] > 0 ? 'bg-indigo-50' : 'hover:bg-gray-50'}">
-                <input type="checkbox" id="item-m-{item.id}" checked={cart[item.id] > 0} on:change={() => toggleItem(item.id)} class="w-4 h-4 cursor-pointer shrink-0 accent-indigo-600" />
-                <label for="item-m-{item.id}" class="flex-1 min-w-0 cursor-pointer">
+                <input type="checkbox" id="item-m-{item.id}" checked={cart[item.id] > 0} on:change={() => toggleItem(item.id)} class="h-4 w-4 shrink-0 cursor-pointer accent-indigo-600" />
+                <label for="item-m-{item.id}" class="min-w-0 flex-1 cursor-pointer">
                   <span class="block text-sm font-medium leading-snug {cart[item.id] > 0 ? 'text-indigo-800' : 'text-gray-800'}">{item.name}</span>
                   <span class="text-[11px] text-gray-400">per {item.satuan}</span>
                 </label>
                 {#if cart[item.id] > 0}
-                  <div class="flex items-center overflow-hidden border border-gray-300 rounded-md shrink-0">
-                    <button type="button" on:click={() => decrement(item.id)} class="flex items-center justify-center w-8 h-8 text-base text-gray-500 transition select-none hover:bg-indigo-50 hover:text-indigo-600">−</button>
-                    <input type="text" inputmode="numeric" value={cart[item.id]} on:change={(e) => setQty(item.id, e.target.value)} class="w-10 h-8 text-sm font-semibold text-center text-gray-800 border-gray-300 border-x focus:bg-indigo-50 focus:outline-none" />
-                    <button type="button" on:click={() => increment(item.id)} class="flex items-center justify-center w-8 h-8 text-base text-gray-500 transition select-none hover:bg-indigo-50 hover:text-indigo-600">+</button>
+                  <div class="flex shrink-0 items-center overflow-hidden rounded-md border border-gray-300">
+                    <button type="button" on:click={() => decrement(item.id)} class="flex h-8 w-8 select-none items-center justify-center text-base text-gray-500 transition hover:bg-indigo-50 hover:text-indigo-600">−</button>
+                    <input type="text" inputmode="numeric" value={cart[item.id]} on:change={(e) => setQty(item.id, e.target.value)} class="h-8 w-10 border-x border-gray-300 text-center text-sm font-semibold text-gray-800 focus:bg-indigo-50 focus:outline-none" />
+                    <button type="button" on:click={() => increment(item.id)} class="flex h-8 w-8 select-none items-center justify-center text-base text-gray-500 transition hover:bg-indigo-50 hover:text-indigo-600">+</button>
                   </div>
                 {/if}
               </li>
@@ -460,8 +403,8 @@
         {/if}
       </div>
 
-      <div class="flex items-center justify-between px-4 py-4 border-t border-gray-100 bg-gray-50 sm:px-6">
-        <button type="button" on:click={() => (step = 1)} class="px-4 py-2 text-sm font-medium text-gray-700 transition bg-gray-200 rounded hover:bg-gray-300">Kembali</button>
+      <div class="flex items-center justify-between border-t border-gray-100 bg-gray-50 px-4 py-4 sm:px-6">
+        <button type="button" on:click={() => (step = 1)} class="rounded bg-gray-200 px-4 py-2 text-sm font-medium text-gray-700 transition hover:bg-gray-300">Kembali</button>
         <div class="flex items-center gap-3">
           {#if selectedItems.length > 0}
             <span class="hidden text-sm text-gray-500 sm:inline">{selectedItems.length} barang dipilih</span>
@@ -473,45 +416,45 @@
   {/if}
 
   {#if step === 3}
-    <div class="max-w-2xl overflow-hidden bg-white border border-gray-200 shadow-sm rounded-xl">
-      <div class="px-5 py-4 border-b border-gray-100 sm:px-8 sm:py-5">
+    <div class="max-w-2xl overflow-hidden rounded-xl border border-gray-200 bg-white shadow-sm">
+      <div class="border-b border-gray-100 px-5 py-4 sm:px-8 sm:py-5">
         <h2 class="text-base font-semibold text-gray-800">Tinjau Permintaan</h2>
         <p class="text-sm text-gray-500">Pastikan semua data sudah benar sebelum diajukan.</p>
       </div>
 
       <div class="divide-y divide-gray-100">
         <div class="px-5 py-4 sm:px-8 sm:py-5">
-          <h3 class="mb-3 text-xs font-semibold tracking-wide text-gray-400 uppercase">Identitas</h3>
+          <h3 class="mb-3 text-xs font-semibold uppercase tracking-wide text-gray-400">Identitas</h3>
           <dl class="space-y-2 text-sm">
             <div class="flex gap-4">
-              <dt class="w-32 text-gray-500 shrink-0">Nama Pemohon</dt>
-              <dd class="font-medium text-gray-800">{$form.requester_name}</dd>
+              <dt class="w-32 shrink-0 text-gray-500">Nama Pemohon</dt>
+              <dd class="font-medium text-gray-800">{nameQuery}</dd>
             </div>
             <div class="flex gap-4">
-              <dt class="w-32 text-gray-500 shrink-0">Tim</dt>
-              <dd class="font-medium text-gray-800 capitalize">{selectedTeam?.name ?? '-'}</dd>
+              <dt class="w-32 shrink-0 text-gray-500">Tim</dt>
+              <dd class="font-medium capitalize text-gray-800">{selectedTeam?.name ?? '-'}</dd>
             </div>
             <div class="flex gap-4">
-              <dt class="w-32 text-gray-500 shrink-0">Kegiatan</dt>
+              <dt class="w-32 shrink-0 text-gray-500">Kegiatan</dt>
               <dd class="font-medium text-gray-800">{$form.activity}</dd>
             </div>
           </dl>
         </div>
 
         <div class="px-5 py-4 sm:px-8 sm:py-5">
-          <h3 class="mb-3 text-xs font-semibold tracking-wide text-gray-400 uppercase">
+          <h3 class="mb-3 text-xs font-semibold uppercase tracking-wide text-gray-400">
             Daftar Barang ({selectedItems.length} item)
           </h3>
           <ul class="space-y-2">
             {#each selectedItems as si, i}
               <li class="flex items-center gap-3 rounded-lg border border-gray-100 bg-gray-50 px-4 py-2.5">
-                <span class="flex items-center justify-center w-6 h-6 text-xs font-bold text-indigo-600 bg-indigo-100 rounded-full shrink-0">{i + 1}</span>
+                <span class="flex h-6 w-6 shrink-0 items-center justify-center rounded-full bg-indigo-100 text-xs font-bold text-indigo-600">{i + 1}</span>
                 <span class="flex-1 text-sm text-gray-800">{si.name}</span>
                 <span class="shrink-0 rounded-full bg-indigo-100 px-2.5 py-0.5 text-xs font-semibold text-indigo-700">
                   {si.qty_requested}
                   {si.satuan}
                 </span>
-                <button type="button" on:click={() => removeFromCart(si.id)} class="text-gray-300 transition shrink-0 hover:text-red-500" title="Hapus">✕</button>
+                <button type="button" on:click={() => removeFromCart(si.id)} class="shrink-0 text-gray-300 transition hover:text-red-500" title="Hapus">✕</button>
               </li>
             {/each}
           </ul>
@@ -524,8 +467,8 @@
         </div>
       {/if}
 
-      <div class="flex items-center justify-between px-5 py-4 border-t border-gray-100 bg-gray-50 sm:px-8">
-        <button type="button" on:click={() => (step = 2)} class="px-4 py-2 text-sm font-medium text-gray-700 transition bg-gray-200 rounded hover:bg-gray-300">Kembali</button>
+      <div class="flex items-center justify-between border-t border-gray-100 bg-gray-50 px-5 py-4 sm:px-8">
+        <button type="button" on:click={() => (step = 2)} class="rounded bg-gray-200 px-4 py-2 text-sm font-medium text-gray-700 transition hover:bg-gray-300">Kembali</button>
         <form on:submit|preventDefault={submit}>
           <LoadingButton loading={$form.processing} class="btn-indigo hover:bg-indigo-700" type="submit">Ajukan Permintaan</LoadingButton>
         </form>

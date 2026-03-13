@@ -10,11 +10,16 @@ class AtkRequest extends Model
     use HasFactory;
 
     protected $fillable = [
-        'requester_name',
+        'pegawai_id',
         'team_id',
         'activity',
         'status',
     ];
+
+    public function pegawai()
+    {
+        return $this->belongsTo(\App\Models\Pegawai::class, 'pegawai_id');
+    }
 
     public function items()
     {

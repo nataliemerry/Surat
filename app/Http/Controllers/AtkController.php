@@ -12,17 +12,17 @@ class AtkController extends Controller
 {
     public function index(): Response
     {
-        $requests = \App\Models\AtkRequest::with(['team', 'items.item'])
+        $requests = \App\Models\AtkRequest::with(['team', 'items.item', 'pegawai'])
             ->orderByDesc('created_at')
             ->get()
             ->map(fn($r) => [
-                'id'             => $r->id,
-                'requester_name' => $r->requester_name,
-                'team'           => $r->team ? ['id' => $r->team->id, 'name' => $r->team->name] : null,
-                'activity'       => $r->activity,
-                'status'         => $r->status,
-                'created_at'     => $r->created_at->format('d-m-Y'),
-                'items'          => $r->items->map(fn($ri) => [
+                'id'         => $r->id,
+                'pegawai'    => $r->pegawai ? ['id' => $r->pegawai->id, 'nama' => $r->pegawai->nama] : null,
+                'team'       => $r->team ? ['id' => $r->team->id, 'name' => $r->team->name] : null,
+                'activity'   => $r->activity,
+                'status'     => $r->status,
+                'created_at' => $r->created_at->format('d-m-Y'),
+                'items'      => $r->items->map(fn($ri) => [
                     'id'           => $ri->id,
                     'item'         => $ri->item ? ['id' => $ri->item->id, 'name' => $ri->item->name, 'satuan' => $ri->item->satuan] : null,
                     'qty_requested' => $ri->qty_requested,
@@ -38,25 +38,26 @@ class AtkController extends Controller
     public function form(): Response
     {
         return Inertia::render('Atk/form', [
-            'teams'      => \App\Models\AtkTeam::orderBy('name')->get(),
-            'categories' => \App\Models\AtkCategory::orderBy('name')->get(),
-            'items'      => \App\Models\AtkItem::orderBy('name')->get(),
+            'teams'     => \App\Models\AtkTeam::orderBy('name')->get(),
+            'categories'=> \App\Models\AtkCategory::orderBy('name')->get(),
+            'items'     => \App\Models\AtkItem::orderBy('name')->get(),
+            'pegawais'  => \App\Models\Pegawai::orderBy('nama')->get(['id', 'nama']),
         ]);
     }
 
     public function store(Request $request): RedirectResponse
     {
         $validated = $request->validate([
-            'requester_name' => 'required|string|max:255',
-            'team_id'        => 'required|integer|exists:atk_teams,id',
-            'activity'       => 'required|string|max:255',
-            'items'          => 'required|array|min:1',
+            'pegawai_id'            => 'required|integer|exists:pegawais,id',
+            'team_id'               => 'required|integer|exists:atk_teams,id',
+            'activity'              => 'required|string|max:255',
+            'items'                 => 'required|array|min:1',
             'items.*.item_id'       => 'required|integer|exists:atk_items,id',
             'items.*.qty_requested' => 'required|integer|min:1',
         ]);
 
         $request_record = \App\Models\AtkRequest::create([
-            'requester_name' => $validated['requester_name'],
+            'pegawai_id'     => $validated['pegawai_id'],
             'team_id'        => $validated['team_id'],
             'activity'       => $validated['activity'],
             'status'         => 'pending',
@@ -163,12 +164,21 @@ class AtkController extends Controller
 
     public function downloadExcel(\App\Models\AtkRequest $atkRequest): \Symfony\Component\HttpFoundation\BinaryFileResponse
     {
-        $atkRequest->load('items.item');
+        $atkRequest->load('items.item', 'pegawai');
 
         $bulanId = [
-            1 => 'Januari', 2 => 'Februari', 3 => 'Maret', 4 => 'April',
-            5 => 'Mei', 6 => 'Juni', 7 => 'Juli', 8 => 'Agustus',
-            9 => 'September', 10 => 'Oktober', 11 => 'November', 12 => 'Desember',
+            1 => 'Januari', 
+            2 => 'Februari', 
+            3 => 'Maret', 
+            4 => 'April',
+            5 => 'Mei', 
+            6 => 'Juni', 
+            7 => 'Juli', 
+            8 => 'Agustus',
+            9 => 'September', 
+            10 => 'Oktober', 
+            11 => 'November', 
+            12 => 'Desember',
         ];
 
         $tanggal    = $atkRequest->updated_at;
@@ -179,12 +189,19 @@ class AtkController extends Controller
         $spreadsheet  = \PhpOffice\PhpSpreadsheet\IOFactory::load($templatePath);
         $sheet        = $spreadsheet->getActiveSheet();
 
-        // Tanggal di J3 dan I39
         $sheet->setCellValue('J3', $tanggalJ3);
         $sheet->setCellValue('I39', $tanggalI39);
 
-        // Nama pemohon di I45
-        $sheet->setCellValue('I45', $atkRequest->requester_name);
+        $sheet->setCellValue('I45', $atkRequest->pegawai?->nama);
+
+        $nip = $atkRequest->pegawai?->nip;
+        if ($nip) {
+            $digits = preg_replace('/\D/', '', $nip);
+            $formattedNip = strlen($digits) === 18
+                ? substr($digits, 0, 8) . ' ' . substr($digits, 8, 6) . ' ' . substr($digits, 14, 1) . ' ' . substr($digits, 15, 3)
+                : $digits;
+            $sheet->setCellValue('I46', 'NIP.' . $formattedNip);
+        }
 
         // Data barang mulai baris 10
         foreach ($atkRequest->items as $index => $requestItem) {
@@ -196,7 +213,7 @@ class AtkController extends Controller
             $sheet->setCellValue('F' . $row, $requestItem->qty_approved ?? 0);
         }
 
-        $safeName = preg_replace('/[^A-Za-z0-9_\-]/', '_', $atkRequest->requester_name);
+        $safeName = preg_replace('/[^A-Za-z0-9_\-]/', '_', $atkRequest->pegawai?->nama);
         $dateStr  = $tanggal->format('Ymd');
         $writer   = new \PhpOffice\PhpSpreadsheet\Writer\Xlsx($spreadsheet);
         $filename = 'atk_' . $safeName . '_' . $dateStr . '.xlsx';
@@ -210,5 +227,49 @@ class AtkController extends Controller
         $writer->save($tempPath);
 
         return response()->download($tempPath, $filename)->deleteFileAfterSend(true);
+    }
+
+    public function rekap(Request $request): Response
+    {
+        $year  = (int) $request->get('year', now()->year);
+        $month = (int) $request->get('month', now()->month);
+
+        $years = \App\Models\AtkRequest::query()
+            ->selectRaw('YEAR(created_at) as year')
+            ->distinct()
+            ->orderByDesc('year')
+            ->pluck('year')
+            ->map(fn($y) => (int) $y);
+
+        if ($years->isEmpty()) {
+            $years = collect([now()->year]);
+        }
+
+        $rekap = \App\Models\AtkRequestItem::query()
+            ->join('atk_requests', 'atk_requests.id', '=', 'atk_request_items.request_id')
+            ->join('atk_items', 'atk_items.id', '=', 'atk_request_items.item_id')
+            ->join('atk_categories', 'atk_categories.id', '=', 'atk_items.category_id')
+            ->whereYear('atk_requests.created_at', $year)
+            ->whereMonth('atk_requests.created_at', $month)
+            ->selectRaw('
+                atk_items.id,
+                atk_items.name as item_name,
+                atk_items.satuan,
+                atk_categories.name as category_name,
+                SUM(atk_request_items.qty_requested) as total_requested,
+                SUM(IFNULL(atk_request_items.qty_approved, 0)) as total_approved,
+                COUNT(DISTINCT atk_requests.id) as jumlah_pengajuan
+            ')
+            ->groupBy('atk_items.id', 'atk_items.name', 'atk_items.satuan', 'atk_categories.name')
+            ->orderBy('atk_categories.name')
+            ->orderBy('atk_items.name')
+            ->get();
+
+        return Inertia::render('Atk/Rekap', [
+            'rekap' => $rekap,
+            'year'  => $year,
+            'month' => $month,
+            'years' => $years,
+        ]);
     }
 }

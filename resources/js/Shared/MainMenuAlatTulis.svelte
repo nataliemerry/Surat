@@ -37,6 +37,13 @@
           </div>
         </a>
       </div>
+      <div class="flex items-start py-2 group">
+        <a use:inertia href="/atk/rekap">
+          <div class={isUrl('atk/rekap') ? 'text-white' : 'text-indigo-300 group-hover:text-white'}>
+            Rekap Bulanan
+          </div>
+        </a>
+      </div>
     {/if}
   </div>
 </div>

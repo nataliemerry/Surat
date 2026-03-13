@@ -102,6 +102,7 @@ Route::prefix('atk')->group(function () {
     Route::get('/{atkRequest}/download', [App\Http\Controllers\AtkController::class, 'downloadExcel'])->name('atk.download')->middleware('auth');
 
     Route::middleware('auth')->group(function () {
+        Route::get('/rekap', [App\Http\Controllers\AtkController::class, 'rekap'])->name('atk.rekap');
         Route::get('/barang', [App\Http\Controllers\AtkController::class, 'kelola'])->name('atk.barang');
         Route::post('/barang/kategori', [App\Http\Controllers\AtkController::class, 'storeCategory'])->name('atk.barang.kategori.store');
         Route::put('/barang/kategori/{category}', [App\Http\Controllers\AtkController::class, 'updateCategory'])->name('atk.barang.kategori.update');
