@@ -59,7 +59,10 @@
 
   function submitApprove() {
     $approveForm.put(`/atk/${reviewRequest.id}/approve`, {
-      onSuccess: () => closeReview(),
+      onSuccess: () => {
+        closeReview()
+        activeTab = 'approved'
+      },
     })
   }
 </script>
