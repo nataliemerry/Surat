@@ -168,9 +168,9 @@
 <h1 class="mb-4 text-2xl font-bold text-gray-800 sm:text-3xl">Riwayat Surat yang Diajukan</h1>
 
 {#if showBanner}
-  <div class="flex items-center justify-between px-5 py-3 mb-4 text-white bg-green-500 rounded-lg shadow">
+  <div class="mb-4 flex items-center justify-between rounded-lg bg-green-500 px-5 py-3 text-white shadow">
     <div class="flex items-center gap-3">
-      <svg xmlns="http://www.w3.org/2000/svg" class="w-5 h-5 shrink-0" viewBox="0 0 20 20" fill="currentColor">
+      <svg xmlns="http://www.w3.org/2000/svg" class="h-5 w-5 shrink-0" viewBox="0 0 20 20" fill="currentColor">
         <path fill-rule="evenodd" d="M10 18a8 8 0 100-16 8 8 0 000 16zm3.707-9.293a1 1 0 00-1.414-1.414L9 10.586 7.707 9.293a1 1 0 00-1.414 1.414l2 2a1 1 0 001.414 0l4-4z" clip-rule="evenodd" />
       </svg>
       <span class="text-sm font-medium">{bannerMessage}</span>
@@ -178,14 +178,56 @@
     <button class="text-white/70 hover:text-white" on:click={() => (showBanner = false)}>✕</button>
   </div>
 {/if}
-<div class="flex gap-1 mb-4 border-b border-gray-200">
-  <button class="px-5 py-2.5 text-sm font-medium transition-colors {activeType === 1 ? 'border-b-2 border-indigo-600 text-indigo-600' : 'text-gray-500 hover:text-gray-700'}" on:click={() => filterByType(1)}>Surat Tugas</button>
-  <button class="px-5 py-2.5 text-sm font-medium transition-colors {activeType === 2 ? 'border-b-2 border-indigo-600 text-indigo-600' : 'text-gray-500 hover:text-gray-700'}" on:click={() => filterByType(2)}>Surat Undangan</button>
-  <button class="px-5 py-2.5 text-sm font-medium transition-colors {activeType === 3 ? 'border-b-2 border-indigo-600 text-indigo-600' : 'text-gray-500 hover:text-gray-700'}" on:click={() => filterByType(3)}>Surat Dinas</button>
+<div class="mb-6 flex flex-col gap-4 sm:flex-row sm:items-center sm:justify-between">
+  <!-- Desktop Tabs -->
+  <div class="hidden gap-1 border-b border-gray-200 sm:flex">
+    <button class="px-5 py-2.5 text-sm font-medium transition-colors {activeType === 1 ? 'border-b-2 border-indigo-600 text-indigo-600' : 'text-gray-500 hover:text-gray-700'}" on:click={() => filterByType(1)}> Surat Tugas </button>
+    <button class="px-5 py-2.5 text-sm font-medium transition-colors {activeType === 2 ? 'border-b-2 border-indigo-600 text-indigo-600' : 'text-gray-500 hover:text-gray-700'}" on:click={() => filterByType(2)}> Surat Undangan </button>
+    <button class="px-5 py-2.5 text-sm font-medium transition-colors {activeType === 3 ? 'border-b-2 border-indigo-600 text-indigo-600' : 'text-gray-500 hover:text-gray-700'}" on:click={() => filterByType(3)}> Surat Dinas </button>
+  </div>
+
+  <!-- Mobile Dropdown -->
+  <div class="relative block sm:hidden">
+    <select class="block w-full appearance-none rounded-lg border-gray-300 bg-white py-2 pl-3 pr-10 text-sm font-medium text-gray-700 focus:border-indigo-500 focus:outline-none focus:ring-indigo-500" value={activeType} on:change={(e) => filterByType(parseInt(e.target.value))}>
+      <option value={1}>Surat Tugas</option>
+      <option value={2}>Surat Undangan</option>
+      <option value={3}>Surat Dinas</option>
+    </select>
+    <div class="pointer-events-none absolute inset-y-0 right-0 flex items-center pr-3">
+      <svg class="h-4 w-4 text-gray-400" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+        <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M19 9l-7 7-7-7" />
+      </svg>
+    </div>
+  </div>
+
+  <div class="flex items-center">
+    {#if activeType === 1}
+      <a href="/surat/tugas/form" class="inline-flex items-center gap-2 rounded-lg bg-indigo-600 px-4 py-2 text-sm font-semibold text-white shadow hover:bg-indigo-700">
+        <svg class="h-4 w-4" fill="none" stroke="currentColor" stroke-width="2" viewBox="0 0 24 24">
+          <path stroke-linecap="round" stroke-linejoin="round" d="M12 4v16m8-8H4" />
+        </svg>
+        Buat Surat Tugas
+      </a>
+    {:else if activeType === 2}
+      <a href="/surat/undangan/form" class="inline-flex items-center gap-2 rounded-lg bg-indigo-600 px-4 py-2 text-sm font-semibold text-white shadow hover:bg-indigo-700">
+        <svg class="h-4 w-4" fill="none" stroke="currentColor" stroke-width="2" viewBox="0 0 24 24">
+          <path stroke-linecap="round" stroke-linejoin="round" d="M12 4v16m8-8H4" />
+        </svg>
+        Buat Surat Undangan
+      </a>
+    {:else if activeType === 3}
+      <a href="/surat/dinas/form" class="inline-flex items-center gap-2 rounded-lg bg-indigo-600 px-4 py-2 text-sm font-semibold text-white shadow hover:bg-indigo-700">
+        <svg class="h-4 w-4" fill="none" stroke="currentColor" stroke-width="2" viewBox="0 0 24 24">
+          <path stroke-linecap="round" stroke-linejoin="round" d="M12 4v16m8-8H4" />
+        </svg>
+        Buat Surat Dinas
+      </a>
+    {/if}
+  </div>
 </div>
-<div class="overflow-x-auto bg-white border border-gray-200 shadow-sm rounded-xl">
-  <table class="min-w-full text-sm whitespace-nowrap">
-    <thead class="text-xs font-semibold tracking-wide text-gray-500 uppercase bg-gray-50">
+<div class="overflow-x-auto rounded-xl border border-gray-200 bg-white shadow-sm">
+  <table class="min-w-full whitespace-nowrap text-sm">
+    <thead class="bg-gray-50 text-xs font-semibold uppercase tracking-wide text-gray-500">
       <tr>
         <th class="px-4 py-3 text-left">Tanggal</th>
         <th class="px-4 py-3 text-left">Kode Arsip</th>
@@ -215,7 +257,7 @@
     <tbody class="divide-y divide-gray-100">
       {#each paginatedSurat as surat (surat.id)}
         <tr class="hover:bg-gray-50">
-          <td class="px-4 py-3 text-gray-600 whitespace-nowrap">{surat.created_at}</td>
+          <td class="whitespace-nowrap px-4 py-3 text-gray-600">{surat.created_at}</td>
           <td class="px-4 py-3 text-gray-600">{surat.kode || ''}</td>
           {#if activeType === 1}
             <td class="px-4 py-3 text-gray-600">{surat.perihal || ''}</td>
@@ -250,8 +292,8 @@
           </td>
           {#if auth?.user}
             <td class="px-4 py-3 text-center">
-              <button class="inline-flex items-center p-2 text-white bg-green-500 rounded-lg hover:bg-green-600 focus:outline-none" on:click={() => (window.location.href = getEditUrl(surat.type, surat.id))} aria-label="Edit">
-                <Pencil class="w-4 h-4" />
+              <button class="inline-flex items-center rounded-lg bg-green-500 p-2 text-white hover:bg-green-600 focus:outline-none" on:click={() => (window.location.href = getEditUrl(surat.type, surat.id))} aria-label="Edit">
+                <Pencil class="h-4 w-4" />
               </button>
             </td>
           {/if}
@@ -269,21 +311,21 @@
 
 {#if showDeleteModal}
   <div class="fixed inset-0 z-50 flex items-center justify-center bg-black/50">
-    <div class="w-full max-w-md p-6 bg-white rounded-lg shadow-xl">
+    <div class="w-full max-w-md rounded-lg bg-white p-6 shadow-xl">
       <h2 class="mb-2 text-lg font-bold text-gray-800">Konfirmasi Hapus</h2>
       <p class="mb-1 text-gray-600">Apakah Anda yakin ingin menghapus surat ini?</p>
-      <p class="mb-6 font-semibold text-gray-800 truncate">"{deleteTarget?.label}"</p>
+      <p class="mb-6 truncate font-semibold text-gray-800">"{deleteTarget?.label}"</p>
       <div class="flex justify-end gap-3">
-        <button class="px-4 py-2 text-gray-600 rounded hover:bg-gray-100 focus:outline-none" on:click={cancelDelete}> Batal </button>
-        <button class="px-4 py-2 text-white bg-red-500 rounded hover:bg-red-600 focus:outline-none" on:click={executeDelete}> Hapus </button>
+        <button class="rounded px-4 py-2 text-gray-600 hover:bg-gray-100 focus:outline-none" on:click={cancelDelete}> Batal </button>
+        <button class="rounded bg-red-500 px-4 py-2 text-white hover:bg-red-600 focus:outline-none" on:click={executeDelete}> Hapus </button>
       </div>
     </div>
   </div>
 {/if}
 
 {#if showToast}
-  <div class="fixed z-50 flex items-center gap-3 px-5 py-3 text-white transition-all bg-green-500 rounded-lg shadow-xl bottom-6 right-6">
-    <svg xmlns="http://www.w3.org/2000/svg" class="w-5 h-5 shrink-0" viewBox="0 0 20 20" fill="currentColor">
+  <div class="fixed bottom-6 right-6 z-50 flex items-center gap-3 rounded-lg bg-green-500 px-5 py-3 text-white shadow-xl transition-all">
+    <svg xmlns="http://www.w3.org/2000/svg" class="h-5 w-5 shrink-0" viewBox="0 0 20 20" fill="currentColor">
       <path fill-rule="evenodd" d="M10 18a8 8 0 100-16 8 8 0 000 16zm3.707-9.293a1 1 0 00-1.414-1.414L9 10.586 7.707 9.293a1 1 0 00-1.414 1.414l2 2a1 1 0 001.414 0l4-4z" clip-rule="evenodd" />
     </svg>
     <span class="text-sm font-medium">{toastMessage}</span>

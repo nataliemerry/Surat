@@ -4,31 +4,31 @@
   export const layout = Layout
 </script>
 
-<h1 class="mb-8 text-3xl font-bold">
+<h1 class="mb-8 text-2xl font-bold sm:text-3xl">
   <a use:inertia href="/" class="text-indigo-400 hover:text-indigo-600"> Surat Undangan </a>
   <span class="font-medium text-indigo-400">/</span> Create
 </h1>
 
-<div class="flex space-x-4">
-  <a use:inertia href="/surat/undangan/form">
-    <div class="flex h-48 w-48 cursor-pointer flex-col items-center justify-center rounded-lg border border-gray-300 transition duration-200 hover:border-2 hover:border-indigo-500">
-      <div class="mb-4 flex h-16 w-16 items-center justify-center rounded-full bg-gray-200">
-        <svg class="h-8 w-8 text-gray-600" xmlns="http://www.w3.org/2000/svg" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round">
+<div class="grid grid-cols-1 gap-4 sm:grid-cols-2">
+  <a use:inertia href="/surat/undangan/form" class="w-full">
+    <div class="flex h-32 w-full cursor-pointer items-center justify-start rounded-xl border border-gray-200 bg-white p-4 transition duration-200 hover:border-indigo-500 hover:shadow-md sm:h-48 sm:flex-col sm:justify-center">
+      <div class="mr-4 flex h-14 w-14 shrink-0 items-center justify-center rounded-full bg-indigo-50 text-indigo-600 sm:mb-4 sm:mr-0 sm:h-16 sm:w-16">
+        <svg class="h-7 w-7 sm:h-8 sm:w-8" xmlns="http://www.w3.org/2000/svg" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round">
           <path d="M12 5v14M5 12h14"></path>
         </svg>
       </div>
-      <p class="text-center font-semibold text-gray-700">Buat Surat Undangan</p>
+      <p class="text-left text-sm font-semibold text-gray-700 sm:text-center sm:text-base">Buat Surat Undangan</p>
     </div>
   </a>
 
-  <a use:inertia href="/surat/undangan/upload">
-    <div class="flex h-48 w-48 cursor-pointer flex-col items-center justify-center rounded-lg border border-gray-300 transition duration-200 hover:border-2 hover:border-indigo-500">
-      <div class="mb-4 flex h-16 w-16 items-center justify-center rounded-full bg-gray-200">
-        <svg class="h-8 w-8 text-gray-600" xmlns="http://www.w3.org/2000/svg" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round">
+  <a use:inertia href="/surat/undangan/upload" class="w-full">
+    <div class="flex h-32 w-full cursor-pointer items-center justify-start rounded-xl border border-gray-200 bg-white p-4 transition duration-200 hover:border-indigo-500 hover:shadow-md sm:h-48 sm:flex-col sm:justify-center">
+      <div class="mr-4 flex h-14 w-14 shrink-0 items-center justify-center rounded-full bg-indigo-50 text-indigo-600 sm:mb-4 sm:mr-0 sm:h-16 sm:w-16">
+        <svg class="h-7 w-7 sm:h-8 sm:w-8" xmlns="http://www.w3.org/2000/svg" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round">
           <path d="M21 15v4a2 2 0 0 1-2 2H5a2 2 0 0 1-2-2v-4M17 8l-5-5-5 5M12 3v12"></path>
         </svg>
       </div>
-      <p class="text-center font-semibold text-gray-700">Upload Dokumen Surat Undangan</p>
+      <p class="text-left text-sm font-semibold text-gray-700 sm:text-center sm:text-base">Upload Dokumen Surat Undangan</p>
     </div>
   </a>
 </div>
