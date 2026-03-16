@@ -178,7 +178,7 @@ class SuratController extends Controller
             'tujuan'              => 'required|string',
             'isRuangan'           => 'required|boolean',
             'isKonsumsi'          => 'required|boolean',
-            'isPengelolaan'       => 'required|boolean',
+            'isPengelolaan'       => 'nullable|boolean',
             'tanggal_pelaksanaan' => 'required|date',
         ]);
 
