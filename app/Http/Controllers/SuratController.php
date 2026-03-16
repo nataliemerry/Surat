@@ -46,7 +46,7 @@ class SuratController extends Controller
 
     public function formSuratTugas(): Response
     {
-        return Inertia::render('Surat/Tugas/Form', ['kode' => $this->kodeOptions()]);
+        return Inertia::render('Surat/Tugas/form', ['kode' => $this->kodeOptions()]);
     }
 
     public function storeSuratTugas(Request $request): RedirectResponse
@@ -76,7 +76,7 @@ class SuratController extends Controller
 
     public function uploadSuratTugas(): Response
     {
-        return Inertia::render('Surat/Tugas/Upload');
+        return Inertia::render('Surat/Tugas/upload');
     }
 
     public function updateSuratTugas(Request $request): RedirectResponse
@@ -110,7 +110,7 @@ class SuratController extends Controller
 
     public function editSuratTugas(Surat $surat): Response
     {
-        return Inertia::render('Surat/Tugas/Edit', [
+        return Inertia::render('Surat/Tugas/edit', [
             'surat' => [
                 'id'                => $surat->id,
                 'type'              => $surat->type,
@@ -165,7 +165,7 @@ class SuratController extends Controller
 
     public function formSuratUndangan(): Response
     {
-        return Inertia::render('Surat/Undangan/Form', ['kode' => $this->kodeOptions()]);
+        return Inertia::render('Surat/Undangan/form', ['kode' => $this->kodeOptions()]);
     }
 
     public function storeSuratUndangan(Request $request): RedirectResponse
@@ -209,7 +209,7 @@ class SuratController extends Controller
 
     public function uploadSuratUndangan(): Response
     {
-        return Inertia::render('Surat/Undangan/Upload');
+        return Inertia::render('Surat/Undangan/upload');
     }
 
     public function updateSuratUndangan(Request $request): RedirectResponse
@@ -243,7 +243,7 @@ class SuratController extends Controller
 
     public function editSuratUndangan(Surat $surat): Response
     {
-        return Inertia::render('Surat/Undangan/Edit', [
+        return Inertia::render('Surat/Undangan/edit', [
             'surat' => [
                 'id'                  => $surat->id,
                 'type'                => $surat->type,
@@ -307,7 +307,7 @@ class SuratController extends Controller
 
     public function formSuratDinas(): Response
     {
-        return Inertia::render('Surat/Dinas/Form', ['kode' => $this->kodeOptions()]);
+        return Inertia::render('Surat/Dinas/form', ['kode' => $this->kodeOptions()]);
     }
 
     public function storeSuratDinas(Request $request): RedirectResponse
@@ -347,7 +347,7 @@ class SuratController extends Controller
 
     public function uploadSuratDinas(): Response
     {
-        return Inertia::render('Surat/Dinas/Upload');
+        return Inertia::render('Surat/Dinas/upload');
     }
 
     public function updateSuratDinas(Request $request): RedirectResponse
@@ -381,7 +381,7 @@ class SuratController extends Controller
 
     public function editSuratDinas(Surat $surat): Response
     {
-        return Inertia::render('Surat/Dinas/Edit', [
+        return Inertia::render('Surat/Dinas/edit', [
             'surat' => [
                 'id'                => $surat->id,
                 'type'              => $surat->type,
