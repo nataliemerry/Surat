@@ -15,7 +15,7 @@
 
 <div {...$$restProps}>
   <div class="mb-4">
-    <a use:inertia href="/" class="flex items-center py-3 group md:px-2">
+    <a use:inertia href="/surat" class="flex items-center py-3 group md:px-2">
       <LayoutDashboard class="mr-2 h-4 w-4 {isUrl('') ? 'text-white' : 'text-indigo-400 group-hover:text-white'}" />
       <div class={isUrl('') ? 'text-white' : 'text-indigo-300 group-hover:text-white'}>Beranda</div>
     </a>
@@ -26,18 +26,18 @@
       <div class="text-xs text-indigo-600">PENGAJUAN NOMOR SURAT</div>
     </div>
     <div class="flex items-start py-2 group">
-      <a use:inertia href="/surat-tugas">
-        <div class={isUrl('surat-tugas') ? 'text-white' : 'text-indigo-300 group-hover:text-white'}>Surat Tugas</div>
+      <a use:inertia href="/surat/tugas">
+        <div class={isUrl('surat/tugas') ? 'text-white' : 'text-indigo-300 group-hover:text-white'}>Surat Tugas</div>
       </a>
     </div>
     <div class="flex items-start py-2 group">
-      <a use:inertia href="/surat-undangan">
-        <div class={isUrl('surat-undangan') ? 'text-white' : 'text-indigo-300 group-hover:text-white'}>Surat Undangan</div>
+      <a use:inertia href="/surat/undangan">
+        <div class={isUrl('surat/undangan') ? 'text-white' : 'text-indigo-300 group-hover:text-white'}>Surat Undangan</div>
       </a>
     </div>
     <div class="flex items-start py-2 group">
-      <a use:inertia href="/surat-dinas">
-        <div class={isUrl('surat-dinas') ? 'text-white' : 'text-indigo-300 group-hover:text-white'}>Surat Dinas</div>
+      <a use:inertia href="/surat/dinas">
+        <div class={isUrl('surat/dinas') ? 'text-white' : 'text-indigo-300 group-hover:text-white'}>Surat Dinas</div>
       </a>
     </div>
   </div>

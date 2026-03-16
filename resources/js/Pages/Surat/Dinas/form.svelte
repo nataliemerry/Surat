@@ -1,3 +1,4 @@
+<!-- flashcard yang jadi -->
 <script context="module">
   import Layout, { title } from '@/Shared/Layout.svelte'
   export const layout = Layout
@@ -16,10 +17,10 @@
     filteredKode = kode.filter((item) => item.value.includes(firstSelect))
   }
 
-  $title = 'Tambah Surat Undangan'
+  $title = 'Tambah Surat Dinas'
 
   let form = useForm('CreateSurat', {
-    type: 2,
+    type: 3,
     firstSelect: null,
     kode: null,
     isRahasia: '0',
@@ -28,9 +29,7 @@
     isPengelolaan: null,
     perihal: null,
     tujuan: null,
-    tanggal_pelaksanaan: null,
     file: null,
-    lnk: null,
   })
 
   $: if ($form.firstSelect) {
@@ -38,7 +37,7 @@
   }
 
   function store() {
-    $form.post('/surat-undangan/create', {
+    $form.post('/surat/dinas/store', {
       forceFormData: true,
     })
   }
@@ -57,7 +56,7 @@
 </script>
 
 <h1 class="mb-8 text-3xl font-bold">
-  <a use:inertia href="/" class="text-indigo-400 hover:text-indigo-600"> Surat Undangan </a>
+  <a use:inertia href="/surat/dinas" class="text-indigo-400 hover:text-indigo-600"> Surat Dinas </a>
   <span class="font-medium text-indigo-400">/</span> Create
 </h1>
 
@@ -100,33 +99,10 @@
       </SelectInput>
       <TextInput bind:value={$form.perihal} error={$form.errors.perihal} class="w-full pb-8 pr-6" label="Perihal:" />
       <TextInput bind:value={$form.tujuan} error={$form.errors.tujuan} class="w-full pb-8 pr-6" label="Tujuan:" />
-      <div class="w-full pb-8 pr-6">
-        <label for="tanggal_pelaksanaan" class="form-label">Tanggal Pelaksanaan:</label>
-        <input id="tanggal_pelaksanaan" type="date" bind:value={$form.tanggal_pelaksanaan} class="form-input" required/>
-        {#if $form.errors.tanggal_pelaksanaan}
-          <div class="form-error">{$form.errors.tanggal_pelaksanaan}</div>
-        {/if}
-      </div>
-      <SelectInput bind:value={$form.isRuangan} error={$form.errors.isRuangan} class="w-full pb-8 pr-6" label="Apakah menggunakan Ruang Aula?" required>
-        <option value={null}>Silakan pilih salah satu opsi</option>
-        <option value="1">Ya, Kegiatan menggunakan Ruang Aula</option>
-        <option value="0">Tidak, Kegiatan tidak menggunakan Ruang Aula</option>
-      </SelectInput>
-      <SelectInput bind:value={$form.isKonsumsi} error={$form.errors.isKonsumsi} class="w-full pb-8 pr-6" label="Keperluan Konsumsi" required>
-        <option value={null}>Silakan pilih salah satu opsi</option>
-        <option value="1">Ya, Kegiatan membutuhkan konsumsi</option>
-        <option value="0">Tidak, Kegiatan tidak membutuhkan konsumsi</option>
-      </SelectInput>
-      {#if $form.isKonsumsi == 1}
-        <SelectInput bind:value={$form.isPengelolaan} error={$form.errors.isPengelolaan} class="w-full pb-8 pr-6" label="Siapa yang akan mengelola konsumsi?" required>
-          <option value={null}>Silakan pilih salah satu opsi</option>
-          <option value="1">Dikelola oleh Umum / TU</option>
-          <option value="0">Dikelola sendiri</option>
-        </SelectInput>
-      {/if}
-      
+
       <!-- <div class="w-full pb-8 pr-6">
-        <label for="file" class="block text-sm font-medium text-gray-700">Unggah File (.docx):</label>
+        <label for="file" class="block text-sm font-medium text-gray-700">Upload File (.docx):</label>
+
         <div class="flex items-center mt-3">
           <label for="file" class="inline-flex items-center px-4 py-2 text-indigo-500 transition border border-indigo-500 rounded-md shadow-sm cursor-pointer hover:bg-indigo-500 hover:text-white focus:ring-2 focus:ring-indigo-500 focus:ring-offset-2">
             <svg class="w-5 h-5 mr-2" xmlns="http://www.w3.org/2000/svg" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round">
@@ -142,7 +118,6 @@
           <p class="mt-2 text-sm text-red-600">{$form.errors.file}</p>
         {/if}
       </div> -->
-      
     </div>
     <div class="flex items-center justify-end px-8 py-4 border-t border-gray-100 bg-gray-50">
       <LoadingButton loading={$form.processing} class="btn-indigo hover:bg-indigo-700" type="submit">Ajukan Surat</LoadingButton>

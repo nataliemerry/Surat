@@ -4,7 +4,6 @@ namespace App\Http\Controllers\Auth;
 
 use App\Http\Controllers\Controller;
 use App\Http\Requests\Auth\LoginRequest;
-use App\Providers\AppServiceProvider;
 use Illuminate\Http\RedirectResponse;
 use Illuminate\Http\Request;
 use Illuminate\Support\Facades\Auth;
@@ -15,7 +14,12 @@ class AuthenticatedSessionController extends Controller
 {
     public function create(): Response
     {
-        return Inertia::render('Auth/Login');
+           // Simpan URL sebelumnya jika bukan halaman login
+           $previousUrl = url()->previous();
+           if ($previousUrl && !str_contains($previousUrl, '/login')) {
+              session(['previous_url' => $previousUrl]);
+           }
+           return Inertia::render('Auth/Login');
     }
 
     public function store(LoginRequest $request): RedirectResponse
@@ -24,7 +28,13 @@ class AuthenticatedSessionController extends Controller
 
         $request->session()->regenerate();
 
-        return redirect()->intended(AppServiceProvider::HOME);
+            // Redirect ke previous_url jika ada dan bukan halaman login
+            $previousUrl = session('previous_url');
+            if ($previousUrl && !str_contains($previousUrl, '/login')) {
+                session()->forget('previous_url');
+                return redirect($previousUrl);
+            }
+            return redirect()->intended(route('home'));
     }
 
     public function destroy(Request $request): RedirectResponse
@@ -35,6 +45,6 @@ class AuthenticatedSessionController extends Controller
 
         $request->session()->regenerateToken();
 
-        return redirect('/');
+           return redirect(url()->previous(route('home')));
     }
 }

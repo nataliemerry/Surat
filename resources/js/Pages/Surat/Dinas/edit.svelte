@@ -18,9 +18,9 @@
     filteredKode = kode.filter((item) => item.value.includes(firstSelect))
   }
 
-  $title = 'Edit Surat Undangan'
+  $title = 'Edit Surat Dinas'
 
-  let form = useForm(`EditSuratUndangan: ${surat.id}`, {
+  let form = useForm(`EditSuratDinas: ${surat.id}`, {
     _method: 'put',
     type: surat.type,
     firstSelect: surat.kode ? surat.kode.substring(0, 2) : null,
@@ -28,10 +28,6 @@
     isRahasia: surat.isRahasia !== null ? String(surat.isRahasia) : '0',
     perihal: surat.perihal,
     tujuan: surat.tujuan,
-    isRuangan: surat.isRuangan !== null ? String(surat.isRuangan) : null,
-    isKonsumsi: surat.isKonsumsi !== null ? String(surat.isKonsumsi) : null,
-    isPengelolaan: surat.isPengelolaan !== null ? String(surat.isPengelolaan) : null,
-    tanggal_pelaksanaan: surat.tanggal_pelaksanaan || null,
     filepath: surat.filepath,
     link: surat.link,
     file: null,
@@ -55,20 +51,20 @@
   }
 
   function update() {
-    $form.post(`/surat-undangan/${surat.id}`, {
+    $form.post(`/surat/dinas/${surat.id}`, {
       forceFormData: true,
     })
   }
 </script>
 
 <h1 class="mb-8 text-3xl font-bold">
-  <a use:inertia href="/?type=2" class="text-indigo-400 hover:text-indigo-600"> Surat Undangan </a>
+  <a use:inertia href="/?type=3" class="text-indigo-400 hover:text-indigo-600"> Surat Dinas </a>
   <span class="font-medium text-indigo-400">/</span> Edit
 </h1>
 
-<div class="max-w-3xl overflow-hidden bg-white rounded-md shadow">
+<div class="max-w-3xl overflow-hidden rounded-md bg-white shadow">
   <form on:submit|preventDefault={update}>
-    <div class="flex flex-wrap p-8 -mb-8 -mr-6">
+    <div class="-mb-8 -mr-6 flex flex-wrap p-8">
       <SelectInput bind:value={$form.firstSelect} error={$form.errors.firstSelect} class="w-full pb-8 pr-6" label="Kode Arsip Utama">
         <option value={null}>Silakan pilih salah satu opsi</option>
         <option value="PS">PS - Perumusan Kebijakan di Bidang Statistik</option>
@@ -106,36 +102,12 @@
       <TextInput bind:value={$form.perihal} error={$form.errors.perihal} class="w-full pb-8 pr-6" label="Perihal:" />
       <TextInput bind:value={$form.tujuan} error={$form.errors.tujuan} class="w-full pb-8 pr-6" label="Tujuan:" />
       <div class="w-full pb-8 pr-6">
-        <label for="tanggal_pelaksanaan" class="form-label">Tanggal Pelaksanaan:</label>
-        <input id="tanggal_pelaksanaan" type="date" bind:value={$form.tanggal_pelaksanaan} class="form-input" />
-        {#if $form.errors.tanggal_pelaksanaan}
-          <div class="form-error">{$form.errors.tanggal_pelaksanaan}</div>
-        {/if}
-      </div>
-      <SelectInput bind:value={$form.isRuangan} error={$form.errors.isRuangan} class="w-full pb-8 pr-6" label="Apakah menggunakan Ruang Aula?">
-        <option value={null}>Silakan pilih salah satu opsi</option>
-        <option value="1">Ya, Kegiatan menggunakan Ruang Aula</option>
-        <option value="0">Tidak, Kegiatan tidak menggunakan Ruang Aula</option>
-      </SelectInput>
-      <SelectInput bind:value={$form.isKonsumsi} error={$form.errors.isKonsumsi} class="w-full pb-8 pr-6" label="Keperluan Konsumsi">
-        <option value={null}>Silakan pilih salah satu opsi</option>
-        <option value="1">Ya, Kegiatan membutuhkan konsumsi</option>
-        <option value="0">Tidak, Kegiatan tidak membutuhkan konsumsi</option>
-      </SelectInput>
-      {#if $form.isKonsumsi == 1}
-        <SelectInput bind:value={$form.isPengelolaan} error={$form.errors.isPengelolaan} class="w-full pb-8 pr-6" label="Siapa yang akan mengelola konsumsi?">
-          <option value={null}>Silakan pilih salah satu opsi</option>
-          <option value="1">Dikelola oleh Umum / TU</option>
-          <option value="0">Dikelola sendiri</option>
-        </SelectInput>
-      {/if}
-      <div class="w-full pb-8 pr-6">
-        <label for="file" class="block text-sm font-medium text-gray-700">File (.docx, .pdf):</label>
+        <label for="file" class="block text-sm font-medium text-gray-700">File (.docx,.pdf):</label>
 
         <!-- Fancy file upload button -->
-        <div class="flex items-center mt-3">
-          <label for="file" class="inline-flex items-center px-4 py-2 text-indigo-500 transition border border-indigo-500 rounded-md shadow-sm cursor-pointer hover:bg-indigo-500 hover:text-white focus:ring-2 focus:ring-indigo-500 focus:ring-offset-2">
-            <svg class="w-5 h-5 mr-2" xmlns="http://www.w3.org/2000/svg" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round">
+        <div class="mt-3 flex items-center">
+          <label for="file" class="inline-flex cursor-pointer items-center rounded-md border border-indigo-500 px-4 py-2 text-indigo-500 shadow-sm transition hover:bg-indigo-500 hover:text-white focus:ring-2 focus:ring-indigo-500 focus:ring-offset-2">
+            <svg class="mr-2 h-5 w-5" xmlns="http://www.w3.org/2000/svg" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round">
               <path d="M21 15v4a2 2 0 0 1-2 2H5a2 2 0 0 1-2-2v-4M17 8l-5-5-5 5M12 3v12"></path>
             </svg>
             Choose File
@@ -149,7 +121,7 @@
         {/if}
       </div>
     </div>
-    <div class="flex items-center justify-end px-8 py-4 border-t border-gray-100 bg-gray-50">
+    <div class="flex items-center justify-end border-t border-gray-100 bg-gray-50 px-8 py-4">
       <LoadingButton loading={$form.processing} class="btn-indigo hover:bg-indigo-700" type="submit">Simpan Perubahan</LoadingButton>
     </div>
   </form>

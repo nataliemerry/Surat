@@ -25,5 +25,8 @@ class DatabaseSeeder extends Seeder
         ]);
 
         User::factory(5)->create(['account_id' => $account->id]);
+
+        $this->call(AtkSeeder::class);
+        $this->call(PegawaiSeeder::class);
     }
 }
