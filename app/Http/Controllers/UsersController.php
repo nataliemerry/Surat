@@ -39,14 +39,14 @@ class UsersController extends Controller
         $isAuthenticated = Auth::check();
         $user = $isAuthenticated ? Auth::user() : null;
 
-        return Inertia::render('Shared/Layout', [
+        return Inertia::render('Users/Index', [
             'user' => $user,
         ]);
     }
 
 
     public function getData():Response{
-        return inertia::render('Shared/Layout', [
+        return Inertia::render('Users/Index', [
             'auth' => [
                 'first_name'=> Auth::user()->first_name
             ]
