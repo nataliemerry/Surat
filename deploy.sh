@@ -1,60 +1,83 @@
 #!/bin/bash
-# ============================================================
-# deploy.sh — Build & zip proyek Laravel untuk upload ke cPanel
-# Jalankan: bash deploy.sh
-# ============================================================
+# deploy.sh — Build & Pack Laravel (Anti-Conflict Version)
 
-# Nama folder sekarang (otomatis)
 FOLDER_NAME=$(basename "$PWD")
-ZIP_NAME="${FOLDER_NAME}.zip"
+ARCHIVE_NAME="${FOLDER_NAME}_production.tar.gz"
+# Path sementara di folder luar agar tar tidak mendeteksi perubahan file sendiri
+TEMP_ARCHIVE="../$ARCHIVE_NAME"
 
-echo "=============================="
-echo "  Laravel Deploy Zipper"
-echo "=============================="
+echo "==========================================="
+echo "   Laravel Production Packager (Full)      "
+echo "==========================================="
 
-# 1. Build aset Vite
-echo ""
-echo "[1/2] Building Vite assets..."
-npm run build
+# 1. Clear Local Laravel Cache
+echo "[1/3] Clearing application cache..."
+php artisan optimize:clear > /dev/null 2>&1
+
+# 2. Build Frontend Assets
+echo "[2/3] Building Vite assets (npm run build)..."
+npm run build > /dev/null 2>&1
 if [ $? -ne 0 ]; then
-    echo "ERROR: npm run build gagal. Pastikan node_modules sudah terinstall."
+    echo "ERROR: npm run build failed. Process aborted."
     exit 1
 fi
 
-# 2. Hapus zip lama jika ada
-if [ -f "$ZIP_NAME" ]; then
-    echo "Menghapus zip lama: $ZIP_NAME"
-    rm "$ZIP_NAME"
-fi
+# 3. Create the Tar Archive
+echo "[3/3] Creating archive: $ARCHIVE_NAME..."
+echo "Archiving progress (number of files):"
 
-# 3. Buat zip (dari direktori parent)
-echo ""
-echo "[2/2] Membuat zip: $ZIP_NAME ..."
-cd ..
-zip -r "${FOLDER_NAME}/${ZIP_NAME}" "${FOLDER_NAME}" \
-    --exclude "${FOLDER_NAME}/node_modules/*" \
-    --exclude "${FOLDER_NAME}/.git/*" \
-    --exclude "${FOLDER_NAME}/${ZIP_NAME}" \
-    --exclude "${FOLDER_NAME}/.env" \
-    --exclude "${FOLDER_NAME}/tests/*" \
-    --exclude "${FOLDER_NAME}/docker-compose.*" \
-    --exclude "${FOLDER_NAME}/screenshot.png" \
-    --exclude "${FOLDER_NAME}/deploy.bat" \
-    --exclude "${FOLDER_NAME}/deploy.sh" \
-    --exclude "${FOLDER_NAME}/README.md" \
-    --exclude "${FOLDER_NAME}/readme.md" \
-    --exclude "${FOLDER_NAME}/phpunit.xml" \
-    --exclude "${FOLDER_NAME}/phpstan.neon"
+# Hapus file lama jika ada
+rm -f "$ARCHIVE_NAME"
+rm -f "$TEMP_ARCHIVE"
 
-cd "${FOLDER_NAME}"
+# Kita simpan output ke $TEMP_ARCHIVE (di luar folder ini)
+tar -I 'gzip -1' -cf "$TEMP_ARCHIVE" \
+    --checkpoint=500 \
+    --checkpoint-action=echo="  > %u files packaged..." \
+    --exclude="node_modules" \
+    --exclude=".git" \
+    --exclude=".env" \
+    --exclude=".env.example" \
+    --exclude=".editorconfig" \
+    --exclude=".prettierrc" \
+    --exclude=".eslintrc.cjs" \
+    --exclude=".gitattributes" \
+    --exclude=".gitignore" \
+    --exclude="tests" \
+    --exclude="storage/logs/*" \
+    --exclude="storage/framework/cache/*" \
+    --exclude="storage/framework/sessions/*" \
+    --exclude="storage/framework/views/*" \
+    --exclude="phpstan.neon" \
+    --exclude="phpunit.xml" \
+    --exclude="docker-compose.yml" \
+    --exclude="package.json" \
+    --exclude="package-lock.json" \
+    --exclude="postcss.config.js" \
+    --exclude="tailwind.config.js" \
+    --exclude="vite.config.js" \
+    --exclude="readme.md" \
+    --exclude="LICENSE.md" \
+    --exclude="screenshot.png" \
+    --exclude="Procfile" \
+    --exclude="deploy.sh" \
+    --exclude="*.tar.gz" \
+    --exclude="*.zip" \
+    --exclude="vendor/**/tests" \
+    --exclude="vendor/**/docs" \
+    --exclude="vendor/**/*.md" \
+    .
 
+# Jika berhasil, pindahkan file dari folder luar ke folder saat ini
 if [ $? -eq 0 ]; then
-    echo ""
-    echo "=============================="
-    echo "  SELESAI! File siap upload:"
-    echo "  $ZIP_NAME"
-    echo "=============================="
+    mv "$TEMP_ARCHIVE" "./$ARCHIVE_NAME"
+    echo "-------------------------------------------"
+    echo " SUCCESS! Archive created: $ARCHIVE_NAME"
+    echo "-------------------------------------------"
 else
-    echo "ERROR: Gagal membuat zip."
-    exit 1
+    # Hapus file temp jika gagal
+    rm -f "$TEMP_ARCHIVE"
+    echo "-------------------------------------------"
+    echo " ERROR: Failed to create the archive."
+    echo "-------------------------------------------"
 fi
