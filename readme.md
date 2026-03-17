@@ -1,81 +1,135 @@
-# Ping CRM - Svelte
+# Surat
 
-A demo application to illustrate how Inertia.js works.
+Surat is a Laravel-based application for managing outgoing letters and related administrative data.
 
-![](https://raw.githubusercontent.com/inertiajs/pingcrm/master/screenshot.png)
+## Requirements
 
-## Installation
+- PHP 8.2+ with required Laravel extensions
+- Composer
+- Node.js 18+ and npm
+- MySQL/MariaDB (or another database supported by Laravel)
 
-Clone the repo locally:
+## Local Setup
+
+1. Clone the repository and enter the project directory.
 
 ```sh
-git clone https://github.com/inertiajs/pingcrm-svelte.git pingcrm-svelte
-cd pingcrm-svelte
+git clone <your-repository-url> Surat
+cd Surat
 ```
 
-Install PHP dependencies:
+2. Install backend and frontend dependencies.
 
 ```sh
 composer install
+npm install
 ```
 
-Install NPM dependencies:
-
-```sh
-npm ci
-```
-
-Build assets:
-
-```sh
-npm run dev
-```
-
-Setup configuration:
+3. Create the environment file.
 
 ```sh
 cp .env.example .env
 ```
 
-Generate application key:
+4. Configure your database in the `.env` file.
+
+Important variables:
+
+```env
+DB_CONNECTION=mysql
+DB_HOST=127.0.0.1
+DB_PORT=3306
+DB_DATABASE=surat
+DB_USERNAME=root
+DB_PASSWORD=
+```
+
+5. Generate an application key.
 
 ```sh
 php artisan key:generate
 ```
 
-Create an SQLite database. You can also use another database (MySQL, Postgres), simply update your configuration accordingly.
-
-```sh
-touch database/database.sqlite
-```
-
-Run database migrations:
+6. Run database migrations (and optional seeders).
 
 ```sh
 php artisan migrate
-```
-
-Run database seeder:
-
-```sh
+# optional
 php artisan db:seed
 ```
 
-Run the dev server (the output will give the address):
+7. Run the app in development mode.
 
 ```sh
+# terminal 1
 php artisan serve
+
+# terminal 2
+npm run dev
 ```
 
-You're ready to go! Visit Ping CRM in your browser, and login with:
+Open the URL shown by `php artisan serve`.
 
-- **Username:** johndoe@example.com
-- **Password:** secret
+## Useful Development Commands
 
-## Running tests
-
-To run the Ping CRM tests, run:
-
+```sh
+php artisan optimize:clear
+php artisan test
+npm run build
 ```
-phpunit
+
+## Deploy Script (`deploy.sh`)
+
+This project includes a deployment packaging script: `deploy.sh`.
+
+### What `deploy.sh` does
+
+The script creates a production archive named:
+
+```text
+<project_folder_name>_production.tar.gz
 ```
+
+Execution flow:
+
+1. Clears Laravel caches using `php artisan optimize:clear`.
+2. Builds frontend assets using `npm run build`.
+3. Packages the application into a `.tar.gz` archive.
+
+The archive excludes development and sensitive files/folders such as:
+
+- `.git`, `node_modules`, test files
+- local environment files (`.env`)
+- frontend build config files
+- logs and temporary framework caches
+- previous archive files (`*.tar.gz`, `*.zip`)
+
+This makes the output archive smaller and safer to upload to production hosting (for example, cPanel).
+
+### How to use `deploy.sh`
+
+1. Make sure you are in the project root.
+2. Run the script:
+
+```sh
+./deploy.sh
+```
+
+If needed, make it executable first:
+
+```sh
+chmod +x deploy.sh
+./deploy.sh
+```
+
+3. Wait until you see the success message.
+4. Upload the generated `*_production.tar.gz` file to your server and extract it there.
+
+### Notes
+
+- If `npm run build` fails, the script stops automatically.
+- The script does not upload files automatically; it only prepares a deployment-ready archive.
+
+## License
+
+This project is licensed under the terms in `LICENSE.md`.
