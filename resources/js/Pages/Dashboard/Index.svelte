@@ -7,7 +7,7 @@
   import { onMount } from 'svelte'
   import Pagination from '@/Shared/Pagination.svelte'
   import { router, page } from '@inertiajs/svelte'
-  import { Pencil, Trash2 } from 'lucide-svelte'
+  import { Pencil, Trash2, Search } from 'lucide-svelte'
 
   let toastMessage = ''
   let showToast = false
@@ -57,14 +57,24 @@
   let itemsPerPage = 10
   let totalPages = 1
   let activeType = 1
+  let searchQuery = ''
 
   $title = 'Dashboard'
 
-  function filterByType(type) {
-    activeType = type
-    filteredSurat = surat.filter((item) => item.type === type)
+  function applyFilters() {
+    filteredSurat = surat.filter((item) => {
+      const matchType = item.type === activeType
+      const safePerihal = item.perihal || ''
+      const matchSearch = !searchQuery || safePerihal.toLowerCase().includes(searchQuery.toLowerCase())
+      return matchType && matchSearch
+    })
     currentPage = 1
     updatePagination()
+  }
+
+  function filterByType(type) {
+    activeType = type
+    applyFilters()
   }
 
   function updatePagination() {
@@ -200,29 +210,39 @@
     </div>
   </div>
 
-  <div class="flex items-center">
-    {#if activeType === 1}
-      <a href="/surat/tugas/form" class="inline-flex items-center gap-2 rounded-lg bg-indigo-600 px-4 py-2 text-sm font-semibold text-white shadow hover:bg-indigo-700">
-        <svg class="h-4 w-4" fill="none" stroke="currentColor" stroke-width="2" viewBox="0 0 24 24">
-          <path stroke-linecap="round" stroke-linejoin="round" d="M12 4v16m8-8H4" />
-        </svg>
-        Buat Surat Tugas
-      </a>
-    {:else if activeType === 2}
-      <a href="/surat/undangan/form" class="inline-flex items-center gap-2 rounded-lg bg-indigo-600 px-4 py-2 text-sm font-semibold text-white shadow hover:bg-indigo-700">
-        <svg class="h-4 w-4" fill="none" stroke="currentColor" stroke-width="2" viewBox="0 0 24 24">
-          <path stroke-linecap="round" stroke-linejoin="round" d="M12 4v16m8-8H4" />
-        </svg>
-        Buat Surat Undangan
-      </a>
-    {:else if activeType === 3}
-      <a href="/surat/dinas/form" class="inline-flex items-center gap-2 rounded-lg bg-indigo-600 px-4 py-2 text-sm font-semibold text-white shadow hover:bg-indigo-700">
-        <svg class="h-4 w-4" fill="none" stroke="currentColor" stroke-width="2" viewBox="0 0 24 24">
-          <path stroke-linecap="round" stroke-linejoin="round" d="M12 4v16m8-8H4" />
-        </svg>
-        Buat Surat Dinas
-      </a>
-    {/if}
+  <div class="flex flex-col gap-3 sm:flex-row sm:items-center">
+    <!-- Search Bar -->
+    <div class="relative w-full sm:w-64">
+      <div class="pointer-events-none absolute inset-y-0 left-0 flex items-center pl-3">
+        <Search class="h-4 w-4 text-gray-400" />
+      </div>
+      <input type="text" bind:value={searchQuery} on:input={applyFilters} placeholder="Cari berdasarkan perihal..." class="block w-full rounded-lg border border-gray-300 bg-white py-2 pl-10 pr-3 text-sm placeholder-gray-400 focus:border-indigo-500 focus:outline-none focus:ring-1 focus:ring-indigo-500" />
+    </div>
+
+    <div class="flex items-center">
+      {#if activeType === 1}
+        <a href="/surat/tugas/form" class="inline-flex items-center gap-2 rounded-lg bg-indigo-600 px-4 py-2 text-sm font-semibold text-white shadow hover:bg-indigo-700">
+          <svg class="h-4 w-4" fill="none" stroke="currentColor" stroke-width="2" viewBox="0 0 24 24">
+            <path stroke-linecap="round" stroke-linejoin="round" d="M12 4v16m8-8H4" />
+          </svg>
+          Buat Surat Tugas
+        </a>
+      {:else if activeType === 2}
+        <a href="/surat/undangan/form" class="inline-flex items-center gap-2 rounded-lg bg-indigo-600 px-4 py-2 text-sm font-semibold text-white shadow hover:bg-indigo-700">
+          <svg class="h-4 w-4" fill="none" stroke="currentColor" stroke-width="2" viewBox="0 0 24 24">
+            <path stroke-linecap="round" stroke-linejoin="round" d="M12 4v16m8-8H4" />
+          </svg>
+          Buat Surat Undangan
+        </a>
+      {:else if activeType === 3}
+        <a href="/surat/dinas/form" class="inline-flex items-center gap-2 rounded-lg bg-indigo-600 px-4 py-2 text-sm font-semibold text-white shadow hover:bg-indigo-700">
+          <svg class="h-4 w-4" fill="none" stroke="currentColor" stroke-width="2" viewBox="0 0 24 24">
+            <path stroke-linecap="round" stroke-linejoin="round" d="M12 4v16m8-8H4" />
+          </svg>
+          Buat Surat Dinas
+        </a>
+      {/if}
+    </div>
   </div>
 </div>
 <div class="overflow-x-auto rounded-xl border border-gray-200 bg-white shadow-sm">
