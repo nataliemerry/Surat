@@ -112,3 +112,10 @@ Route::prefix('atk')->group(function () {
         Route::delete('/barang/item/{item}', [App\Http\Controllers\AtkController::class, 'destroyItem'])->name('atk.barang.item.destroy');
     });
 });
+
+Route::prefix('pegawai')->middleware('auth')->group(function () {
+    Route::get('/', [App\Http\Controllers\PegawaiController::class, 'index'])->name('pegawai.index');
+    Route::post('/', [App\Http\Controllers\PegawaiController::class, 'store'])->name('pegawai.store');
+    Route::put('/{pegawai}', [App\Http\Controllers\PegawaiController::class, 'update'])->name('pegawai.update');
+    Route::delete('/{pegawai}', [App\Http\Controllers\PegawaiController::class, 'destroy'])->name('pegawai.destroy');
+});

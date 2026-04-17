@@ -89,6 +89,12 @@
     updatePagination()
   }
 
+  function handleItemsPerPageChange(newSize) {
+    itemsPerPage = newSize
+    currentPage = 1
+    updatePagination()
+  }
+
   $: updatePagination()
 
   onMount(() => {
@@ -327,7 +333,7 @@
     </tbody>
   </table>
 </div>
-<Pagination {totalPages} {currentPage} onChange={changePage} />
+<Pagination {totalPages} {currentPage} {itemsPerPage} totalItems={filteredSurat.length} onPageChange={changePage} onItemsPerPageChange={handleItemsPerPageChange} />
 
 {#if showDeleteModal}
   <div class="fixed inset-0 z-50 flex items-center justify-center bg-black/50">

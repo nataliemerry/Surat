@@ -68,19 +68,19 @@
 </script>
 
 <div class="w-full">
-  <div class="flex flex-col gap-3 mb-6 sm:flex-row sm:items-center sm:justify-between">
+  <div class="mb-6 flex flex-col gap-3 sm:flex-row sm:items-center sm:justify-between">
     <div>
       <h1 class="text-2xl font-bold text-gray-800 sm:text-3xl">Riwayat Permintaan ATK</h1>
     </div>
-    <a use:inertia href="/atk/form" class="inline-flex items-center gap-2 px-4 py-2 text-sm font-semibold text-white bg-indigo-600 rounded-lg shadow w-fit hover:bg-indigo-700">
-      <svg class="w-4 h-4" fill="none" stroke="currentColor" stroke-width="2" viewBox="0 0 24 24">
+    <a use:inertia href="/atk/form" class="inline-flex w-fit items-center gap-2 rounded-lg bg-indigo-600 px-4 py-2 text-sm font-semibold text-white shadow hover:bg-indigo-700">
+      <svg class="h-4 w-4" fill="none" stroke="currentColor" stroke-width="2" viewBox="0 0 24 24">
         <path stroke-linecap="round" stroke-linejoin="round" d="M12 4v16m8-8H4" />
       </svg>
       Ajukan Permintaan
     </a>
   </div>
 
-  <div class="flex gap-1 mb-4 border-b border-gray-200">
+  <div class="mb-4 flex gap-1 border-b border-gray-200">
     <button class="px-5 py-2.5 text-sm font-medium transition-colors {activeTab === 'pending' ? 'border-b-2 border-indigo-600 text-indigo-600' : 'text-gray-500 hover:text-gray-700'}" on:click={() => (activeTab = 'pending')}>
       Menunggu
       {#if pendingList.length > 0}
@@ -96,16 +96,16 @@
   </div>
 
   {#if tabList.length === 0}
-    <div class="text-center text-gray-400 border border-gray-300 border-dashed rounded-xl py-14">
-      <svg class="w-10 h-10 mx-auto mb-3 opacity-40" fill="none" stroke="currentColor" stroke-width="1.5" viewBox="0 0 24 24">
+    <div class="rounded-xl border border-dashed border-gray-300 py-14 text-center text-gray-400">
+      <svg class="mx-auto mb-3 h-10 w-10 opacity-40" fill="none" stroke="currentColor" stroke-width="1.5" viewBox="0 0 24 24">
         <path stroke-linecap="round" stroke-linejoin="round" d="M9 12h6m-3-3v6M4.5 12a7.5 7.5 0 1115 0 7.5 7.5 0 01-15 0z" />
       </svg>
       <p class="text-sm">Belum ada permintaan di tab ini.</p>
     </div>
   {:else}
-    <div class="overflow-x-auto bg-white border border-gray-200 shadow-sm rounded-xl">
+    <div class="overflow-x-auto rounded-xl border border-gray-200 bg-white shadow-sm">
       <table class="min-w-full text-sm">
-        <thead class="text-xs font-semibold tracking-wide text-gray-800 uppercase bg-gray-50">
+        <thead class="bg-gray-50 text-xs font-semibold uppercase tracking-wide text-gray-800">
           <tr>
             <th class="px-4 py-3 text-left">Tanggal</th>
             <th class="px-4 py-3 text-left">Nama Pemohon</th>
@@ -117,7 +117,7 @@
         <tbody class="divide-y divide-gray-100">
           {#each tabList as req (req.id)}
             <tr class="hover:bg-gray-50">
-              <td class="px-4 py-3 text-gray-600 whitespace-nowrap">{req.created_at}</td>
+              <td class="whitespace-nowrap px-4 py-3 text-gray-600">{req.created_at}</td>
               <td class="px-4 py-3 font-medium text-gray-800">{req.pegawai?.nama ?? '-'} </td>
               <td class="px-4 py-3 text-gray-600">{req.team ? req.team.name : '-'}</td>
               <td class="px-4 py-3 text-gray-600">{req.activity}</td>
@@ -149,37 +149,37 @@
 </div>
 
 {#if detailOpen && detailRequest}
-  <div class="fixed inset-0 z-50 flex items-center justify-center p-4 bg-black/40" role="dialog" aria-modal="true">
+  <div class="fixed inset-0 z-50 flex items-center justify-center bg-black/40 p-4" role="dialog" aria-modal="true">
     <div class="flex max-h-[90vh] w-full max-w-lg flex-col rounded-2xl bg-white shadow-2xl">
-      <div class="flex items-center justify-between px-6 py-4 border-b">
+      <div class="flex items-center justify-between border-b px-6 py-4">
         <h2 class="text-lg font-bold text-gray-800">Detail Permintaan</h2>
-        <button on:click={closeDetail} class="p-1 text-gray-400 rounded hover:bg-gray-100 hover:text-gray-600">
-          <svg class="w-5 h-5" fill="none" stroke="currentColor" stroke-width="2" viewBox="0 0 24 24">
+        <button on:click={closeDetail} class="rounded p-1 text-gray-400 hover:bg-gray-100 hover:text-gray-600">
+          <svg class="h-5 w-5" fill="none" stroke="currentColor" stroke-width="2" viewBox="0 0 24 24">
             <path stroke-linecap="round" stroke-linejoin="round" d="M6 18L18 6M6 6l12 12" />
           </svg>
         </button>
       </div>
 
-      <div class="flex-1 px-6 py-5 space-y-4 overflow-y-auto">
-        <div class="px-4 py-3 space-y-1 text-base rounded-lg bg-gray-50">
+      <div class="flex-1 space-y-4 overflow-y-auto px-6 py-5">
+        <div class="space-y-1 rounded-lg bg-gray-50 px-4 py-3 text-base">
           <div class="flex gap-2">
-            <span class="w-32 text-gray-800 shrink-0">Nama Pemohon</span>
+            <span class="w-32 shrink-0 text-gray-800">Nama Pemohon</span>
             <span class="font-medium text-gray-800">{detailRequest.pegawai?.nama ?? '-'} </span>
           </div>
           <div class="flex gap-2">
-            <span class="w-32 text-gray-800 shrink-0">Tim Kerja</span>
+            <span class="w-32 shrink-0 text-gray-800">Tim Kerja</span>
             <span class="font-medium text-gray-800">{detailRequest.team ? detailRequest.team.name : '-'}</span>
           </div>
           <div class="flex gap-2">
-            <span class="w-32 text-gray-800 shrink-0">Kegiatan</span>
+            <span class="w-32 shrink-0 text-gray-800">Kegiatan</span>
             <span class="font-medium text-gray-800">{detailRequest.activity}</span>
           </div>
           <div class="flex gap-2">
-            <span class="w-32 text-gray-800 shrink-0">Tanggal</span>
+            <span class="w-32 shrink-0 text-gray-800">Tanggal</span>
             <span class="font-medium text-gray-800">{detailRequest.created_at}</span>
           </div>
           <div class="flex gap-2">
-            <span class="w-32 text-gray-800 shrink-0">Status</span>
+            <span class="w-32 shrink-0 text-gray-800">Status</span>
             {#if detailRequest.status === 'approved'}
               <span class="inline-flex items-center rounded-full bg-green-100 px-2.5 py-0.5 text-xs font-semibold text-green-700">Disetujui</span>
             {:else}
@@ -190,9 +190,9 @@
 
         <div>
           <p class="mb-2 text-sm font-semibold text-gray-700">Daftar Barang</p>
-          <div class="overflow-hidden border border-gray-200 rounded-lg">
+          <div class="overflow-hidden rounded-lg border border-gray-200">
             <table class="min-w-full text-sm">
-              <thead class="text-xs font-semibold tracking-wide text-gray-500 uppercase bg-gray-50">
+              <thead class="bg-gray-50 text-xs font-semibold uppercase tracking-wide text-gray-500">
                 <tr>
                   <th class="px-3 py-2 text-left">Barang</th>
                   <th class="px-3 py-2 text-center">Diajukan</th>
@@ -212,7 +212,7 @@
                     </td>
                     <td class="px-3 py-2 text-center text-gray-600">{ri.qty_requested}</td>
                     {#if detailRequest.status === 'approved'}
-                      <td class="px-3 py-2 font-semibold text-center text-green-700">{ri.qty_approved ?? '-'}</td>
+                      <td class="px-3 py-2 text-center font-semibold text-green-700">{ri.qty_approved ?? '-'}</td>
                     {/if}
                   </tr>
                 {/each}
@@ -222,56 +222,56 @@
         </div>
       </div>
 
-      <div class="flex items-center justify-between px-6 py-4 border-t">
+      <div class="flex items-center justify-between border-t px-6 py-4">
         <div>
-          {#if detailRequest.status === 'approved'}
-            <a href={`/atk/${detailRequest.id}/download`} class="inline-flex items-center gap-2 px-4 py-2 text-sm font-semibold text-white bg-green-600 rounded-lg shadow hover:bg-green-700">
-              <svg class="w-4 h-4" fill="none" stroke="currentColor" stroke-width="2" viewBox="0 0 24 24">
+          {#if isAdmin && detailRequest.status === 'approved'}
+            <a href={`/atk/${detailRequest.id}/download`} class="inline-flex items-center gap-2 rounded-lg bg-green-600 px-4 py-2 text-sm font-semibold text-white shadow hover:bg-green-700">
+              <svg class="h-4 w-4" fill="none" stroke="currentColor" stroke-width="2" viewBox="0 0 24 24">
                 <path stroke-linecap="round" stroke-linejoin="round" d="M4 16v2a2 2 0 002 2h12a2 2 0 002-2v-2M7 10l5 5 5-5M12 3v12" />
               </svg>
               Download Excel
             </a>
           {/if}
         </div>
-        <button on:click={closeDetail} class="px-4 py-2 text-sm font-medium text-gray-700 bg-gray-100 rounded-lg hover:bg-gray-200">Tutup</button>
+        <button on:click={closeDetail} class="rounded-lg bg-gray-100 px-4 py-2 text-sm font-medium text-gray-700 hover:bg-gray-200">Tutup</button>
       </div>
     </div>
   </div>
 {/if}
 
 {#if reviewOpen && reviewRequest && approveForm}
-  <div class="fixed inset-0 z-50 flex items-center justify-center p-4 bg-black/40" role="dialog" aria-modal="true">
+  <div class="fixed inset-0 z-50 flex items-center justify-center bg-black/40 p-4" role="dialog" aria-modal="true">
     <div class="flex max-h-[90vh] w-full max-w-lg flex-col rounded-2xl bg-white shadow-2xl">
-      <div class="flex items-center justify-between px-6 py-4 border-b">
+      <div class="flex items-center justify-between border-b px-6 py-4">
         <h2 class="text-lg font-bold text-gray-800">Review Permintaan</h2>
-        <button on:click={closeReview} class="p-1 text-gray-400 rounded hover:bg-gray-100 hover:text-gray-600">
-          <svg class="w-5 h-5" fill="none" stroke="currentColor" stroke-width="2" viewBox="0 0 24 24">
+        <button on:click={closeReview} class="rounded p-1 text-gray-400 hover:bg-gray-100 hover:text-gray-600">
+          <svg class="h-5 w-5" fill="none" stroke="currentColor" stroke-width="2" viewBox="0 0 24 24">
             <path stroke-linecap="round" stroke-linejoin="round" d="M6 18L18 6M6 6l12 12" />
           </svg>
         </button>
       </div>
 
-      <div class="flex-1 px-6 py-5 space-y-4 overflow-y-auto">
-        <div class="px-4 py-3 space-y-1 text-sm rounded-lg bg-gray-50">
+      <div class="flex-1 space-y-4 overflow-y-auto px-6 py-5">
+        <div class="space-y-1 rounded-lg bg-gray-50 px-4 py-3 text-sm">
           <div class="flex gap-2">
-            <span class="w-32 text-gray-500 shrink-0">Nama Pemohon</span>
+            <span class="w-32 shrink-0 text-gray-500">Nama Pemohon</span>
             <span class="font-medium text-gray-800">{reviewRequest.pegawai?.nama ?? '-'} </span>
           </div>
           <div class="flex gap-2">
-            <span class="w-32 text-gray-500 shrink-0">Tim Kerja</span>
+            <span class="w-32 shrink-0 text-gray-500">Tim Kerja</span>
             <span class="font-medium text-gray-800">{reviewRequest.team ? reviewRequest.team.name : '-'}</span>
           </div>
           <div class="flex gap-2">
-            <span class="w-32 text-gray-500 shrink-0">Kegiatan</span>
+            <span class="w-32 shrink-0 text-gray-500">Kegiatan</span>
             <span class="font-medium text-gray-800">{reviewRequest.activity}</span>
           </div>
         </div>
 
         <div>
           <p class="mb-2 text-sm font-semibold text-gray-700">Jumlah Barang Disetujui</p>
-          <div class="overflow-hidden border border-gray-200 rounded-lg">
+          <div class="overflow-hidden rounded-lg border border-gray-200">
             <table class="min-w-full text-sm">
-              <thead class="text-xs font-semibold tracking-wide text-gray-500 uppercase bg-gray-50">
+              <thead class="bg-gray-50 text-xs font-semibold uppercase tracking-wide text-gray-500">
                 <tr>
                   <th class="px-3 py-2 text-left">Barang</th>
                   <th class="px-3 py-2 text-center">Diajukan</th>
@@ -289,7 +289,7 @@
                     </td>
                     <td class="px-3 py-2 text-center text-gray-500">{ri.qty_requested}</td>
                     <td class="px-3 py-2 text-center">
-                      <input type="number" min="0" max={ri.qty_requested} bind:value={$approveForm.items[idx].qty_approved} class="w-20 px-2 py-1 text-sm text-center border border-gray-300 rounded-md focus:border-indigo-500 focus:outline-none focus:ring-1 focus:ring-indigo-500" />
+                      <input type="number" min="0" max={ri.qty_requested} bind:value={$approveForm.items[idx].qty_approved} class="w-20 rounded-md border border-gray-300 px-2 py-1 text-center text-sm focus:border-indigo-500 focus:outline-none focus:ring-1 focus:ring-indigo-500" />
                     </td>
                   </tr>
                 {/each}
@@ -303,9 +303,9 @@
         {/if}
       </div>
 
-      <div class="flex items-center justify-end gap-3 px-6 py-4 border-t">
-        <button on:click={closeReview} class="px-4 py-2 text-sm font-medium text-gray-700 bg-gray-100 rounded-lg hover:bg-gray-200" disabled={$approveForm.processing}> Batal </button>
-        <button on:click={submitApprove} disabled={$approveForm.processing} class="px-5 py-2 text-sm font-semibold text-white bg-indigo-600 rounded-lg shadow hover:bg-indigo-700 disabled:opacity-60">
+      <div class="flex items-center justify-end gap-3 border-t px-6 py-4">
+        <button on:click={closeReview} class="rounded-lg bg-gray-100 px-4 py-2 text-sm font-medium text-gray-700 hover:bg-gray-200" disabled={$approveForm.processing}> Batal </button>
+        <button on:click={submitApprove} disabled={$approveForm.processing} class="rounded-lg bg-indigo-600 px-5 py-2 text-sm font-semibold text-white shadow hover:bg-indigo-700 disabled:opacity-60">
           {$approveForm.processing ? 'Menyimpan…' : 'Setujui Permintaan'}
         </button>
       </div>
